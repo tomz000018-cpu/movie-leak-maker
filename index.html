@@ -1,289 +1,309 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <title>Movie Leak Maker</title>
+<title>Movie Leak Maker</title>
 
-  <style>
-    * {
-      box-sizing: border-box;
-    }
+<style>
 
-    body {
-      margin: 0;
-      background: #090909;
-      color: #ffffff;
-      font-family:
-        -apple-system,
-        BlinkMacSystemFont,
-        "Helvetica Neue",
-        Arial,
-        sans-serif;
-    }
+* {
+  box-sizing: border-box;
+}
 
-    .container {
-      width: min(92%, 800px);
-      margin: 0 auto;
-      padding: 35px 0 80px;
-    }
+body {
+  margin: 0;
+  background: #090909;
+  color: white;
+  font-family:
+    -apple-system,
+    BlinkMacSystemFont,
+    "Helvetica Neue",
+    Arial,
+    sans-serif;
+}
 
-    h1 {
-      text-align: center;
-      margin: 0 0 8px;
-      font-size: 30px;
-    }
+.container {
+  width: min(92%, 800px);
+  margin: auto;
+  padding: 35px 0 80px;
+}
 
-    .subtitle {
-      text-align: center;
-      color: #aaaaaa;
-      line-height: 1.6;
-      margin-bottom: 30px;
-    }
+h1 {
+  text-align: center;
+  margin: 0 0 8px;
+  font-size: 30px;
+}
 
-    .panel {
-      background: #161616;
-      border: 1px solid #333333;
-      border-radius: 18px;
-      padding: 20px;
-    }
+.subtitle {
+  text-align: center;
+  color: #aaa;
+  line-height: 1.6;
+  margin-bottom: 30px;
+}
 
-    .file-label,
-    .process-button,
-    .save-button {
-      display: block;
-      width: 100%;
-      border: none;
-      border-radius: 12px;
-      padding: 16px;
-      font-size: 17px;
-      font-weight: bold;
-      text-align: center;
-    }
+.panel {
+  background: #161616;
+  border: 1px solid #333;
+  border-radius: 18px;
+  padding: 20px;
+}
 
-    .file-label {
-      background: white;
-      color: #111111;
-      cursor: pointer;
-    }
+.file-label,
+.process-button,
+.save-button {
+  display: block;
+  width: 100%;
+  border: none;
+  border-radius: 12px;
+  padding: 16px;
+  font-size: 17px;
+  font-weight: bold;
+  text-align: center;
+}
 
-    #videoInput {
-      display: none;
-    }
+.file-label {
+  background: white;
+  color: #111;
+}
 
-    #fileName {
-      margin-top: 14px;
-      text-align: center;
-      color: #aaaaaa;
-      word-break: break-all;
-    }
+#videoInput {
+  display: none;
+}
 
-    .preview-area,
-    .result-area {
-      display: none;
-      margin-top: 24px;
-    }
+#fileName {
+  margin-top: 14px;
+  text-align: center;
+  color: #aaa;
+  word-break: break-all;
+}
 
-    .screen {
-      background: #000;
-      padding: 8px;
-      border-radius: 10px;
-      overflow: hidden;
-    }
+.preview-area,
+.result-area {
+  display: none;
+  margin-top: 24px;
+}
 
-    video {
-      display: block;
-      width: 100%;
-      max-height: 60vh;
-      background: black;
-    }
+.screen {
+  background: black;
+  padding: 8px;
+  border-radius: 10px;
+  overflow: hidden;
+}
 
-    .process-button {
-      margin-top: 20px;
-      background: #f2f2f2;
-      color: #111;
-      cursor: pointer;
-    }
+video,
+canvas {
+  display: block;
+  width: 100%;
+  max-height: 65vh;
+  background: black;
+}
 
-    .process-button:disabled {
-      background: #444;
-      color: #999;
-      cursor: default;
-    }
+#workCanvas {
+  display: none;
+}
 
-    .save-button {
-      margin-top: 16px;
-      background: #ffffff;
-      color: #111111;
-      text-decoration: none;
-    }
+.process-button {
+  margin-top: 20px;
+  background: #f2f2f2;
+  color: #111;
+}
 
-    .status {
-      margin-top: 18px;
-      padding: 14px;
-      border-radius: 10px;
-      background: #101010;
-      color: #cccccc;
-      line-height: 1.6;
-      font-size: 14px;
-    }
+.process-button:disabled {
+  background: #444;
+  color: #999;
+}
 
-    .progress-wrap {
-      display: none;
-      margin-top: 18px;
-    }
+.save-button {
+  margin-top: 16px;
+  background: white;
+  color: #111;
+  text-decoration: none;
+}
 
-    .progress-bar-bg {
-      height: 12px;
-      background: #333333;
-      border-radius: 10px;
-      overflow: hidden;
-    }
+.status {
+  margin-top: 18px;
+  padding: 14px;
+  border-radius: 10px;
+  background: #101010;
+  color: #ccc;
+  line-height: 1.6;
+  font-size: 14px;
+}
 
-    .progress-bar {
-      width: 0%;
-      height: 100%;
-      background: #eeeeee;
-      transition: width 0.2s;
-    }
+.progress-wrap {
+  display: none;
+  margin-top: 18px;
+}
 
-    .progress-text {
-      margin-top: 8px;
-      font-size: 13px;
-      color: #aaaaaa;
-      text-align: center;
-    }
+.progress-bg {
+  height: 12px;
+  background: #333;
+  border-radius: 10px;
+  overflow: hidden;
+}
 
-    .notice {
-      margin-top: 24px;
-      text-align: center;
-      color: #777777;
-      font-size: 12px;
-      line-height: 1.6;
-    }
-  </style>
+.progress-bar {
+  width: 0%;
+  height: 100%;
+  background: white;
+}
+
+.progress-text {
+  margin-top: 8px;
+  color: #aaa;
+  text-align: center;
+  font-size: 13px;
+}
+
+.notice {
+  margin-top: 25px;
+  text-align: center;
+  color: #777;
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+</style>
 </head>
 
 <body>
 
 <div class="container">
 
-  <h1>Movie Leak Maker</h1>
+<h1>Movie Leak Maker</h1>
 
-  <div class="subtitle">
-    普通の動画を<br>
-    「海外試写会の流出映像風」に加工します
-  </div>
+<div class="subtitle">
+普通の動画を<br>
+「海外試写会の流出映像風」に加工します
+</div>
 
-  <div class="panel">
+<div class="panel">
 
-    <label class="file-label" for="videoInput">
-      動画を選ぶ
-    </label>
+<label class="file-label" for="videoInput">
+動画を選ぶ
+</label>
 
-    <input
-      id="videoInput"
-      type="file"
-      accept="video/*"
-    >
+<input
+  id="videoInput"
+  type="file"
+  accept="video/*"
+>
 
-    <div id="fileName">
-      まだ動画は選択されていません
-    </div>
-
-    <div class="preview-area" id="previewArea">
-
-      <div class="screen">
-        <video
-          id="videoPreview"
-          controls
-          playsinline
-        ></video>
-      </div>
-
-      <button
-        class="process-button"
-        id="processButton"
-      >
-        流出映像風に加工する
-      </button>
-
-      <div
-        class="progress-wrap"
-        id="progressWrap"
-      >
-
-        <div class="progress-bar-bg">
-          <div
-            class="progress-bar"
-            id="progressBar"
-          ></div>
-        </div>
-
-        <div
-          class="progress-text"
-          id="progressText"
-        >
-          準備中
-        </div>
-
-      </div>
-
-      <div class="status" id="status">
-        動画を読み込みました。
-      </div>
-
-    </div>
+<div id="fileName">
+まだ動画は選択されていません
+</div>
 
 
-    <div class="result-area" id="resultArea">
+<div
+  class="preview-area"
+  id="previewArea"
+>
 
-      <div class="screen">
-        <video
-          id="resultVideo"
-          controls
-          playsinline
-        ></video>
-      </div>
+<div class="screen">
 
-      <a
-        class="save-button"
-        id="saveButton"
-        download="movie-leak.mp4"
-      >
-        完成動画を保存
-      </a>
-
-    </div>
-
-  </div>
-
-  <div class="notice">
-    動画処理はブラウザ内で行います。
-    初回のみFFmpeg.wasmの読み込みに少し時間がかかります。
-  </div>
+<video
+  id="sourceVideo"
+  controls
+  playsinline
+></video>
 
 </div>
 
 
-<script type="module">
+<button
+  id="processButton"
+  class="process-button"
+>
+流出映像風に加工する
+</button>
 
-import { FFmpeg }
-from "https://cdn.jsdelivr.net/npm/@ffmpeg/ffmpeg@0.12.15/dist/esm/index.js";
 
-import {
-  fetchFile,
-  toBlobURL
-}
-from "https://cdn.jsdelivr.net/npm/@ffmpeg/util@0.12.2/dist/esm/index.js";
+<div
+  class="progress-wrap"
+  id="progressWrap"
+>
 
+<div class="progress-bg">
+
+<div
+  class="progress-bar"
+  id="progressBar"
+></div>
+
+</div>
+
+<div
+  class="progress-text"
+  id="progressText"
+>
+準備中
+</div>
+
+</div>
+
+
+<div
+  class="status"
+  id="status"
+>
+動画を選んでください。
+</div>
+
+</div>
+
+
+<div
+  class="result-area"
+  id="resultArea"
+>
+
+<h2>
+完成動画
+</h2>
+
+<div class="screen">
+
+<video
+  id="resultVideo"
+  controls
+  playsinline
+></video>
+
+</div>
+
+
+<a
+  id="saveButton"
+  class="save-button"
+>
+完成動画を保存
+</a>
+
+</div>
+
+</div>
+
+
+<canvas id="workCanvas"></canvas>
+
+
+<div class="notice">
+動画はサーバーへ送信せず、
+この端末の中で加工します。
+</div>
+
+</div>
+
+
+<script>
 
 const videoInput =
   document.getElementById("videoInput");
 
-const videoPreview =
-  document.getElementById("videoPreview");
+const sourceVideo =
+  document.getElementById("sourceVideo");
 
 const resultVideo =
   document.getElementById("resultVideo");
@@ -294,14 +314,14 @@ const previewArea =
 const resultArea =
   document.getElementById("resultArea");
 
-const fileName =
-  document.getElementById("fileName");
-
 const processButton =
   document.getElementById("processButton");
 
 const saveButton =
   document.getElementById("saveButton");
+
+const fileName =
+  document.getElementById("fileName");
 
 const status =
   document.getElementById("status");
@@ -315,12 +335,24 @@ const progressBar =
 const progressText =
   document.getElementById("progressText");
 
+const canvas =
+  document.getElementById("workCanvas");
+
+const ctx =
+  canvas.getContext("2d");
+
 
 let selectedFile = null;
 
-let ffmpeg = null;
+let inputURL = null;
 
-let ffmpegLoaded = false;
+let outputURL = null;
+
+let audioContext = null;
+
+let audioSource = null;
+
+let audioDestination = null;
 
 
 videoInput.addEventListener(
@@ -334,11 +366,21 @@ videoInput.addEventListener(
       return;
     }
 
+
+    if (inputURL) {
+      URL.revokeObjectURL(inputURL);
+    }
+
+    inputURL =
+      URL.createObjectURL(selectedFile);
+
+    sourceVideo.src =
+      inputURL;
+
+    sourceVideo.load();
+
     fileName.textContent =
       selectedFile.name;
-
-    videoPreview.src =
-      URL.createObjectURL(selectedFile);
 
     previewArea.style.display =
       "block";
@@ -347,79 +389,86 @@ videoInput.addEventListener(
       "none";
 
     status.textContent =
-      "動画を読み込みました。下のボタンで加工できます。";
+      "動画を読み込みました。";
+
   }
 );
 
 
-async function loadFFmpeg() {
+function chooseMimeType() {
 
-  if (ffmpegLoaded) {
-    return;
+  const types = [
+
+    'video/mp4;codecs="avc1.42E01E,mp4a.40.2"',
+
+    'video/mp4',
+
+    'video/webm;codecs=vp9,opus',
+
+    'video/webm;codecs=vp8,opus',
+
+    'video/webm'
+
+  ];
+
+
+  for (const type of types) {
+
+    if (
+      MediaRecorder.isTypeSupported(type)
+    ) {
+
+      return type;
+
+    }
+
   }
 
-  status.textContent =
-    "FFmpeg.wasmを読み込んでいます。初回は少し時間がかかります。";
 
-  processButton.disabled =
-    true;
+  return "";
 
-  const baseURL =
-    "https://cdn.jsdelivr.net/npm/@ffmpeg/core@0.12.10/dist/esm";
-
-  ffmpeg =
-    new FFmpeg();
+}
 
 
-  ffmpeg.on(
-    "progress",
-    ({ progress }) => {
+async function prepareAudio() {
 
-      if (!Number.isFinite(progress)) {
-        return;
-      }
+  if (!audioContext) {
 
-      const percent =
-        Math.max(
-          0,
-          Math.min(
-            100,
-            Math.round(progress * 100)
-          )
-        );
+    audioContext =
+      new (
+        window.AudioContext ||
+        window.webkitAudioContext
+      )();
 
-      progressBar.style.width =
-        percent + "%";
-
-      progressText.textContent =
-        "加工中 " + percent + "%";
-    }
-  );
+  }
 
 
-  await ffmpeg.load({
+  await audioContext.resume();
 
-    coreURL:
-      await toBlobURL(
-        `${baseURL}/ffmpeg-core.js`,
-        "text/javascript"
-      ),
 
-    wasmURL:
-      await toBlobURL(
-        `${baseURL}/ffmpeg-core.wasm`,
-        "application/wasm"
-      )
-  });
+  if (!audioSource) {
 
-  ffmpegLoaded =
-    true;
+    audioSource =
+      audioContext.createMediaElementSource(
+        sourceVideo
+      );
 
-  processButton.disabled =
-    false;
 
-  status.textContent =
-    "FFmpeg.wasmの準備ができました。";
+    audioDestination =
+      audioContext.createMediaStreamDestination();
+
+
+    audioSource.connect(
+      audioDestination
+    );
+
+
+    audioSource.connect(
+      audioContext.destination
+    );
+
+  }
+
 }
 
 
@@ -431,10 +480,40 @@ processButton.addEventListener(
       return;
     }
 
+
     try {
+
+
+      if (
+        !window.MediaRecorder
+      ) {
+
+        throw new Error(
+          "MediaRecorderに対応していません"
+        );
+
+      }
+
+
+      if (
+        !canvas.captureStream
+      ) {
+
+        throw new Error(
+          "Canvas captureStreamに対応していません"
+        );
+
+      }
+
 
       processButton.disabled =
         true;
+
+      sourceVideo.controls =
+        false;
+
+      resultArea.style.display =
+        "none";
 
       progressWrap.style.display =
         "block";
@@ -445,127 +524,484 @@ processButton.addEventListener(
       progressText.textContent =
         "準備中";
 
-      resultArea.style.display =
-        "none";
+      status.textContent =
+        "動画加工の準備をしています。";
 
 
-      await loadFFmpeg();
+      await prepareAudio();
+
+
+      sourceVideo.pause();
+
+      sourceVideo.currentTime =
+        0;
+
+
+      await new Promise(resolve => {
+
+        if (
+          sourceVideo.readyState >= 1
+        ) {
+
+          resolve();
+
+        }
+
+        else {
+
+          sourceVideo.onloadedmetadata =
+            resolve;
+
+        }
+
+      });
+
+
+      const originalWidth =
+        sourceVideo.videoWidth;
+
+      const originalHeight =
+        sourceVideo.videoHeight;
+
+
+      let outputWidth =
+        originalWidth;
+
+      let outputHeight =
+        originalHeight;
+
+
+      if (outputWidth > 720) {
+
+        const ratio =
+          720 / outputWidth;
+
+        outputWidth =
+          720;
+
+        outputHeight =
+          Math.round(
+            outputHeight * ratio
+          );
+
+      }
+
+
+      outputWidth =
+        Math.floor(
+          outputWidth / 2
+        ) * 2;
+
+      outputHeight =
+        Math.floor(
+          outputHeight / 2
+        ) * 2;
+
+
+      canvas.width =
+        outputWidth;
+
+      canvas.height =
+        outputHeight;
+
+
+      const canvasStream =
+        canvas.captureStream(30);
+
+
+      const finalStream =
+        new MediaStream();
+
+
+      canvasStream
+        .getVideoTracks()
+        .forEach(track => {
+
+          finalStream.addTrack(track);
+
+        });
+
+
+      if (audioDestination) {
+
+        audioDestination.stream
+          .getAudioTracks()
+          .forEach(track => {
+
+            finalStream.addTrack(track);
+
+          });
+
+      }
+
+
+      const mimeType =
+        chooseMimeType();
+
+
+      const recorderOptions =
+        mimeType
+        ? {
+            mimeType: mimeType,
+            videoBitsPerSecond:
+              3500000
+          }
+        : {
+            videoBitsPerSecond:
+              3500000
+          };
+
+
+      const recorder =
+        new MediaRecorder(
+          finalStream,
+          recorderOptions
+        );
+
+
+      const chunks =
+        [];
+
+
+      recorder.ondataavailable =
+        function(event) {
+
+          if (
+            event.data &&
+            event.data.size > 0
+          ) {
+
+            chunks.push(
+              event.data
+            );
+
+          }
+
+        };
+
+
+      recorder.onerror =
+        function(event) {
+
+          console.error(
+            event
+          );
+
+        };
+
+
+      recorder.onstop =
+        function() {
+
+
+          const actualType =
+            recorder.mimeType ||
+            mimeType ||
+            "video/mp4";
+
+
+          const blob =
+            new Blob(
+              chunks,
+              {
+                type: actualType
+              }
+            );
+
+
+          if (outputURL) {
+
+            URL.revokeObjectURL(
+              outputURL
+            );
+
+          }
+
+
+          outputURL =
+            URL.createObjectURL(
+              blob
+            );
+
+
+          resultVideo.src =
+            outputURL;
+
+
+          const isMP4 =
+            actualType.includes(
+              "mp4"
+            );
+
+
+          saveButton.href =
+            outputURL;
+
+
+          saveButton.download =
+            isMP4
+              ? "movie-leak.mp4"
+              : "movie-leak.webm";
+
+
+          resultArea.style.display =
+            "block";
+
+
+          progressBar.style.width =
+            "100%";
+
+
+          progressText.textContent =
+            "完成";
+
+
+          status.textContent =
+            "加工が完了しました。";
+
+
+          processButton.disabled =
+            false;
+
+
+          sourceVideo.controls =
+            true;
+
+        };
+
+
+      function drawFrame() {
+
+
+        if (
+          sourceVideo.paused ||
+          sourceVideo.ended
+        ) {
+
+          return;
+
+        }
+
+
+        const t =
+          sourceVideo.currentTime;
+
+
+        const shakeX =
+          Math.sin(
+            t * 7.3
+          ) * 2.5
+          +
+          Math.sin(
+            t * 2.1
+          ) * 1.5;
+
+
+        const shakeY =
+          Math.cos(
+            t * 5.7
+          ) * 2.0;
+
+
+        const angle =
+          Math.sin(
+            t * 1.8
+          ) * 0.004;
+
+
+        ctx.save();
+
+
+        ctx.fillStyle =
+          "black";
+
+
+        ctx.fillRect(
+          0,
+          0,
+          canvas.width,
+          canvas.height
+        );
+
+
+        ctx.translate(
+          canvas.width / 2
+          + shakeX,
+
+          canvas.height / 2
+          + shakeY
+        );
+
+
+        ctx.rotate(
+          angle
+        );
+
+
+        ctx.scale(
+          1.035,
+          1.035
+        );
+
+
+        ctx.filter =
+          "brightness(82%) " +
+          "contrast(90%) " +
+          "saturate(72%) " +
+          "blur(0.7px)";
+
+
+        ctx.drawImage(
+          sourceVideo,
+
+          -canvas.width / 2,
+
+          -canvas.height / 2,
+
+          canvas.width,
+
+          canvas.height
+        );
+
+
+        ctx.restore();
+
+
+        /*
+        暗い映画館で撮ったような
+        周辺減光
+        */
+
+        const gradient =
+          ctx.createRadialGradient(
+
+            canvas.width / 2,
+            canvas.height / 2,
+            canvas.width * 0.15,
+
+            canvas.width / 2,
+            canvas.height / 2,
+            canvas.width * 0.75
+
+          );
+
+
+        gradient.addColorStop(
+          0,
+          "rgba(0,0,0,0)"
+        );
+
+
+        gradient.addColorStop(
+          1,
+          "rgba(0,0,0,0.30)"
+        );
+
+
+        ctx.fillStyle =
+          gradient;
+
+
+        ctx.fillRect(
+          0,
+          0,
+          canvas.width,
+          canvas.height
+        );
+
+
+        if (
+          sourceVideo.duration
+        ) {
+
+          const percent =
+            Math.min(
+              100,
+              Math.round(
+                sourceVideo.currentTime /
+                sourceVideo.duration *
+                100
+              )
+            );
+
+
+          progressBar.style.width =
+            percent + "%";
+
+
+          progressText.textContent =
+            "加工中 " +
+            percent +
+            "%";
+
+        }
+
+
+        requestAnimationFrame(
+          drawFrame
+        );
+
+      }
+
+
+      sourceVideo.onended =
+        function() {
+
+          if (
+            recorder.state !==
+            "inactive"
+          ) {
+
+            recorder.stop();
+
+          }
+
+        };
 
 
       status.textContent =
-        "動画を加工しています。画面を閉じずにお待ちください。";
+        "加工しています。動画の長さとほぼ同じ時間かかります。";
 
 
-      const inputName =
-        "input.mov";
-
-      const outputName =
-        "output.mp4";
+      recorder.start(500);
 
 
-      await ffmpeg.writeFile(
-        inputName,
-        await fetchFile(selectedFile)
+      await sourceVideo.play();
+
+
+      requestAnimationFrame(
+        drawFrame
       );
 
 
-      await ffmpeg.exec([
-
-        "-i",
-        inputName,
-
-        "-vf",
-
-        [
-          "scale='min(720,iw)':-2",
-          "eq=brightness=-0.08:saturation=0.72:contrast=0.92",
-          "gblur=sigma=0.7",
-          "rotate=0.004*sin(2*PI*t*0.8):fillcolor=black",
-          "crop=iw*0.97:ih*0.97",
-          "scale=trunc(iw/2)*2:trunc(ih/2)*2"
-        ].join(","),
-
-        "-c:v",
-        "libx264",
-
-        "-preset",
-        "ultrafast",
-
-        "-crf",
-        "28",
-
-        "-c:a",
-        "aac",
-
-        "-b:a",
-        "128k",
-
-        "-movflags",
-        "+faststart",
-
-        outputName
-
-      ]);
-
-
-      const data =
-        await ffmpeg.readFile(
-          outputName
-        );
-
-
-      const blob =
-        new Blob(
-          [data.buffer],
-          {
-            type:
-              "video/mp4"
-          }
-        );
-
-
-      const outputURL =
-        URL.createObjectURL(blob);
-
-
-      resultVideo.src =
-        outputURL;
-
-      saveButton.href =
-        outputURL;
-
-      resultArea.style.display =
-        "block";
-
-
-      progressBar.style.width =
-        "100%";
-
-      progressText.textContent =
-        "完成";
-
-      status.textContent =
-        "加工が完了しました。下に完成動画が表示されています。";
-
-
-      processButton.disabled =
-        false;
-
     }
 
-    catch (error) {
+    catch(error) {
 
-      console.error(error);
+
+      console.error(
+        error
+      );
+
 
       processButton.disabled =
         false;
 
-      status.textContent =
-        "加工中にエラーが発生しました。短い動画でもう一度試してください。";
+
+      sourceVideo.controls =
+        true;
+
 
       progressText.textContent =
         "エラー";
+
+
+      status.textContent =
+        "エラー：" +
+        error.message;
+
     }
+
   }
 );
 
