@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="ja">
+
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -14,7 +15,7 @@
 
 body {
   margin: 0;
-  background: #090909;
+  background: #080808;
   color: white;
   font-family:
     -apple-system,
@@ -92,8 +93,7 @@ h1 {
   overflow: hidden;
 }
 
-video,
-canvas {
+video {
   display: block;
   width: 100%;
   max-height: 65vh;
@@ -168,6 +168,7 @@ canvas {
 </style>
 </head>
 
+
 <body>
 
 <div class="container">
@@ -178,6 +179,7 @@ canvas {
 普通の動画を<br>
 「海外試写会の流出映像風」に加工します
 </div>
+
 
 <div class="panel">
 
@@ -273,7 +275,6 @@ canvas {
 
 </div>
 
-
 <a
   id="saveButton"
   class="save-button"
@@ -342,6 +343,13 @@ const ctx =
   canvas.getContext("2d");
 
 
+const tempCanvas =
+  document.createElement("canvas");
+
+const tempCtx =
+  tempCanvas.getContext("2d");
+
+
 let selectedFile = null;
 
 let inputURL = null;
@@ -353,6 +361,7 @@ let audioContext = null;
 let audioSource = null;
 
 let audioDestination = null;
+
 
 
 videoInput.addEventListener(
@@ -371,16 +380,20 @@ videoInput.addEventListener(
       URL.revokeObjectURL(inputURL);
     }
 
+
     inputURL =
       URL.createObjectURL(selectedFile);
+
 
     sourceVideo.src =
       inputURL;
 
     sourceVideo.load();
 
+
     fileName.textContent =
       selectedFile.name;
+
 
     previewArea.style.display =
       "block";
@@ -388,11 +401,13 @@ videoInput.addEventListener(
     resultArea.style.display =
       "none";
 
+
     status.textContent =
       "動画を読み込みました。";
 
   }
 );
+
 
 
 function chooseMimeType() {
@@ -428,6 +443,7 @@ function chooseMimeType() {
   return "";
 
 }
+
 
 
 async function prepareAudio() {
@@ -472,6 +488,714 @@ async function prepareAudio() {
 }
 
 
+
+function lerp(a, b, t) {
+
+  return a + (b - a) * t;
+
+}
+
+
+
+function drawCinemaBackground(w, h, time) {
+
+  ctx.fillStyle =
+    "#010101";
+
+  ctx.fillRect(
+    0,
+    0,
+    w,
+    h
+  );
+
+
+  const glow =
+    ctx.createRadialGradient(
+
+      w * 0.52,
+      h * 0.43,
+      10,
+
+      w * 0.52,
+      h * 0.43,
+      w * 0.75
+
+    );
+
+
+  glow.addColorStop(
+    0,
+    "rgba(80,90,105,0.10)"
+  );
+
+  glow.addColorStop(
+    0.45,
+    "rgba(25,25,30,0.06)"
+  );
+
+  glow.addColorStop(
+    1,
+    "rgba(0,0,0,0)"
+  );
+
+
+  ctx.fillStyle =
+    glow;
+
+  ctx.fillRect(
+    0,
+    0,
+    w,
+    h
+  );
+
+
+  /*
+  ほんの少しだけ
+  暗い映画館の壁っぽい色
+  */
+
+  ctx.fillStyle =
+    "rgba(20,18,18,0.18)";
+
+  ctx.fillRect(
+    0,
+    h * 0.78,
+    w,
+    h * 0.22
+  );
+
+}
+
+
+
+function drawAudience(w, h, time) {
+
+  ctx.save();
+
+  ctx.fillStyle =
+    "rgba(0,0,0,0.92)";
+
+
+  /*
+  左の観客
+  */
+
+  ctx.beginPath();
+
+  ctx.ellipse(
+    w * 0.10,
+    h * 0.88,
+    w * 0.085,
+    h * 0.075,
+    -0.1,
+    0,
+    Math.PI * 2
+  );
+
+  ctx.fill();
+
+
+  ctx.beginPath();
+
+  ctx.ellipse(
+    w * 0.12,
+    h * 1.02,
+    w * 0.16,
+    h * 0.15,
+    0,
+    0,
+    Math.PI * 2
+  );
+
+  ctx.fill();
+
+
+  /*
+  中央寄りの観客
+  */
+
+  ctx.beginPath();
+
+  ctx.ellipse(
+    w * 0.48,
+    h * 0.93,
+    w * 0.07,
+    h * 0.06,
+    0,
+    0,
+    Math.PI * 2
+  );
+
+  ctx.fill();
+
+
+  ctx.beginPath();
+
+  ctx.ellipse(
+    w * 0.48,
+    h * 1.04,
+    w * 0.15,
+    h * 0.13,
+    0,
+    0,
+    Math.PI * 2
+  );
+
+  ctx.fill();
+
+
+  /*
+  右側の観客
+  */
+
+  ctx.beginPath();
+
+  ctx.ellipse(
+    w * 0.91,
+    h * 0.86,
+    w * 0.095,
+    h * 0.085,
+    0.1,
+    0,
+    Math.PI * 2
+  );
+
+  ctx.fill();
+
+
+  ctx.beginPath();
+
+  ctx.ellipse(
+    w * 0.90,
+    h * 1.01,
+    w * 0.18,
+    h * 0.16,
+    0,
+    0,
+    Math.PI * 2
+  );
+
+  ctx.fill();
+
+
+  ctx.restore();
+
+}
+
+
+
+function drawNoise(w, h) {
+
+  ctx.save();
+
+  ctx.globalAlpha =
+    0.06;
+
+
+  for (
+    let i = 0;
+    i < 120;
+    i++
+  ) {
+
+    const gray =
+      Math.floor(
+        80 +
+        Math.random() * 120
+      );
+
+
+    ctx.fillStyle =
+      `rgb(${gray},${gray},${gray})`;
+
+
+    const x =
+      Math.random() * w;
+
+    const y =
+      Math.random() * h;
+
+
+    ctx.fillRect(
+      x,
+      y,
+      1 + Math.random() * 2,
+      1 + Math.random() * 2
+    );
+
+  }
+
+
+  ctx.restore();
+
+}
+
+
+
+function drawScreenWarp(
+  source,
+  w,
+  h,
+  time
+) {
+
+  /*
+  手持ち撮影らしい
+  不規則なブレ
+  */
+
+  const shakeX =
+    Math.sin(time * 7.1) * 2.4
+    +
+    Math.sin(time * 17.3) * 1.1
+    +
+    Math.sin(time * 2.2) * 3.0;
+
+
+  const shakeY =
+    Math.cos(time * 6.3) * 2.0
+    +
+    Math.sin(time * 14.7) * 0.9;
+
+
+  /*
+  ときどき少しだけ
+  カメラがずれる感じ
+  */
+
+  const driftX =
+    Math.sin(time * 0.72) * 5;
+
+
+  const driftY =
+    Math.cos(time * 0.51) * 3;
+
+
+  /*
+  スクリーン四隅
+
+  右側から斜めに撮っている
+  ような形
+  */
+
+  const TL = {
+    x: w * 0.13 + shakeX + driftX,
+    y: h * 0.18 + shakeY + driftY
+  };
+
+  const TR = {
+    x: w * 0.91 + shakeX + driftX,
+    y: h * 0.10 + shakeY + driftY
+  };
+
+  const BL = {
+    x: w * 0.17 + shakeX + driftX,
+    y: h * 0.76 + shakeY + driftY
+  };
+
+  const BR = {
+    x: w * 0.94 + shakeX + driftX,
+    y: h * 0.69 + shakeY + driftY
+  };
+
+
+  /*
+  スクリーンの弱い光
+  */
+
+  ctx.save();
+
+  ctx.shadowColor =
+    "rgba(190,200,220,0.22)";
+
+  ctx.shadowBlur =
+    22;
+
+
+  ctx.fillStyle =
+    "rgba(160,170,180,0.06)";
+
+
+  ctx.beginPath();
+
+  ctx.moveTo(
+    TL.x,
+    TL.y
+  );
+
+  ctx.lineTo(
+    TR.x,
+    TR.y
+  );
+
+  ctx.lineTo(
+    BR.x,
+    BR.y
+  );
+
+  ctx.lineTo(
+    BL.x,
+    BL.y
+  );
+
+  ctx.closePath();
+
+  ctx.fill();
+
+  ctx.restore();
+
+
+
+  /*
+  低画質化用
+  一度小さなキャンバスに縮小
+  */
+
+
+  const tempWidth =
+    source.videoWidth >
+    source.videoHeight
+      ? 420
+      : 260;
+
+
+  const tempHeight =
+    Math.max(
+      2,
+      Math.round(
+        tempWidth *
+        source.videoHeight /
+        source.videoWidth
+      )
+    );
+
+
+  tempCanvas.width =
+    tempWidth;
+
+  tempCanvas.height =
+    tempHeight;
+
+
+  /*
+  時々ピントが少し揺れる
+  */
+
+  const focusBreath =
+    1.4 +
+    (
+      Math.sin(
+        time * 0.75
+      ) + 1
+    ) * 0.55;
+
+
+  const exposure =
+    76 +
+    Math.sin(
+      time * 5.4
+    ) * 3;
+
+
+  tempCtx.clearRect(
+    0,
+    0,
+    tempWidth,
+    tempHeight
+  );
+
+
+  tempCtx.filter =
+    "brightness(" +
+    exposure +
+    "%) " +
+
+    "contrast(82%) " +
+
+    "saturate(62%) " +
+
+    "blur(" +
+    focusBreath +
+    "px)";
+
+
+  tempCtx.drawImage(
+    source,
+    0,
+    0,
+    tempWidth,
+    tempHeight
+  );
+
+
+  /*
+  台形スクリーンを
+  細い縦線に分割して描画。
+
+  Canvasだけで
+  遠近変形っぽく見せる方法。
+  */
+
+
+  const strips =
+    100;
+
+
+  for (
+    let i = 0;
+    i < strips;
+    i++
+  ) {
+
+    const u1 =
+      i / strips;
+
+    const u2 =
+      (i + 1) / strips;
+
+
+    const topX1 =
+      lerp(
+        TL.x,
+        TR.x,
+        u1
+      );
+
+
+    const topX2 =
+      lerp(
+        TL.x,
+        TR.x,
+        u2
+      );
+
+
+    const bottomX1 =
+      lerp(
+        BL.x,
+        BR.x,
+        u1
+      );
+
+
+    const bottomX2 =
+      lerp(
+        BL.x,
+        BR.x,
+        u2
+      );
+
+
+    const topY1 =
+      lerp(
+        TL.y,
+        TR.y,
+        u1
+      );
+
+
+    const topY2 =
+      lerp(
+        TL.y,
+        TR.y,
+        u2
+      );
+
+
+    const bottomY1 =
+      lerp(
+        BL.y,
+        BR.y,
+        u1
+      );
+
+
+    const bottomY2 =
+      lerp(
+        BL.y,
+        BR.y,
+        u2
+      );
+
+
+    const destX =
+      (
+        topX1 +
+        bottomX1
+      ) / 2;
+
+
+    const nextDestX =
+      (
+        topX2 +
+        bottomX2
+      ) / 2;
+
+
+    const destY =
+      (
+        topY1 +
+        topY2
+      ) / 2;
+
+
+    const bottomY =
+      (
+        bottomY1 +
+        bottomY2
+      ) / 2;
+
+
+    const destW =
+      Math.max(
+        2,
+        nextDestX -
+        destX +
+        2
+      );
+
+
+    const destH =
+      bottomY -
+      destY;
+
+
+    const srcX =
+      Math.floor(
+        u1 *
+        tempWidth
+      );
+
+
+    const srcW =
+      Math.max(
+        1,
+        Math.ceil(
+          tempWidth /
+          strips
+        )
+      );
+
+
+    ctx.drawImage(
+      tempCanvas,
+
+      srcX,
+      0,
+      srcW,
+      tempHeight,
+
+      destX,
+      destY,
+      destW,
+      destH
+    );
+
+  }
+
+
+
+  /*
+  スクリーン全体に
+  少し白っぽいかぶり
+  */
+
+  ctx.save();
+
+
+  ctx.globalAlpha =
+    0.055 +
+    Math.random() * 0.025;
+
+
+  ctx.fillStyle =
+    "#d8dfdf";
+
+
+  ctx.beginPath();
+
+  ctx.moveTo(
+    TL.x,
+    TL.y
+  );
+
+  ctx.lineTo(
+    TR.x,
+    TR.y
+  );
+
+  ctx.lineTo(
+    BR.x,
+    BR.y
+  );
+
+  ctx.lineTo(
+    BL.x,
+    BL.y
+  );
+
+  ctx.closePath();
+
+  ctx.fill();
+
+
+  ctx.restore();
+
+}
+
+
+
+function drawVignette(w, h) {
+
+  const gradient =
+    ctx.createRadialGradient(
+
+      w * 0.5,
+      h * 0.43,
+      w * 0.18,
+
+      w * 0.5,
+      h * 0.48,
+      w * 0.78
+
+    );
+
+
+  gradient.addColorStop(
+    0,
+    "rgba(0,0,0,0)"
+  );
+
+
+  gradient.addColorStop(
+    0.62,
+    "rgba(0,0,0,0.12)"
+  );
+
+
+  gradient.addColorStop(
+    1,
+    "rgba(0,0,0,0.72)"
+  );
+
+
+  ctx.fillStyle =
+    gradient;
+
+
+  ctx.fillRect(
+    0,
+    0,
+    w,
+    h
+  );
+
+}
+
+
+
 processButton.addEventListener(
   "click",
   async function() {
@@ -509,20 +1233,26 @@ processButton.addEventListener(
       processButton.disabled =
         true;
 
+
       sourceVideo.controls =
         false;
+
 
       resultArea.style.display =
         "none";
 
+
       progressWrap.style.display =
         "block";
+
 
       progressBar.style.width =
         "0%";
 
+
       progressText.textContent =
         "準備中";
+
 
       status.textContent =
         "動画加工の準備をしています。";
@@ -537,72 +1267,61 @@ processButton.addEventListener(
         0;
 
 
-      await new Promise(resolve => {
 
-        if (
-          sourceVideo.readyState >= 1
-        ) {
+      await new Promise(
+        resolve => {
 
-          resolve();
+          if (
+            sourceVideo.readyState >= 1
+          ) {
+
+            resolve();
+
+          }
+
+          else {
+
+            sourceVideo.onloadedmetadata =
+              resolve;
+
+          }
 
         }
-
-        else {
-
-          sourceVideo.onloadedmetadata =
-            resolve;
-
-        }
-
-      });
+      );
 
 
-      const originalWidth =
+      const isPortrait =
+        sourceVideo.videoHeight >
         sourceVideo.videoWidth;
 
-      const originalHeight =
-        sourceVideo.videoHeight;
 
 
-      let outputWidth =
-        originalWidth;
+      /*
+      縦動画なら縦
+      横動画なら横で出力
+      */
 
-      let outputHeight =
-        originalHeight;
 
+      if (isPortrait) {
 
-      if (outputWidth > 720) {
+        canvas.width =
+          540;
 
-        const ratio =
-          720 / outputWidth;
-
-        outputWidth =
-          720;
-
-        outputHeight =
-          Math.round(
-            outputHeight * ratio
-          );
+        canvas.height =
+          960;
 
       }
 
+      else {
 
-      outputWidth =
-        Math.floor(
-          outputWidth / 2
-        ) * 2;
+        canvas.width =
+          960;
 
-      outputHeight =
-        Math.floor(
-          outputHeight / 2
-        ) * 2;
+        canvas.height =
+          540;
 
+      }
 
-      canvas.width =
-        outputWidth;
-
-      canvas.height =
-        outputHeight;
 
 
       const canvasStream =
@@ -613,43 +1332,64 @@ processButton.addEventListener(
         new MediaStream();
 
 
+
       canvasStream
         .getVideoTracks()
-        .forEach(track => {
+        .forEach(
+          track => {
 
-          finalStream.addTrack(track);
+            finalStream.addTrack(
+              track
+            );
 
-        });
+          }
+        );
+
 
 
       if (audioDestination) {
 
         audioDestination.stream
           .getAudioTracks()
-          .forEach(track => {
+          .forEach(
+            track => {
 
-            finalStream.addTrack(track);
+              finalStream.addTrack(
+                track
+              );
 
-          });
+            }
+          );
 
       }
+
 
 
       const mimeType =
         chooseMimeType();
 
 
+
       const recorderOptions =
         mimeType
         ? {
             mimeType: mimeType,
+
+            /*
+            わざと少し低めの
+            ビットレート
+            */
             videoBitsPerSecond:
-              3500000
+              1800000
+
           }
         : {
+
             videoBitsPerSecond:
-              3500000
+              1800000
+
           };
+
 
 
       const recorder =
@@ -661,6 +1401,7 @@ processButton.addEventListener(
 
       const chunks =
         [];
+
 
 
       recorder.ondataavailable =
@@ -680,15 +1421,6 @@ processButton.addEventListener(
         };
 
 
-      recorder.onerror =
-        function(event) {
-
-          console.error(
-            event
-          );
-
-        };
-
 
       recorder.onstop =
         function() {
@@ -704,7 +1436,8 @@ processButton.addEventListener(
             new Blob(
               chunks,
               {
-                type: actualType
+                type:
+                  actualType
               }
             );
 
@@ -728,18 +1461,14 @@ processButton.addEventListener(
             outputURL;
 
 
-          const isMP4 =
-            actualType.includes(
-              "mp4"
-            );
-
-
           saveButton.href =
             outputURL;
 
 
           saveButton.download =
-            isMP4
+            actualType.includes(
+              "mp4"
+            )
               ? "movie-leak.mp4"
               : "movie-leak.webm";
 
@@ -770,6 +1499,7 @@ processButton.addEventListener(
         };
 
 
+
       function drawFrame() {
 
 
@@ -787,127 +1517,69 @@ processButton.addEventListener(
           sourceVideo.currentTime;
 
 
-        const shakeX =
-          Math.sin(
-            t * 7.3
-          ) * 2.5
-          +
-          Math.sin(
-            t * 2.1
-          ) * 1.5;
+        const w =
+          canvas.width;
+
+        const h =
+          canvas.height;
 
 
-        const shakeY =
-          Math.cos(
-            t * 5.7
-          ) * 2.0;
 
-
-        const angle =
-          Math.sin(
-            t * 1.8
-          ) * 0.004;
-
-
-        ctx.save();
-
-
-        ctx.fillStyle =
-          "black";
-
-
-        ctx.fillRect(
-          0,
-          0,
-          canvas.width,
-          canvas.height
+        drawCinemaBackground(
+          w,
+          h,
+          t
         );
 
 
-        ctx.translate(
-          canvas.width / 2
-          + shakeX,
-
-          canvas.height / 2
-          + shakeY
-        );
-
-
-        ctx.rotate(
-          angle
-        );
-
-
-        ctx.scale(
-          1.035,
-          1.035
-        );
-
-
-        ctx.filter =
-          "brightness(82%) " +
-          "contrast(90%) " +
-          "saturate(72%) " +
-          "blur(0.7px)";
-
-
-        ctx.drawImage(
+        drawScreenWarp(
           sourceVideo,
-
-          -canvas.width / 2,
-
-          -canvas.height / 2,
-
-          canvas.width,
-
-          canvas.height
+          w,
+          h,
+          t
         );
 
 
-        ctx.restore();
+        drawVignette(
+          w,
+          h
+        );
+
+
+        drawAudience(
+          w,
+          h,
+          t
+        );
+
+
+        drawNoise(
+          w,
+          h
+        );
 
 
         /*
-        暗い映画館で撮ったような
-        周辺減光
+        ごく薄い露出変動
         */
 
-        const gradient =
-          ctx.createRadialGradient(
+        if (
+          Math.random() <
+          0.08
+        ) {
 
-            canvas.width / 2,
-            canvas.height / 2,
-            canvas.width * 0.15,
+          ctx.fillStyle =
+            "rgba(255,255,255,0.012)";
 
-            canvas.width / 2,
-            canvas.height / 2,
-            canvas.width * 0.75
-
+          ctx.fillRect(
+            0,
+            0,
+            w,
+            h
           );
 
+        }
 
-        gradient.addColorStop(
-          0,
-          "rgba(0,0,0,0)"
-        );
-
-
-        gradient.addColorStop(
-          1,
-          "rgba(0,0,0,0.30)"
-        );
-
-
-        ctx.fillStyle =
-          gradient;
-
-
-        ctx.fillRect(
-          0,
-          0,
-          canvas.width,
-          canvas.height
-        );
 
 
         if (
@@ -944,6 +1616,7 @@ processButton.addEventListener(
       }
 
 
+
       sourceVideo.onended =
         function() {
 
@@ -959,8 +1632,9 @@ processButton.addEventListener(
         };
 
 
+
       status.textContent =
-        "加工しています。動画の長さとほぼ同じ時間かかります。";
+        "映画館流出映像風に加工しています。動画の長さとほぼ同じ時間かかります。";
 
 
       recorder.start(500);
@@ -975,6 +1649,7 @@ processButton.addEventListener(
 
 
     }
+
 
     catch(error) {
 
