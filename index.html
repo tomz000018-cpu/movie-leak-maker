@@ -15,7 +15,12 @@ body {
   margin: 0;
   background: #080808;
   color: white;
-  font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
+  font-family:
+    -apple-system,
+    BlinkMacSystemFont,
+    "Helvetica Neue",
+    Arial,
+    sans-serif;
 }
 
 .container {
@@ -177,49 +182,92 @@ video {
 動画を選ぶ
 </label>
 
-<input id="videoInput" type="file" accept="video/*">
+<input
+  id="videoInput"
+  type="file"
+  accept="video/*"
+>
 
 <div id="fileName">
 まだ動画は選択されていません
 </div>
 
-<div class="preview-area" id="previewArea">
+<div
+  class="preview-area"
+  id="previewArea"
+>
 
 <div class="screen">
-<video id="sourceVideo" controls playsinline></video>
+
+<video
+  id="sourceVideo"
+  controls
+  playsinline
+></video>
+
 </div>
 
-<button id="processButton" class="process-button">
+<button
+  id="processButton"
+  class="process-button"
+>
 流出映像風に加工する
 </button>
 
-<div class="progress-wrap" id="progressWrap">
+<div
+  class="progress-wrap"
+  id="progressWrap"
+>
 
 <div class="progress-bg">
-<div class="progress-bar" id="progressBar"></div>
+
+<div
+  class="progress-bar"
+  id="progressBar"
+></div>
+
 </div>
 
-<div class="progress-text" id="progressText">
+<div
+  class="progress-text"
+  id="progressText"
+>
 準備中
 </div>
 
 </div>
 
-<div class="status" id="status">
+<div
+  class="status"
+  id="status"
+>
 動画を選んでください。
 </div>
 
 </div>
 
-<div class="result-area" id="resultArea">
+
+<div
+  class="result-area"
+  id="resultArea"
+>
 
 <h2>完成動画</h2>
 
 <div class="screen">
-<video id="resultVideo" controls playsinline></video>
+
+<video
+  id="resultVideo"
+  controls
+  playsinline
+></video>
+
 </div>
 
-<a id="saveButton" class="save-button">
+<a
+  id="saveButton"
+  class="save-button"
+>
 完成動画を保存
 </a>
 
@@ -230,7 +278,8 @@ video {
 <canvas id="workCanvas"></canvas>
 
 <div class="notice">
-動画はサーバーへ送信せず、この端末の中で加工します。
+動画はサーバーへ送信せず、
+この端末の中で加工します。
 </div>
 
 </div>
@@ -238,71 +287,147 @@ video {
 
 <script>
 
-const videoInput = document.getElementById("videoInput");
-const sourceVideo = document.getElementById("sourceVideo");
-const resultVideo = document.getElementById("resultVideo");
-const previewArea = document.getElementById("previewArea");
-const resultArea = document.getElementById("resultArea");
-const processButton = document.getElementById("processButton");
-const saveButton = document.getElementById("saveButton");
-const fileName = document.getElementById("fileName");
-const status = document.getElementById("status");
-const progressWrap = document.getElementById("progressWrap");
-const progressBar = document.getElementById("progressBar");
-const progressText = document.getElementById("progressText");
+const videoInput =
+  document.getElementById("videoInput");
 
-const canvas = document.getElementById("workCanvas");
-const ctx = canvas.getContext("2d");
+const sourceVideo =
+  document.getElementById("sourceVideo");
 
-const tempCanvas = document.createElement("canvas");
-const tempCtx = tempCanvas.getContext("2d");
+const resultVideo =
+  document.getElementById("resultVideo");
+
+const previewArea =
+  document.getElementById("previewArea");
+
+const resultArea =
+  document.getElementById("resultArea");
+
+const processButton =
+  document.getElementById("processButton");
+
+const saveButton =
+  document.getElementById("saveButton");
+
+const fileName =
+  document.getElementById("fileName");
+
+const status =
+  document.getElementById("status");
+
+const progressWrap =
+  document.getElementById("progressWrap");
+
+const progressBar =
+  document.getElementById("progressBar");
+
+const progressText =
+  document.getElementById("progressText");
+
+const canvas =
+  document.getElementById("workCanvas");
+
+const ctx =
+  canvas.getContext("2d");
+
+
+const sceneCanvas =
+  document.createElement("canvas");
+
+const sceneCtx =
+  sceneCanvas.getContext("2d");
+
+
+const videoCanvas =
+  document.createElement("canvas");
+
+const videoCtx =
+  videoCanvas.getContext("2d");
+
+
+const glowCanvas =
+  document.createElement("canvas");
+
+const glowCtx =
+  glowCanvas.getContext("2d");
+
 
 let selectedFile = null;
+
 let inputURL = null;
+
 let outputURL = null;
 
 let audioContext = null;
+
 let audioSource = null;
+
 let audioDestination = null;
 
 
-videoInput.addEventListener("change", function(event) {
 
-  selectedFile = event.target.files[0];
+videoInput.addEventListener(
+  "change",
+  function(event) {
 
-  if (!selectedFile) return;
+    selectedFile =
+      event.target.files[0];
 
-  if (inputURL) {
-    URL.revokeObjectURL(inputURL);
+    if (!selectedFile) {
+      return;
+    }
+
+    if (inputURL) {
+      URL.revokeObjectURL(inputURL);
+    }
+
+    inputURL =
+      URL.createObjectURL(
+        selectedFile
+      );
+
+    sourceVideo.src =
+      inputURL;
+
+    sourceVideo.load();
+
+    fileName.textContent =
+      selectedFile.name;
+
+    previewArea.style.display =
+      "block";
+
+    resultArea.style.display =
+      "none";
+
+    status.textContent =
+      "動画を読み込みました。";
   }
+);
 
-  inputURL = URL.createObjectURL(selectedFile);
-
-  sourceVideo.src = inputURL;
-  sourceVideo.load();
-
-  fileName.textContent = selectedFile.name;
-
-  previewArea.style.display = "block";
-  resultArea.style.display = "none";
-
-  status.textContent = "動画を読み込みました。";
-});
 
 
 function chooseMimeType() {
 
   const types = [
+
     'video/mp4;codecs="avc1.42E01E,mp4a.40.2"',
+
     'video/mp4',
+
     'video/webm;codecs=vp9,opus',
+
     'video/webm;codecs=vp8,opus',
+
     'video/webm'
   ];
 
+
   for (const type of types) {
 
-    if (MediaRecorder.isTypeSupported(type)) {
+    if (
+      MediaRecorder.isTypeSupported(type)
+    ) {
+
       return type;
     }
   }
@@ -311,26 +436,50 @@ function chooseMimeType() {
 }
 
 
-function makeImpulse(context, seconds, decay) {
 
-  const rate = context.sampleRate;
-  const length = rate * seconds;
+function makeImpulse(
+  context,
+  seconds,
+  decay
+) {
 
-  const impulse = context.createBuffer(
-    2,
-    length,
-    rate
-  );
+  const rate =
+    context.sampleRate;
 
-  for (let channel = 0; channel < 2; channel++) {
+  const length =
+    rate * seconds;
+
+  const impulse =
+    context.createBuffer(
+      2,
+      length,
+      rate
+    );
+
+
+  for (
+    let channel = 0;
+    channel < 2;
+    channel++
+  ) {
 
     const data =
-      impulse.getChannelData(channel);
+      impulse.getChannelData(
+        channel
+      );
 
-    for (let i = 0; i < length; i++) {
+
+    for (
+      let i = 0;
+      i < length;
+      i++
+    ) {
 
       data[i] =
-        (Math.random() * 2 - 1) *
+        (
+          Math.random() * 2 - 1
+        )
+        *
         Math.pow(
           1 - i / length,
           decay
@@ -338,8 +487,10 @@ function makeImpulse(context, seconds, decay) {
     }
   }
 
+
   return impulse;
 }
+
 
 
 async function prepareAudio() {
@@ -353,7 +504,9 @@ async function prepareAudio() {
       )();
   }
 
+
   await audioContext.resume();
+
 
   if (!audioSource) {
 
@@ -362,6 +515,7 @@ async function prepareAudio() {
         sourceVideo
       );
 
+
     audioDestination =
       audioContext.createMediaStreamDestination();
 
@@ -369,22 +523,25 @@ async function prepareAudio() {
     const dry =
       audioContext.createGain();
 
-    dry.gain.value = 0.72;
+    dry.gain.value =
+      0.65;
 
 
     const wet =
       audioContext.createGain();
 
-    wet.gain.value = 0.34;
+    wet.gain.value =
+      0.28;
 
 
     const convolver =
       audioContext.createConvolver();
 
+
     convolver.buffer =
       makeImpulse(
         audioContext,
-        1.5,
+        1.35,
         2.8
       );
 
@@ -392,343 +549,506 @@ async function prepareAudio() {
     const delay =
       audioContext.createDelay();
 
-    delay.delayTime.value = 0.055;
+
+    delay.delayTime.value =
+      0.045;
 
 
     const highCut =
       audioContext.createBiquadFilter();
 
-    highCut.type = "lowpass";
-    highCut.frequency.value = 5200;
+
+    highCut.type =
+      "lowpass";
 
 
-    audioSource.connect(highCut);
-
-    highCut.connect(dry);
-    dry.connect(audioDestination);
-
-    highCut.connect(delay);
-    delay.connect(convolver);
-    convolver.connect(wet);
-    wet.connect(audioDestination);
+    highCut.frequency.value =
+      4700;
 
 
-    /*
-    端末からも音を聞けるようにする
-    */
+    audioSource.connect(
+      highCut
+    );
 
-    dry.connect(audioContext.destination);
-    wet.connect(audioContext.destination);
+
+    highCut.connect(
+      dry
+    );
+
+
+    dry.connect(
+      audioDestination
+    );
+
+
+    highCut.connect(
+      delay
+    );
+
+
+    delay.connect(
+      convolver
+    );
+
+
+    convolver.connect(
+      wet
+    );
+
+
+    wet.connect(
+      audioDestination
+    );
+
+
+    dry.connect(
+      audioContext.destination
+    );
+
+
+    wet.connect(
+      audioContext.destination
+    );
   }
 }
 
 
-function lerp(a, b, t) {
-  return a + (b - a) * t;
+
+function lerp(
+  a,
+  b,
+  t
+) {
+
+  return a +
+    (b - a) * t;
 }
 
 
-function drawCinemaBackground(w, h) {
 
-  ctx.fillStyle = "#010101";
-
-  ctx.fillRect(
-    0,
-    0,
-    w,
-    h
-  );
-
+function getScreenPoints(
+  w,
+  h
+) {
 
   /*
-  スクリーンから客席に漏れる光
-  */
+  スクリーンそのものは
+  ここでは動かさない。
 
-  const glow =
-    ctx.createRadialGradient(
-      w * 0.52,
-      h * 0.50,
-      w * 0.10,
-
-      w * 0.52,
-      h * 0.60,
-      w * 0.78
-    );
-
-  glow.addColorStop(
-    0,
-    "rgba(105,115,125,0.12)"
-  );
-
-  glow.addColorStop(
-    0.55,
-    "rgba(45,45,50,0.07)"
-  );
-
-  glow.addColorStop(
-    1,
-    "rgba(0,0,0,0)"
-  );
-
-  ctx.fillStyle = glow;
-
-  ctx.fillRect(
-    0,
-    0,
-    w,
-    h
-  );
-}
-
-
-function createScreenPoints(w, h, t) {
-
-  /*
-  小さい手ブレ
-  */
-
-  const shakeX =
-    Math.sin(t * 7.2) * 2.8 +
-    Math.sin(t * 15.6) * 1.2 +
-    Math.sin(t * 2.0) * 3.5;
-
-  const shakeY =
-    Math.cos(t * 6.6) * 2.2 +
-    Math.sin(t * 13.1) * 1.0;
-
-  /*
-  手で構えているため
-  ゆっくり位置が流れる
-  */
-
-  const driftX =
-    Math.sin(t * 0.48) * 5;
-
-  const driftY =
-    Math.cos(t * 0.39) * 3;
-
-
-  /*
-  前回より大きなスクリーン
+  最後に映画館全体を
+  カメラ手ブレとして動かす。
   */
 
   return {
 
     TL: {
-      x:
-        w * 0.045 +
-        shakeX +
-        driftX,
-
-      y:
-        h * 0.115 +
-        shakeY +
-        driftY
+      x: w * 0.025,
+      y: h * 0.09
     },
 
     TR: {
-      x:
-        w * 0.975 +
-        shakeX +
-        driftX,
-
-      y:
-        h * 0.035 +
-        shakeY +
-        driftY
+      x: w * 0.995,
+      y: h * 0.005
     },
 
     BL: {
-      x:
-        w * 0.075 +
-        shakeX +
-        driftX,
-
-      y:
-        h * 0.835 +
-        shakeY +
-        driftY
+      x: w * 0.055,
+      y: h * 0.88
     },
 
     BR: {
-      x:
-        w * 0.985 +
-        shakeX +
-        driftX,
-
-      y:
-        h * 0.755 +
-        shakeY +
-        driftY
+      x: w * 1.01,
+      y: h * 0.79
     }
 
   };
 }
 
 
-function drawScreenGlow(points) {
 
-  const {TL, TR, BL, BR} = points;
+function drawCinemaBackground(
+  targetCtx,
+  w,
+  h
+) {
 
-  ctx.save();
+  targetCtx.fillStyle =
+    "#000000";
 
-  ctx.shadowColor =
-    "rgba(180,195,215,0.35)";
 
-  ctx.shadowBlur = 30;
+  targetCtx.fillRect(
+    0,
+    0,
+    w,
+    h
+  );
 
-  ctx.fillStyle =
-    "rgba(130,145,160,0.10)";
 
-  ctx.beginPath();
+  /*
+  スクリーンから映画館へ
+  漏れている弱い光
+  */
 
-  ctx.moveTo(TL.x, TL.y);
-  ctx.lineTo(TR.x, TR.y);
-  ctx.lineTo(BR.x, BR.y);
-  ctx.lineTo(BL.x, BL.y);
+  const glow =
+    targetCtx.createRadialGradient(
 
-  ctx.closePath();
-  ctx.fill();
+      w * 0.52,
+      h * 0.47,
+      w * 0.16,
 
-  ctx.restore();
+      w * 0.52,
+      h * 0.52,
+      w * 0.78
+    );
+
+
+  glow.addColorStop(
+    0,
+    "rgba(115,125,135,0.11)"
+  );
+
+
+  glow.addColorStop(
+    0.50,
+    "rgba(45,50,55,0.055)"
+  );
+
+
+  glow.addColorStop(
+    1,
+    "rgba(0,0,0,0)"
+  );
+
+
+  targetCtx.fillStyle =
+    glow;
+
+
+  targetCtx.fillRect(
+    0,
+    0,
+    w,
+    h
+  );
 }
 
 
-function prepareUglyVideo(source, time) {
+
+function prepareVideoImage(
+  source,
+  time,
+  w,
+  h
+) {
 
   /*
-  解像度をわざと落とす
+  前回の320pxへの縮小は廃止。
+  今回はかなり解像度を残す。
   */
 
-  const landscape =
-    source.videoWidth >=
-    source.videoHeight;
+  const renderWidth =
+    Math.min(
+      760,
+      source.videoWidth
+    );
 
-  const tempWidth =
-    landscape ? 320 : 210;
 
-  const tempHeight =
+  const renderHeight =
     Math.max(
       2,
       Math.round(
-        tempWidth *
+        renderWidth *
         source.videoHeight /
         source.videoWidth
       )
     );
 
-  tempCanvas.width = tempWidth;
-  tempCanvas.height = tempHeight;
+
+  videoCanvas.width =
+    renderWidth;
+
+  videoCanvas.height =
+    renderHeight;
 
 
   /*
-  ピントがずっと微妙に呼吸する
+  ピントがゆっくり前後する。
+  単なる低解像度ではなく
+  光学的に外れたようなボケ。
   */
 
-  const blurAmount =
-    2.2 +
+  const focusWave =
     (
-      Math.sin(time * 0.67) + 1
-    ) * 0.75;
+      Math.sin(
+        time * 0.52
+      ) + 1
+    ) / 2;
+
+
+  const focusWave2 =
+    (
+      Math.sin(
+        time * 0.19 + 1.7
+      ) + 1
+    ) / 2;
+
+
+  const blurAmount =
+    2.8 +
+    focusWave * 2.4 +
+    focusWave2 * 1.0;
 
 
   /*
-  スマホの自動露出が
-  少し迷っている感じ
+  自動露出が少し迷う
   */
 
   const brightness =
-    72 +
-    Math.sin(time * 4.8) * 4 +
-    Math.sin(time * 1.1) * 2;
+    82 +
+    Math.sin(
+      time * 4.2
+    ) * 3 +
+    Math.sin(
+      time * 0.9
+    ) * 2;
 
 
-  tempCtx.clearRect(
+  videoCtx.clearRect(
     0,
     0,
-    tempWidth,
-    tempHeight
+    renderWidth,
+    renderHeight
   );
 
 
-  tempCtx.filter =
+  videoCtx.filter =
     "brightness(" +
     brightness +
     "%) " +
 
-    "contrast(78%) " +
+    "contrast(84%) " +
 
-    "saturate(55%) " +
+    "saturate(64%) " +
 
     "blur(" +
     blurAmount +
     "px)";
 
 
-  tempCtx.drawImage(
+  videoCtx.drawImage(
     source,
     0,
     0,
-    tempWidth,
-    tempHeight
+    renderWidth,
+    renderHeight
   );
 
 
   /*
-  薄い霞
+  スクリーンの空気・霞
   */
 
-  tempCtx.fillStyle =
-    "rgba(200,210,215,0.045)";
+  videoCtx.fillStyle =
+    "rgba(210,220,225,0.035)";
 
-  tempCtx.fillRect(
+
+  videoCtx.fillRect(
     0,
     0,
-    tempWidth,
-    tempHeight
+    renderWidth,
+    renderHeight
   );
+
+
+  /*
+  Bloom（ブルーム）
+  明るい部分を少し拡散
+  */
+
+  glowCanvas.width =
+    renderWidth;
+
+  glowCanvas.height =
+    renderHeight;
+
+
+  glowCtx.clearRect(
+    0,
+    0,
+    renderWidth,
+    renderHeight
+  );
+
+
+  glowCtx.globalAlpha =
+    0.55;
+
+
+  glowCtx.filter =
+    "brightness(145%) blur(9px)";
+
+
+  glowCtx.drawImage(
+    videoCanvas,
+    0,
+    0
+  );
+
+
+  glowCtx.globalAlpha =
+    1;
+
+
+  videoCtx.save();
+
+
+  videoCtx.globalCompositeOperation =
+    "screen";
+
+
+  videoCtx.globalAlpha =
+    0.26;
+
+
+  videoCtx.drawImage(
+    glowCanvas,
+    0,
+    0
+  );
+
+
+  videoCtx.restore();
 }
 
 
-function drawWarpedVideo(source, w, h, time) {
+
+function drawWarpedScreen(
+  targetCtx,
+  source,
+  w,
+  h,
+  time
+) {
 
   const points =
-    createScreenPoints(
+    getScreenPoints(
       w,
-      h,
-      time
+      h
     );
 
-  const {TL, TR, BL, BR} = points;
+
+  const {
+    TL,
+    TR,
+    BL,
+    BR
+  } = points;
 
 
-  drawScreenGlow(points);
-
-  prepareUglyVideo(
+  prepareVideoImage(
     source,
-    time
+    time,
+    w,
+    h
   );
 
 
   /*
-  台形からはみ出さないように
-  クリップ
+  スクリーン周囲の光のにじみ。
+
+  まず大きくぼけた光を
+  後ろに敷く。
   */
 
-  ctx.save();
-
-  ctx.beginPath();
-
-  ctx.moveTo(TL.x, TL.y);
-  ctx.lineTo(TR.x, TR.y);
-  ctx.lineTo(BR.x, BR.y);
-  ctx.lineTo(BL.x, BL.y);
-
-  ctx.closePath();
-  ctx.clip();
+  targetCtx.save();
 
 
-  const strips = 150;
+  targetCtx.filter =
+    "blur(16px)";
+
+
+  targetCtx.fillStyle =
+    "rgba(150,165,180,0.11)";
+
+
+  targetCtx.beginPath();
+
+
+  targetCtx.moveTo(
+    TL.x - 4,
+    TL.y - 4
+  );
+
+
+  targetCtx.lineTo(
+    TR.x + 4,
+    TR.y - 4
+  );
+
+
+  targetCtx.lineTo(
+    BR.x + 4,
+    BR.y + 4
+  );
+
+
+  targetCtx.lineTo(
+    BL.x - 4,
+    BL.y + 4
+  );
+
+
+  targetCtx.closePath();
+
+
+  targetCtx.fill();
+
+
+  targetCtx.restore();
+
+
+  /*
+  本体を台形へ描画
+  */
+
+  targetCtx.save();
+
+
+  targetCtx.beginPath();
+
+
+  targetCtx.moveTo(
+    TL.x,
+    TL.y
+  );
+
+
+  targetCtx.lineTo(
+    TR.x,
+    TR.y
+  );
+
+
+  targetCtx.lineTo(
+    BR.x,
+    BR.y
+  );
+
+
+  targetCtx.lineTo(
+    BL.x,
+    BL.y
+  );
+
+
+  targetCtx.closePath();
+
+
+  targetCtx.clip();
+
+
+  const strips =
+    180;
 
 
   for (
@@ -739,6 +1059,7 @@ function drawWarpedVideo(source, w, h, time) {
 
     const u1 =
       i / strips;
+
 
     const u2 =
       (i + 1) / strips;
@@ -751,6 +1072,7 @@ function drawWarpedVideo(source, w, h, time) {
         u1
       );
 
+
     const topX2 =
       lerp(
         TL.x,
@@ -758,12 +1080,14 @@ function drawWarpedVideo(source, w, h, time) {
         u2
       );
 
+
     const bottomX1 =
       lerp(
         BL.x,
         BR.x,
         u1
       );
+
 
     const bottomX2 =
       lerp(
@@ -780,6 +1104,7 @@ function drawWarpedVideo(source, w, h, time) {
         u1
       );
 
+
     const topY2 =
       lerp(
         TL.y,
@@ -787,12 +1112,14 @@ function drawWarpedVideo(source, w, h, time) {
         u2
       );
 
+
     const bottomY1 =
       lerp(
         BL.y,
         BR.y,
         u1
       );
+
 
     const bottomY2 =
       lerp(
@@ -808,7 +1135,8 @@ function drawWarpedVideo(source, w, h, time) {
         bottomX1
       );
 
-    const nextDestX =
+
+    const nextX =
       Math.max(
         topX2,
         bottomX2
@@ -816,19 +1144,27 @@ function drawWarpedVideo(source, w, h, time) {
 
 
     const destY =
-      (topY1 + topY2) / 2;
+      (
+        topY1 +
+        topY2
+      ) / 2;
+
 
     const destBottom =
-      (bottomY1 + bottomY2) / 2;
+      (
+        bottomY1 +
+        bottomY2
+      ) / 2;
 
 
     const destW =
       Math.max(
         2,
-        nextDestX -
+        nextX -
         destX +
         3
       );
+
 
     const destH =
       destBottom -
@@ -838,7 +1174,7 @@ function drawWarpedVideo(source, w, h, time) {
     const srcX =
       Math.floor(
         u1 *
-        tempCanvas.width
+        videoCanvas.width
       );
 
 
@@ -846,19 +1182,19 @@ function drawWarpedVideo(source, w, h, time) {
       Math.max(
         1,
         Math.ceil(
-          tempCanvas.width /
+          videoCanvas.width /
           strips
         ) + 1
       );
 
 
-    ctx.drawImage(
-      tempCanvas,
+    targetCtx.drawImage(
+      videoCanvas,
 
       srcX,
       0,
       srcW,
-      tempCanvas.height,
+      videoCanvas.height,
 
       destX,
       destY,
@@ -868,232 +1204,109 @@ function drawWarpedVideo(source, w, h, time) {
   }
 
 
+  targetCtx.restore();
+
+
   /*
-  スクリーンの白浮き
+  黒背景とスクリーンの境界を
+  はっきり線にしない。
   */
 
-  ctx.fillStyle =
-    "rgba(210,220,225,0.045)";
+  targetCtx.save();
 
-  ctx.fillRect(
-    0,
-    0,
-    w,
-    h
+
+  targetCtx.filter =
+    "blur(7px)";
+
+
+  targetCtx.strokeStyle =
+    "rgba(165,175,185,0.15)";
+
+
+  targetCtx.lineWidth =
+    12;
+
+
+  targetCtx.beginPath();
+
+
+  targetCtx.moveTo(
+    TL.x,
+    TL.y
   );
 
 
-  ctx.restore();
+  targetCtx.lineTo(
+    TR.x,
+    TR.y
+  );
 
 
-  /*
-  スクリーンの縁を
-  あえてシャープにしすぎない
-  */
+  targetCtx.lineTo(
+    BR.x,
+    BR.y
+  );
 
-  ctx.save();
 
-  ctx.strokeStyle =
-    "rgba(150,160,170,0.08)";
+  targetCtx.lineTo(
+    BL.x,
+    BL.y
+  );
 
-  ctx.lineWidth = 7;
 
-  ctx.filter =
-    "blur(4px)";
+  targetCtx.closePath();
 
-  ctx.beginPath();
 
-  ctx.moveTo(TL.x, TL.y);
-  ctx.lineTo(TR.x, TR.y);
-  ctx.lineTo(BR.x, BR.y);
-  ctx.lineTo(BL.x, BL.y);
+  targetCtx.stroke();
 
-  ctx.closePath();
-  ctx.stroke();
 
-  ctx.restore();
+  targetCtx.restore();
 }
 
 
-function drawAudience(w, h, time) {
 
-  /*
-  客席をスクリーンへ少し重ねる。
-  前回より明確に見える位置。
-  */
-
-  ctx.save();
-
-
-  /*
-  輪郭にスクリーンの反射光
-  */
-
-  ctx.shadowColor =
-    "rgba(100,115,125,0.25)";
-
-  ctx.shadowBlur = 5;
-
-  ctx.fillStyle =
-    "rgba(0,0,0,0.97)";
-
-
-  /*
-  左
-  */
-
-  ctx.beginPath();
-
-  ctx.ellipse(
-    w * 0.075,
-    h * 0.80,
-    w * 0.075,
-    h * 0.105,
-    -0.08,
-    0,
-    Math.PI * 2
-  );
-
-  ctx.fill();
-
-
-  ctx.beginPath();
-
-  ctx.ellipse(
-    w * 0.08,
-    h * 0.99,
-    w * 0.16,
-    h * 0.19,
-    0,
-    0,
-    Math.PI * 2
-  );
-
-  ctx.fill();
-
-
-  /*
-  左中央
-  */
-
-  ctx.beginPath();
-
-  ctx.ellipse(
-    w * 0.31,
-    h * 0.90,
-    w * 0.055,
-    h * 0.075,
-    0,
-    0,
-    Math.PI * 2
-  );
-
-  ctx.fill();
-
-
-  /*
-  中央
-  */
-
-  ctx.beginPath();
-
-  ctx.ellipse(
-    w * 0.53,
-    h * 0.865,
-    w * 0.075,
-    h * 0.095,
-    0.03,
-    0,
-    Math.PI * 2
-  );
-
-  ctx.fill();
-
-
-  ctx.beginPath();
-
-  ctx.ellipse(
-    w * 0.53,
-    h * 1.01,
-    w * 0.15,
-    h * 0.16,
-    0,
-    0,
-    Math.PI * 2
-  );
-
-  ctx.fill();
-
-
-  /*
-  右
-  */
-
-  ctx.beginPath();
-
-  ctx.ellipse(
-    w * 0.91,
-    h * 0.79,
-    w * 0.085,
-    h * 0.11,
-    0.08,
-    0,
-    Math.PI * 2
-  );
-
-  ctx.fill();
-
-
-  ctx.beginPath();
-
-  ctx.ellipse(
-    w * 0.91,
-    h * 0.99,
-    w * 0.18,
-    h * 0.19,
-    0,
-    0,
-    Math.PI * 2
-  );
-
-  ctx.fill();
-
-
-  ctx.restore();
-}
-
-
-function drawVignette(w, h) {
+function drawVignette(
+  targetCtx,
+  w,
+  h
+) {
 
   const gradient =
-    ctx.createRadialGradient(
+    targetCtx.createRadialGradient(
+
       w * 0.52,
-      h * 0.43,
-      w * 0.20,
+      h * 0.45,
+      w * 0.25,
 
       w * 0.52,
       h * 0.48,
-      w * 0.77
+      w * 0.80
     );
+
 
   gradient.addColorStop(
     0,
     "rgba(0,0,0,0)"
   );
 
+
   gradient.addColorStop(
-    0.57,
+    0.58,
     "rgba(0,0,0,0.08)"
   );
 
+
   gradient.addColorStop(
     1,
-    "rgba(0,0,0,0.67)"
+    "rgba(0,0,0,0.72)"
   );
 
-  ctx.fillStyle = gradient;
 
-  ctx.fillRect(
+  targetCtx.fillStyle =
+    gradient;
+
+
+  targetCtx.fillRect(
     0,
     0,
     w,
@@ -1102,75 +1315,222 @@ function drawVignette(w, h) {
 }
 
 
-function drawNoise(w, h) {
 
-  ctx.save();
+function drawNoise(
+  targetCtx,
+  w,
+  h
+) {
 
-  ctx.globalAlpha = 0.085;
+  targetCtx.save();
+
+
+  targetCtx.globalAlpha =
+    0.045;
+
 
   for (
     let i = 0;
-    i < 190;
+    i < 130;
     i++
   ) {
 
     const gray =
       Math.floor(
-        65 +
-        Math.random() * 150
+        70 +
+        Math.random() * 140
       );
 
-    ctx.fillStyle =
+
+    targetCtx.fillStyle =
       `rgb(${gray},${gray},${gray})`;
 
-    ctx.fillRect(
+
+    targetCtx.fillRect(
       Math.random() * w,
       Math.random() * h,
-      1 + Math.random() * 2,
-      1 + Math.random() * 2
+      1 + Math.random() * 1.5,
+      1 + Math.random() * 1.5
     );
   }
 
+
+  targetCtx.restore();
+}
+
+
+
+function drawWholeCameraShake(
+  time,
+  w,
+  h
+) {
+
+  /*
+  カメラそのものが揺れる動き。
+  スクリーン単体ではなく
+  映画館全体に適用。
+  */
+
+  const shakeX =
+    Math.sin(
+      time * 7.9
+    ) * 2.4
+    +
+    Math.sin(
+      time * 17.1
+    ) * 0.9
+    +
+    Math.sin(
+      time * 1.8
+    ) * 3.2;
+
+
+  const shakeY =
+    Math.cos(
+      time * 6.7
+    ) * 2.0
+    +
+    Math.sin(
+      time * 12.8
+    ) * 0.85;
+
+
+  const driftX =
+    Math.sin(
+      time * 0.37
+    ) * 4.5;
+
+
+  const driftY =
+    Math.cos(
+      time * 0.31
+    ) * 3.2;
+
+
+  const rotation =
+    Math.sin(
+      time * 0.76
+    ) * 0.0038
+    +
+    Math.sin(
+      time * 3.6
+    ) * 0.0012;
+
+
+  ctx.save();
+
+
+  ctx.fillStyle =
+    "#000";
+
+
+  ctx.fillRect(
+    0,
+    0,
+    w,
+    h
+  );
+
+
+  ctx.translate(
+    w / 2 +
+    shakeX +
+    driftX,
+
+    h / 2 +
+    shakeY +
+    driftY
+  );
+
+
+  ctx.rotate(
+    rotation
+  );
+
+
+  /*
+  少し拡大して
+  ブレで端が見えないようにする
+  */
+
+  ctx.scale(
+    1.018,
+    1.018
+  );
+
+
+  ctx.drawImage(
+    sceneCanvas,
+
+    -w / 2,
+    -h / 2,
+
+    w,
+    h
+  );
+
+
   ctx.restore();
 }
+
 
 
 processButton.addEventListener(
   "click",
   async function() {
 
-    if (!selectedFile) return;
+    if (!selectedFile) {
+      return;
+    }
+
 
     try {
 
-      if (!window.MediaRecorder) {
+
+      if (
+        !window.MediaRecorder
+      ) {
+
         throw new Error(
           "MediaRecorderに対応していません"
         );
       }
 
-      if (!canvas.captureStream) {
+
+      if (
+        !canvas.captureStream
+      ) {
+
         throw new Error(
           "Canvas captureStreamに対応していません"
         );
       }
 
 
-      processButton.disabled = true;
+      processButton.disabled =
+        true;
 
-      sourceVideo.controls = false;
+
+      sourceVideo.controls =
+        false;
+
 
       resultArea.style.display =
         "none";
 
+
       progressWrap.style.display =
         "block";
+
 
       progressBar.style.width =
         "0%";
 
+
       progressText.textContent =
         "準備中";
+
 
       status.textContent =
         "動画加工の準備をしています。";
@@ -1181,23 +1541,27 @@ processButton.addEventListener(
 
       sourceVideo.pause();
 
-      sourceVideo.currentTime = 0;
+
+      sourceVideo.currentTime =
+        0;
 
 
-      await new Promise(resolve => {
+      await new Promise(
+        resolve => {
 
-        if (
-          sourceVideo.readyState >= 1
-        ) {
+          if (
+            sourceVideo.readyState >= 1
+          ) {
 
-          resolve();
+            resolve();
 
-        } else {
+          } else {
 
-          sourceVideo.onloadedmetadata =
-            resolve;
+            sourceVideo.onloadedmetadata =
+              resolve;
+          }
         }
-      });
+      );
 
 
       const isPortrait =
@@ -1207,14 +1571,28 @@ processButton.addEventListener(
 
       if (isPortrait) {
 
-        canvas.width = 540;
-        canvas.height = 960;
+        canvas.width =
+          540;
+
+        canvas.height =
+          960;
 
       } else {
 
-        canvas.width = 960;
-        canvas.height = 540;
+        canvas.width =
+          960;
+
+        canvas.height =
+          540;
       }
+
+
+      sceneCanvas.width =
+        canvas.width;
+
+
+      sceneCanvas.height =
+        canvas.height;
 
 
       const canvasStream =
@@ -1227,22 +1605,28 @@ processButton.addEventListener(
 
       canvasStream
         .getVideoTracks()
-        .forEach(track => {
+        .forEach(
+          track => {
 
-          finalStream.addTrack(track);
-
-        });
+            finalStream.addTrack(
+              track
+            );
+          }
+        );
 
 
       if (audioDestination) {
 
         audioDestination.stream
           .getAudioTracks()
-          .forEach(track => {
+          .forEach(
+            track => {
 
-            finalStream.addTrack(track);
-
-          });
+              finalStream.addTrack(
+                track
+              );
+            }
+          );
       }
 
 
@@ -1253,13 +1637,15 @@ processButton.addEventListener(
       const recorderOptions =
         mimeType
         ? {
-            mimeType: mimeType,
+            mimeType:
+              mimeType,
+
             videoBitsPerSecond:
-              1350000
+              2300000
           }
         : {
             videoBitsPerSecond:
-              1350000
+              2300000
           };
 
 
@@ -1291,6 +1677,7 @@ processButton.addEventListener(
       recorder.onstop =
         function() {
 
+
           const actualType =
             recorder.mimeType ||
             mimeType ||
@@ -1301,7 +1688,8 @@ processButton.addEventListener(
             new Blob(
               chunks,
               {
-                type: actualType
+                type:
+                  actualType
               }
             );
 
@@ -1329,7 +1717,9 @@ processButton.addEventListener(
 
 
           saveButton.download =
-            actualType.includes("mp4")
+            actualType.includes(
+              "mp4"
+            )
               ? "movie-leak.mp4"
               : "movie-leak.webm";
 
@@ -1361,79 +1751,86 @@ processButton.addEventListener(
 
       function drawFrame() {
 
+
         if (
           sourceVideo.paused ||
           sourceVideo.ended
         ) {
+
           return;
         }
 
 
-        const t =
+        const time =
           sourceVideo.currentTime;
+
 
         const w =
           canvas.width;
+
 
         const h =
           canvas.height;
 
 
-        drawCinemaBackground(
+        /*
+        まず映画館全体を
+        静止した1枚として作る。
+        */
+
+        sceneCtx.clearRect(
+          0,
+          0,
           w,
           h
         );
 
 
-        drawWarpedVideo(
+        drawCinemaBackground(
+          sceneCtx,
+          w,
+          h
+        );
+
+
+        drawWarpedScreen(
+          sceneCtx,
           sourceVideo,
           w,
           h,
-          t
+          time
         );
 
 
         drawVignette(
+          sceneCtx,
           w,
           h
         );
 
 
-        drawAudience(
-          w,
-          h,
-          t
-        );
-
-
         drawNoise(
+          sceneCtx,
           w,
           h
         );
 
 
         /*
-        スマホの露出が
-        ときどき一瞬迷う
+        最後にカメラ全体の
+        手ブレとして描画。
         */
 
+        drawWholeCameraShake(
+          time,
+          w,
+          h
+        );
+
+
         if (
-          Math.random() < 0.06
+          sourceVideo.duration
         ) {
-
-          ctx.fillStyle =
-            "rgba(255,255,255,0.015)";
-
-          ctx.fillRect(
-            0,
-            0,
-            w,
-            h
-          );
-        }
-
-
-        if (sourceVideo.duration) {
 
           const percent =
             Math.min(
@@ -1447,7 +1844,8 @@ processButton.addEventListener(
 
 
           progressBar.style.width =
-            percent + "%";
+            percent +
+            "%";
 
 
           progressText.textContent =
@@ -1466,6 +1864,7 @@ processButton.addEventListener(
       sourceVideo.onended =
         function() {
 
+
           if (
             recorder.state !==
             "inactive"
@@ -1477,10 +1876,12 @@ processButton.addEventListener(
 
 
       status.textContent =
-        "映画館流出映像風に加工しています。動画の長さとほぼ同じ時間かかります。";
+        "ピンぼけ・光のにじみ・手ブレを加えています。動画の長さとほぼ同じ時間かかります。";
 
 
-      recorder.start(500);
+      recorder.start(
+        500
+      );
 
 
       await sourceVideo.play();
@@ -1492,18 +1893,26 @@ processButton.addEventListener(
 
     }
 
+
     catch(error) {
 
-      console.error(error);
+
+      console.error(
+        error
+      );
+
 
       processButton.disabled =
         false;
 
+
       sourceVideo.controls =
         true;
 
+
       progressText.textContent =
         "エラー";
+
 
       status.textContent =
         "エラー：" +
