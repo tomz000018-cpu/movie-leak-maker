@@ -26,40 +26,46 @@
     .container {
       width: min(92%, 800px);
       margin: 0 auto;
-      padding: 40px 0 80px;
+      padding: 35px 0 80px;
     }
 
     h1 {
       text-align: center;
+      margin: 0 0 8px;
       font-size: 30px;
-      margin-bottom: 8px;
     }
 
     .subtitle {
       text-align: center;
       color: #aaaaaa;
-      margin-bottom: 35px;
       line-height: 1.6;
+      margin-bottom: 30px;
     }
 
     .panel {
       background: #161616;
       border: 1px solid #333333;
       border-radius: 18px;
-      padding: 22px;
+      padding: 20px;
+    }
+
+    .file-label,
+    .process-button,
+    .save-button {
+      display: block;
+      width: 100%;
+      border: none;
+      border-radius: 12px;
+      padding: 16px;
+      font-size: 17px;
+      font-weight: bold;
+      text-align: center;
     }
 
     .file-label {
-      display: block;
-      width: 100%;
-      background: #ffffff;
+      background: white;
       color: #111111;
-      font-weight: bold;
-      text-align: center;
-      padding: 16px;
-      border-radius: 12px;
       cursor: pointer;
-      font-size: 17px;
     }
 
     #videoInput {
@@ -67,67 +73,93 @@
     }
 
     #fileName {
+      margin-top: 14px;
       text-align: center;
       color: #aaaaaa;
-      margin-top: 14px;
       word-break: break-all;
     }
 
-    .preview-area {
-      margin-top: 25px;
+    .preview-area,
+    .result-area {
       display: none;
+      margin-top: 24px;
     }
 
     .screen {
-      background: #000000;
+      background: #000;
       padding: 8px;
       border-radius: 10px;
       overflow: hidden;
-      box-shadow:
-        0 0 40px rgba(255,255,255,0.08);
     }
 
     video {
       display: block;
       width: 100%;
       max-height: 60vh;
-      background: #000000;
-      border-radius: 6px;
+      background: black;
+    }
 
-      filter:
-        brightness(0.85)
-        contrast(0.9)
-        saturate(0.72)
-        blur(0.4px);
+    .process-button {
+      margin-top: 20px;
+      background: #f2f2f2;
+      color: #111;
+      cursor: pointer;
+    }
+
+    .process-button:disabled {
+      background: #444;
+      color: #999;
+      cursor: default;
+    }
+
+    .save-button {
+      margin-top: 16px;
+      background: #ffffff;
+      color: #111111;
+      text-decoration: none;
     }
 
     .status {
-      margin-top: 20px;
-      padding: 15px;
-      background: #101010;
+      margin-top: 18px;
+      padding: 14px;
       border-radius: 10px;
+      background: #101010;
       color: #cccccc;
-      line-height: 1.7;
+      line-height: 1.6;
       font-size: 14px;
     }
 
-    .next-button {
-      width: 100%;
-      margin-top: 20px;
-      border: 0;
-      border-radius: 12px;
-      padding: 16px;
-      font-size: 17px;
-      font-weight: bold;
-      background: #444444;
-      color: #999999;
+    .progress-wrap {
+      display: none;
+      margin-top: 18px;
+    }
+
+    .progress-bar-bg {
+      height: 12px;
+      background: #333333;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    .progress-bar {
+      width: 0%;
+      height: 100%;
+      background: #eeeeee;
+      transition: width 0.2s;
+    }
+
+    .progress-text {
+      margin-top: 8px;
+      font-size: 13px;
+      color: #aaaaaa;
+      text-align: center;
     }
 
     .notice {
-      margin-top: 25px;
+      margin-top: 24px;
+      text-align: center;
       color: #777777;
       font-size: 12px;
-      text-align: center;
       line-height: 1.6;
     }
   </style>
@@ -135,69 +167,117 @@
 
 <body>
 
-  <div class="container">
+<div class="container">
 
-    <h1>Movie Leak Maker</h1>
+  <h1>Movie Leak Maker</h1>
 
-    <div class="subtitle">
-      普通の動画を<br>
-      「海外の試写会で撮影された流出映像風」に加工します
+  <div class="subtitle">
+    普通の動画を<br>
+    「海外試写会の流出映像風」に加工します
+  </div>
+
+  <div class="panel">
+
+    <label class="file-label" for="videoInput">
+      動画を選ぶ
+    </label>
+
+    <input
+      id="videoInput"
+      type="file"
+      accept="video/*"
+    >
+
+    <div id="fileName">
+      まだ動画は選択されていません
     </div>
 
-    <div class="panel">
+    <div class="preview-area" id="previewArea">
 
-      <label class="file-label" for="videoInput">
-        動画を選ぶ
-      </label>
-
-      <input
-        type="file"
-        id="videoInput"
-        accept="video/*"
-      >
-
-      <div id="fileName">
-        まだ動画は選択されていません
+      <div class="screen">
+        <video
+          id="videoPreview"
+          controls
+          playsinline
+        ></video>
       </div>
+
+      <button
+        class="process-button"
+        id="processButton"
+      >
+        流出映像風に加工する
+      </button>
 
       <div
-        class="preview-area"
-        id="previewArea"
+        class="progress-wrap"
+        id="progressWrap"
       >
 
-        <div class="screen">
-          <video
-            id="videoPreview"
-            controls
-            playsinline
-          ></video>
+        <div class="progress-bar-bg">
+          <div
+            class="progress-bar"
+            id="progressBar"
+          ></div>
         </div>
 
-        <div class="status" id="status">
-          動画を読み込みました。<br>
-          次の段階で、手ブレ・ぼかし・映画館音響・観客の歓声を追加します。
-        </div>
-
-        <button
-          class="next-button"
-          type="button"
-          disabled
+        <div
+          class="progress-text"
+          id="progressText"
         >
-          流出映像を作る（次の段階で実装）
-        </button>
+          準備中
+        </div>
 
+      </div>
+
+      <div class="status" id="status">
+        動画を読み込みました。
       </div>
 
     </div>
 
-    <div class="notice">
-      動画は現在、あなたの端末内だけで読み込んでいます。
+
+    <div class="result-area" id="resultArea">
+
+      <div class="screen">
+        <video
+          id="resultVideo"
+          controls
+          playsinline
+        ></video>
+      </div>
+
+      <a
+        class="save-button"
+        id="saveButton"
+        download="movie-leak.mp4"
+      >
+        完成動画を保存
+      </a>
+
     </div>
 
   </div>
 
+  <div class="notice">
+    動画処理はブラウザ内で行います。
+    初回のみFFmpeg.wasmの読み込みに少し時間がかかります。
+  </div>
 
-<script>
+</div>
+
+
+<script type="module">
+
+import { FFmpeg }
+from "https://cdn.jsdelivr.net/npm/@ffmpeg/ffmpeg@0.12.15/dist/esm/index.js";
+
+import {
+  fetchFile,
+  toBlobURL
+}
+from "https://cdn.jsdelivr.net/npm/@ffmpeg/util@0.12.2/dist/esm/index.js";
+
 
 const videoInput =
   document.getElementById("videoInput");
@@ -205,35 +285,287 @@ const videoInput =
 const videoPreview =
   document.getElementById("videoPreview");
 
+const resultVideo =
+  document.getElementById("resultVideo");
+
 const previewArea =
   document.getElementById("previewArea");
 
+const resultArea =
+  document.getElementById("resultArea");
+
 const fileName =
   document.getElementById("fileName");
+
+const processButton =
+  document.getElementById("processButton");
+
+const saveButton =
+  document.getElementById("saveButton");
+
+const status =
+  document.getElementById("status");
+
+const progressWrap =
+  document.getElementById("progressWrap");
+
+const progressBar =
+  document.getElementById("progressBar");
+
+const progressText =
+  document.getElementById("progressText");
+
+
+let selectedFile = null;
+
+let ffmpeg = null;
+
+let ffmpegLoaded = false;
 
 
 videoInput.addEventListener(
   "change",
   function(event) {
 
-    const file =
+    selectedFile =
       event.target.files[0];
 
-    if (!file) {
+    if (!selectedFile) {
       return;
     }
 
     fileName.textContent =
-      file.name;
-
-    const videoURL =
-      URL.createObjectURL(file);
+      selectedFile.name;
 
     videoPreview.src =
-      videoURL;
+      URL.createObjectURL(selectedFile);
 
     previewArea.style.display =
       "block";
+
+    resultArea.style.display =
+      "none";
+
+    status.textContent =
+      "動画を読み込みました。下のボタンで加工できます。";
+  }
+);
+
+
+async function loadFFmpeg() {
+
+  if (ffmpegLoaded) {
+    return;
+  }
+
+  status.textContent =
+    "FFmpeg.wasmを読み込んでいます。初回は少し時間がかかります。";
+
+  processButton.disabled =
+    true;
+
+  const baseURL =
+    "https://cdn.jsdelivr.net/npm/@ffmpeg/core@0.12.10/dist/esm";
+
+  ffmpeg =
+    new FFmpeg();
+
+
+  ffmpeg.on(
+    "progress",
+    ({ progress }) => {
+
+      if (!Number.isFinite(progress)) {
+        return;
+      }
+
+      const percent =
+        Math.max(
+          0,
+          Math.min(
+            100,
+            Math.round(progress * 100)
+          )
+        );
+
+      progressBar.style.width =
+        percent + "%";
+
+      progressText.textContent =
+        "加工中 " + percent + "%";
+    }
+  );
+
+
+  await ffmpeg.load({
+
+    coreURL:
+      await toBlobURL(
+        `${baseURL}/ffmpeg-core.js`,
+        "text/javascript"
+      ),
+
+    wasmURL:
+      await toBlobURL(
+        `${baseURL}/ffmpeg-core.wasm`,
+        "application/wasm"
+      )
+  });
+
+  ffmpegLoaded =
+    true;
+
+  processButton.disabled =
+    false;
+
+  status.textContent =
+    "FFmpeg.wasmの準備ができました。";
+}
+
+
+processButton.addEventListener(
+  "click",
+  async function() {
+
+    if (!selectedFile) {
+      return;
+    }
+
+    try {
+
+      processButton.disabled =
+        true;
+
+      progressWrap.style.display =
+        "block";
+
+      progressBar.style.width =
+        "0%";
+
+      progressText.textContent =
+        "準備中";
+
+      resultArea.style.display =
+        "none";
+
+
+      await loadFFmpeg();
+
+
+      status.textContent =
+        "動画を加工しています。画面を閉じずにお待ちください。";
+
+
+      const inputName =
+        "input.mov";
+
+      const outputName =
+        "output.mp4";
+
+
+      await ffmpeg.writeFile(
+        inputName,
+        await fetchFile(selectedFile)
+      );
+
+
+      await ffmpeg.exec([
+
+        "-i",
+        inputName,
+
+        "-vf",
+
+        [
+          "scale='min(720,iw)':-2",
+          "eq=brightness=-0.08:saturation=0.72:contrast=0.92",
+          "gblur=sigma=0.7",
+          "rotate=0.004*sin(2*PI*t*0.8):fillcolor=black",
+          "crop=iw*0.97:ih*0.97",
+          "scale=trunc(iw/2)*2:trunc(ih/2)*2"
+        ].join(","),
+
+        "-c:v",
+        "libx264",
+
+        "-preset",
+        "ultrafast",
+
+        "-crf",
+        "28",
+
+        "-c:a",
+        "aac",
+
+        "-b:a",
+        "128k",
+
+        "-movflags",
+        "+faststart",
+
+        outputName
+
+      ]);
+
+
+      const data =
+        await ffmpeg.readFile(
+          outputName
+        );
+
+
+      const blob =
+        new Blob(
+          [data.buffer],
+          {
+            type:
+              "video/mp4"
+          }
+        );
+
+
+      const outputURL =
+        URL.createObjectURL(blob);
+
+
+      resultVideo.src =
+        outputURL;
+
+      saveButton.href =
+        outputURL;
+
+      resultArea.style.display =
+        "block";
+
+
+      progressBar.style.width =
+        "100%";
+
+      progressText.textContent =
+        "完成";
+
+      status.textContent =
+        "加工が完了しました。下に完成動画が表示されています。";
+
+
+      processButton.disabled =
+        false;
+
+    }
+
+    catch (error) {
+
+      console.error(error);
+
+      processButton.disabled =
+        false;
+
+      status.textContent =
+        "加工中にエラーが発生しました。短い動画でもう一度試してください。";
+
+      progressText.textContent =
+        "エラー";
+    }
   }
 );
 
