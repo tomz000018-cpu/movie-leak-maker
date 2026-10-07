@@ -7,13 +7,20 @@
 <title>Movie Leak Maker</title>
 
 <style>
-*{box-sizing:border-box}
+*{
+  box-sizing:border-box;
+}
 
 body{
   margin:0;
   background:#080808;
   color:#fff;
-  font-family:-apple-system,BlinkMacSystemFont,"Helvetica Neue",Arial,sans-serif;
+  font-family:
+    -apple-system,
+    BlinkMacSystemFont,
+    "Helvetica Neue",
+    Arial,
+    sans-serif;
 }
 
 .container{
@@ -60,7 +67,9 @@ h1{
   color:#111;
 }
 
-#videoInput{display:none}
+#videoInput{
+  display:none;
+}
 
 #fileName{
   margin-top:14px;
@@ -89,7 +98,9 @@ video{
   background:#000;
 }
 
-#workCanvas{display:none}
+#workCanvas{
+  display:none;
+}
 
 .process-button{
   margin-top:20px;
@@ -171,49 +182,92 @@ video{
 動画を選ぶ
 </label>
 
-<input id="videoInput" type="file" accept="video/*">
+<input
+  id="videoInput"
+  type="file"
+  accept="video/*"
+>
 
 <div id="fileName">
 まだ動画は選択されていません
 </div>
 
-<div class="preview-area" id="previewArea">
+<div
+  id="previewArea"
+  class="preview-area"
+>
 
 <div class="screen">
-<video id="sourceVideo" controls playsinline></video>
+
+<video
+  id="sourceVideo"
+  controls
+  playsinline
+></video>
+
 </div>
 
-<button id="processButton" class="process-button">
+<button
+  id="processButton"
+  class="process-button"
+>
 流出映像風に加工する
 </button>
 
-<div class="progress-wrap" id="progressWrap">
+<div
+  id="progressWrap"
+  class="progress-wrap"
+>
 
 <div class="progress-bg">
-<div id="progressBar" class="progress-bar"></div>
+
+<div
+  id="progressBar"
+  class="progress-bar"
+></div>
+
 </div>
 
-<div id="progressText" class="progress-text">
+<div
+  id="progressText"
+  class="progress-text"
+>
 準備中
 </div>
 
 </div>
 
-<div id="status" class="status">
+<div
+  id="status"
+  class="status"
+>
 動画を選んでください。
 </div>
 
 </div>
 
-<div class="result-area" id="resultArea">
+
+<div
+  id="resultArea"
+  class="result-area"
+>
 
 <h2>完成動画</h2>
 
 <div class="screen">
-<video id="resultVideo" controls playsinline></video>
+
+<video
+  id="resultVideo"
+  controls
+  playsinline
+></video>
+
 </div>
 
-<a id="saveButton" class="save-button">
+<a
+  id="saveButton"
+  class="save-button"
+>
 完成動画を保存
 </a>
 
@@ -224,7 +278,7 @@ video{
 <canvas id="workCanvas"></canvas>
 
 <div class="notice">
-動画はサーバーへ送信せず、この端末の中で加工します。
+動画はサーバーへ送信せず、この端末内で加工します。
 </div>
 
 </div>
@@ -232,101 +286,228 @@ video{
 
 <script>
 
-const videoInput = document.getElementById("videoInput");
-const sourceVideo = document.getElementById("sourceVideo");
-const resultVideo = document.getElementById("resultVideo");
+const videoInput =
+  document.getElementById("videoInput");
 
-const previewArea = document.getElementById("previewArea");
-const resultArea = document.getElementById("resultArea");
+const sourceVideo =
+  document.getElementById("sourceVideo");
 
-const processButton = document.getElementById("processButton");
-const saveButton = document.getElementById("saveButton");
+const resultVideo =
+  document.getElementById("resultVideo");
 
-const fileName = document.getElementById("fileName");
-const status = document.getElementById("status");
+const previewArea =
+  document.getElementById("previewArea");
 
-const progressWrap = document.getElementById("progressWrap");
-const progressBar = document.getElementById("progressBar");
-const progressText = document.getElementById("progressText");
+const resultArea =
+  document.getElementById("resultArea");
 
-const canvas = document.getElementById("workCanvas");
-const ctx = canvas.getContext("2d");
+const processButton =
+  document.getElementById("processButton");
 
-const sceneCanvas = document.createElement("canvas");
-const sceneCtx = sceneCanvas.getContext("2d");
+const saveButton =
+  document.getElementById("saveButton");
 
-const screenCanvas = document.createElement("canvas");
-const screenCtx = screenCanvas.getContext("2d");
+const fileName =
+  document.getElementById("fileName");
+
+const status =
+  document.getElementById("status");
+
+const progressWrap =
+  document.getElementById("progressWrap");
+
+const progressBar =
+  document.getElementById("progressBar");
+
+const progressText =
+  document.getElementById("progressText");
+
+const canvas =
+  document.getElementById("workCanvas");
+
+const ctx =
+  canvas.getContext(
+    "2d",
+    {alpha:false}
+  );
+
+
+/*
+映画館の一枚絵
+*/
+const sceneCanvas =
+  document.createElement("canvas");
+
+const sceneCtx =
+  sceneCanvas.getContext("2d");
+
+
+/*
+スクリーン映像
+*/
+const screenCanvas =
+  document.createElement("canvas");
+
+const screenCtx =
+  screenCanvas.getContext("2d");
+
+
+/*
+強い光の滲み
+*/
+const bloomCanvas =
+  document.createElement("canvas");
+
+const bloomCtx =
+  bloomCanvas.getContext("2d");
+
 
 let selectedFile = null;
+
 let inputURL = null;
+
 let outputURL = null;
 
 let audioContext = null;
+
 let audioSource = null;
+
 let audioDestination = null;
 
 
-videoInput.addEventListener("change", event => {
 
-  selectedFile = event.target.files[0];
+videoInput.addEventListener(
+  "change",
+  event => {
 
-  if (!selectedFile) return;
+    selectedFile =
+      event.target.files[0];
 
-  if (inputURL) URL.revokeObjectURL(inputURL);
+    if(!selectedFile){
+      return;
+    }
 
-  inputURL = URL.createObjectURL(selectedFile);
 
-  sourceVideo.src = inputURL;
-  sourceVideo.load();
+    if(inputURL){
 
-  fileName.textContent = selectedFile.name;
+      URL.revokeObjectURL(
+        inputURL
+      );
+    }
 
-  previewArea.style.display = "block";
-  resultArea.style.display = "none";
 
-  status.textContent = "動画を読み込みました。";
-});
+    inputURL =
+      URL.createObjectURL(
+        selectedFile
+      );
+
+
+    sourceVideo.src =
+      inputURL;
+
+
+    sourceVideo.load();
+
+
+    fileName.textContent =
+      selectedFile.name;
+
+
+    previewArea.style.display =
+      "block";
+
+
+    resultArea.style.display =
+      "none";
+
+
+    status.textContent =
+      "動画を読み込みました。";
+  }
+);
+
 
 
 function chooseMimeType(){
 
   const types = [
+
     'video/mp4;codecs="avc1.42E01E,mp4a.40.2"',
+
     'video/mp4',
+
     'video/webm;codecs=vp9,opus',
+
     'video/webm;codecs=vp8,opus',
+
     'video/webm'
+
   ];
+
 
   for(const type of types){
 
-    if(MediaRecorder.isTypeSupported(type)){
+    if(
+      MediaRecorder.isTypeSupported(
+        type
+      )
+    ){
+
       return type;
     }
   }
+
 
   return "";
 }
 
 
-function makeImpulse(context,seconds,decay){
 
-  const rate = context.sampleRate;
-  const length = rate * seconds;
+function makeImpulse(
+  context,
+  seconds,
+  decay
+){
+
+  const rate =
+    context.sampleRate;
+
+
+  const length =
+    rate * seconds;
+
 
   const impulse =
-    context.createBuffer(2,length,rate);
+    context.createBuffer(
+      2,
+      length,
+      rate
+    );
 
-  for(let c=0;c<2;c++){
+
+  for(
+    let channel=0;
+    channel<2;
+    channel++
+  ){
 
     const data =
-      impulse.getChannelData(c);
+      impulse.getChannelData(
+        channel
+      );
 
-    for(let i=0;i<length;i++){
+
+    for(
+      let i=0;
+      i<length;
+      i++
+    ){
 
       data[i] =
-        (Math.random()*2-1) *
+        (
+          Math.random()*2-1
+        )
+        *
         Math.pow(
           1-i/length,
           decay
@@ -334,8 +515,10 @@ function makeImpulse(context,seconds,decay){
     }
   }
 
+
   return impulse;
 }
+
 
 
 async function prepareAudio(){
@@ -343,20 +526,26 @@ async function prepareAudio(){
   if(!audioContext){
 
     audioContext =
-      new (
+      new(
         window.AudioContext ||
         window.webkitAudioContext
       )();
   }
 
+
   await audioContext.resume();
 
-  if(audioSource) return;
+
+  if(audioSource){
+    return;
+  }
+
 
   audioSource =
     audioContext.createMediaElementSource(
       sourceVideo
     );
+
 
   audioDestination =
     audioContext.createMediaStreamDestination();
@@ -365,30 +554,42 @@ async function prepareAudio(){
   const dry =
     audioContext.createGain();
 
-  dry.gain.value = 0.68;
+
+  dry.gain.value =
+    0.68;
 
 
   const wet =
     audioContext.createGain();
 
-  wet.gain.value = 0.26;
+
+  wet.gain.value =
+    0.26;
 
 
   const lowpass =
     audioContext.createBiquadFilter();
 
-  lowpass.type = "lowpass";
-  lowpass.frequency.value = 4700;
+
+  lowpass.type =
+    "lowpass";
+
+
+  lowpass.frequency.value =
+    4500;
 
 
   const delay =
     audioContext.createDelay();
 
-  delay.delayTime.value = 0.045;
+
+  delay.delayTime.value =
+    0.045;
 
 
   const convolver =
     audioContext.createConvolver();
+
 
   convolver.buffer =
     makeImpulse(
@@ -398,354 +599,392 @@ async function prepareAudio(){
     );
 
 
-  audioSource.connect(lowpass);
+  audioSource.connect(
+    lowpass
+  );
 
-  lowpass.connect(dry);
-  dry.connect(audioDestination);
 
-  lowpass.connect(delay);
-  delay.connect(convolver);
-  convolver.connect(wet);
-  wet.connect(audioDestination);
+  lowpass.connect(
+    dry
+  );
 
-  dry.connect(audioContext.destination);
-  wet.connect(audioContext.destination);
+
+  dry.connect(
+    audioDestination
+  );
+
+
+  lowpass.connect(
+    delay
+  );
+
+
+  delay.connect(
+    convolver
+  );
+
+
+  convolver.connect(
+    wet
+  );
+
+
+  wet.connect(
+    audioDestination
+  );
+
+
+  dry.connect(
+    audioContext.destination
+  );
+
+
+  wet.connect(
+    audioContext.destination
+  );
 }
 
 
-function renderScreenImage(time){
 
-  /*
-    解像度を潰さない。
-    出力とほぼ同じ大きさで描く。
-  */
+/*
+映像を画面いっぱいへ。
 
-  screenCanvas.width = canvas.width;
-  screenCanvas.height = canvas.height;
+黒帯を作らず、
+多少切れてもスクリーンを満たす。
+*/
+function drawVideoCover(
+  targetCtx,
+  video,
+  width,
+  height
+){
 
-
-  const sw = screenCanvas.width;
-  const sh = screenCanvas.height;
-
-
-  screenCtx.clearRect(0,0,sw,sh);
-
-
-  /*
-    元動画の縦横比を維持しながら
-    スクリーンいっぱいに表示。
-  */
-
-  const vr =
-    sourceVideo.videoWidth /
-    sourceVideo.videoHeight;
-
-  const sr = sw/sh;
+  const videoRatio =
+    video.videoWidth /
+    video.videoHeight;
 
 
-  let dw;
-  let dh;
-  let dx;
-  let dy;
+  const targetRatio =
+    width /
+    height;
 
 
-  if(vr > sr){
+  let sourceX = 0;
+  let sourceY = 0;
+  let sourceW =
+    video.videoWidth;
+  let sourceH =
+    video.videoHeight;
 
-    dw = sw;
-    dh = sw / vr;
+
+  if(
+    videoRatio >
+    targetRatio
+  ){
+
+    sourceW =
+      video.videoHeight *
+      targetRatio;
+
+
+    sourceX =
+      (
+        video.videoWidth -
+        sourceW
+      ) / 2;
 
   }else{
 
-    dh = sh;
-    dw = sh * vr;
+    sourceH =
+      video.videoWidth /
+      targetRatio;
+
+
+    sourceY =
+      (
+        video.videoHeight -
+        sourceH
+      ) / 2;
   }
 
 
-  dx = (sw-dw)/2;
-  dy = (sh-dh)/2;
+  targetCtx.drawImage(
+    video,
 
+    sourceX,
+    sourceY,
+    sourceW,
+    sourceH,
 
-  /*
-    本当のピンぼけ。
-
-    以前よりかなり強くしている。
-  */
-
-  const slowFocus =
-    (Math.sin(time*0.55)+1)/2;
-
-  const secondFocus =
-    (Math.sin(time*0.21+1.4)+1)/2;
-
-  const blur =
-    7 +
-    slowFocus*5 +
-    secondFocus*2;
-
-
-  /*
-    露出の呼吸
-  */
-
-  const brightness =
-    92 +
-    Math.sin(time*0.85)*4 +
-    Math.sin(time*4.3)*2;
-
-
-  screenCtx.save();
-
-  screenCtx.filter =
-    `brightness(${brightness}%)
-     contrast(88%)
-     saturate(72%)
-     blur(${blur}px)`;
-
-  screenCtx.drawImage(
-    sourceVideo,
-    dx,
-    dy,
-    dw,
-    dh
+    0,
+    0,
+    width,
+    height
   );
-
-  screenCtx.restore();
-
-
-  /*
-    BLOOM
-
-    同じ映像を強くぼかして
-    screen合成する。
-  */
-
-  screenCtx.save();
-
-  screenCtx.globalCompositeOperation =
-    "screen";
-
-  screenCtx.globalAlpha =
-    0.48;
-
-  screenCtx.filter =
-    "brightness(165%) blur(20px)";
-
-  screenCtx.drawImage(
-    sourceVideo,
-    dx,
-    dy,
-    dw,
-    dh
-  );
-
-  screenCtx.restore();
-
-
-  /*
-    さらに強い白飛びの滲み。
-  */
-
-  screenCtx.save();
-
-  screenCtx.globalCompositeOperation =
-    "screen";
-
-  screenCtx.globalAlpha =
-    0.18;
-
-  screenCtx.filter =
-    "brightness(210%) blur(38px)";
-
-  screenCtx.drawImage(
-    sourceVideo,
-    dx,
-    dy,
-    dw,
-    dh
-  );
-
-  screenCtx.restore();
 }
 
 
-function buildCinemaScene(time){
 
-  const w = sceneCanvas.width;
-  const h = sceneCanvas.height;
+/*
+本物のピンぼけ映像を作る
+*/
+function renderOutOfFocusScreen(
+  time
+){
 
-  sceneCtx.clearRect(0,0,w,h);
-
-  sceneCtx.fillStyle = "#000";
-  sceneCtx.fillRect(0,0,w,h);
-
-
-  renderScreenImage(time);
+  const w =
+    screenCanvas.width;
 
 
-  /*
-    斜めスクリーン。
-
-    細切れ処理は一切しない。
-    1枚の連続画像を変形する。
-  */
-
-  sceneCtx.save();
+  const h =
+    screenCanvas.height;
 
 
-  /*
-    スクリーン中心
-  */
-
-  sceneCtx.translate(
-    w*0.50,
-    h*0.48
+  screenCtx.clearRect(
+    0,
+    0,
+    w,
+    h
   );
 
 
   /*
-    少し回転
+  ピントが数秒かけて
+  ゆっくり呼吸する
   */
 
-  sceneCtx.rotate(
-    -0.055
-  );
+  const focus1 =
+    (
+      Math.sin(
+        time * 0.43
+      ) + 1
+    ) / 2;
+
+
+  const focus2 =
+    (
+      Math.sin(
+        time * 0.17 + 1.8
+      ) + 1
+    ) / 2;
 
 
   /*
-    横方向のスキュー
+  今回はかなり強い。
+
+  約12〜22px。
   */
 
-  sceneCtx.transform(
-    1,
-    -0.035,
-    0.13,
-    1,
+  const blurAmount =
+    12 +
+    focus1 * 7 +
+    focus2 * 3;
+
+
+  const brightness =
+    97 +
+    Math.sin(
+      time * 0.77
+    ) * 5 +
+    Math.sin(
+      time * 4.1
+    ) * 2;
+
+
+  /*
+  メイン映像
+  */
+
+  screenCtx.save();
+
+
+  screenCtx.filter =
+    `
+    brightness(${brightness}%)
+    contrast(84%)
+    saturate(67%)
+    blur(${blurAmount}px)
+    `;
+
+
+  drawVideoCover(
+    screenCtx,
+    sourceVideo,
+    w,
+    h
+  );
+
+
+  screenCtx.restore();
+
+
+
+  /*
+  第一Bloom
+  */
+
+  bloomCtx.clearRect(
+    0,
+    0,
+    w,
+    h
+  );
+
+
+  bloomCtx.save();
+
+
+  bloomCtx.filter =
+    "brightness(175%) blur(28px)";
+
+
+  drawVideoCover(
+    bloomCtx,
+    sourceVideo,
+    w,
+    h
+  );
+
+
+  bloomCtx.restore();
+
+
+  screenCtx.save();
+
+
+  screenCtx.globalCompositeOperation =
+    "screen";
+
+
+  screenCtx.globalAlpha =
+    0.42;
+
+
+  screenCtx.drawImage(
+    bloomCanvas,
     0,
     0
   );
 
 
-  /*
-    ほぼ画面いっぱいまで拡大
-  */
+  screenCtx.restore();
 
-  const scaleX = 1.03;
-  const scaleY = 0.86;
 
 
   /*
-    スクリーン外側の大きな光漏れ
+  第二Bloom
+  白い部分をさらに大きく滲ませる
   */
 
-  sceneCtx.save();
-
-  sceneCtx.globalAlpha = 0.24;
-
-  sceneCtx.filter =
-    "blur(38px) brightness(140%)";
-
-  sceneCtx.drawImage(
-    screenCanvas,
-
-    -w*0.49*scaleX,
-    -h*0.46*scaleY,
-
-    w*0.98*scaleX,
-    h*0.92*scaleY
+  bloomCtx.clearRect(
+    0,
+    0,
+    w,
+    h
   );
 
-  sceneCtx.restore();
+
+  bloomCtx.save();
 
 
-  /*
-    メイン映像。
+  bloomCtx.filter =
+    "brightness(230%) blur(52px)";
 
-    ここにも軽く追加のBlurをかけ、
-    スクリーンの縁を鋭くしない。
-  */
 
-  sceneCtx.save();
-
-  sceneCtx.filter =
-    "blur(3.5px)";
-
-  sceneCtx.drawImage(
-    screenCanvas,
-
-    -w*0.49*scaleX,
-    -h*0.46*scaleY,
-
-    w*0.98*scaleX,
-    h*0.92*scaleY
+  drawVideoCover(
+    bloomCtx,
+    sourceVideo,
+    w,
+    h
   );
 
-  sceneCtx.restore();
+
+  bloomCtx.restore();
+
+
+  screenCtx.save();
+
+
+  screenCtx.globalCompositeOperation =
+    "screen";
+
+
+  screenCtx.globalAlpha =
+    0.15;
+
+
+  screenCtx.drawImage(
+    bloomCanvas,
+    0,
+    0
+  );
+
+
+  screenCtx.restore();
+
 
 
   /*
-    スクリーン境界の光。
+  スクリーンの縁そのものを
+  フェザー処理。
 
-    矩形の線は描かない。
-    周囲にボヤっとした光だけ置く。
+  黒との境目をくっきり残さない。
   */
 
-  sceneCtx.save();
+  screenCtx.save();
 
-  sceneCtx.globalAlpha = 0.13;
 
-  sceneCtx.filter =
-    "blur(30px)";
+  screenCtx.globalCompositeOperation =
+    "destination-in";
+
+
+  screenCtx.filter =
+    "blur(26px)";
+
+
+  screenCtx.fillStyle =
+    "rgba(255,255,255,1)";
+
+
+  screenCtx.fillRect(
+    28,
+    28,
+    w-56,
+    h-56
+  );
+
+
+  screenCtx.restore();
+}
+
+
+
+/*
+映画館空間を作る
+*/
+function buildCinemaScene(
+  time
+){
+
+  const w =
+    sceneCanvas.width;
+
+
+  const h =
+    sceneCanvas.height;
+
+
+  sceneCtx.clearRect(
+    0,
+    0,
+    w,
+    h
+  );
+
 
   sceneCtx.fillStyle =
-    "rgba(185,200,215,0.8)";
+    "#000";
 
-  sceneCtx.fillRect(
-    -w*0.485*scaleX,
-    -h*0.455*scaleY,
-    w*0.97*scaleX,
-    h*0.91*scaleY
-  );
-
-  sceneCtx.restore();
-
-
-  sceneCtx.restore();
-
-
-  /*
-    スクリーン光が黒い空間にも
-    うっすら漏れる。
-  */
-
-  const glow =
-    sceneCtx.createRadialGradient(
-
-      w*0.52,
-      h*0.47,
-      w*0.12,
-
-      w*0.52,
-      h*0.50,
-      w*0.75
-    );
-
-
-  glow.addColorStop(
-    0,
-    "rgba(120,135,150,0.055)"
-  );
-
-  glow.addColorStop(
-    0.48,
-    "rgba(60,65,70,0.028)"
-  );
-
-  glow.addColorStop(
-    1,
-    "rgba(0,0,0,0)"
-  );
-
-  sceneCtx.fillStyle = glow;
 
   sceneCtx.fillRect(
     0,
@@ -755,20 +994,200 @@ function buildCinemaScene(time){
   );
 
 
+  renderOutOfFocusScreen(
+    time
+  );
+
+
+
   /*
-    周辺減光
+  スクリーンから周囲の闇へ漏れる光
+  */
+
+  const roomGlow =
+    sceneCtx.createRadialGradient(
+
+      w * 0.53,
+      h * 0.49,
+      w * 0.16,
+
+      w * 0.53,
+      h * 0.49,
+      w * 0.90
+    );
+
+
+  roomGlow.addColorStop(
+    0,
+    "rgba(130,145,160,0.10)"
+  );
+
+
+  roomGlow.addColorStop(
+    0.44,
+    "rgba(65,72,80,0.055)"
+  );
+
+
+  roomGlow.addColorStop(
+    1,
+    "rgba(0,0,0,0)"
+  );
+
+
+  sceneCtx.fillStyle =
+    roomGlow;
+
+
+  sceneCtx.fillRect(
+    0,
+    0,
+    w,
+    h
+  );
+
+
+
+  /*
+  スクリーン本体。
+
+  前回よりかなり大きくする。
+
+  左右端は原則として
+  撮影フレーム外へ追い出す。
+  */
+
+  sceneCtx.save();
+
+
+  sceneCtx.translate(
+    w * 0.51,
+    h * 0.48
+  );
+
+
+  /*
+  映画館の座席から
+  少し斜めに撮影
+  */
+
+  sceneCtx.rotate(
+    -0.045
+  );
+
+
+  sceneCtx.transform(
+
+    1,
+
+    -0.025,
+
+    0.10,
+
+    1,
+
+    0,
+
+    0
+  );
+
+
+  /*
+  大胆にOverscan
+  */
+
+  const screenWidth =
+    w * 1.34;
+
+
+  const screenHeight =
+    h * 1.11;
+
+
+
+  /*
+  スクリーン周囲の
+  巨大な光の滲み
+  */
+
+  sceneCtx.save();
+
+
+  sceneCtx.globalAlpha =
+    0.30;
+
+
+  sceneCtx.filter =
+    "blur(45px) brightness(150%)";
+
+
+  sceneCtx.drawImage(
+
+    screenCanvas,
+
+    -screenWidth / 2,
+
+    -screenHeight / 2,
+
+    screenWidth,
+
+    screenHeight
+  );
+
+
+  sceneCtx.restore();
+
+
+
+  /*
+  本体も最後にさらにぼかす。
+
+  これでスクリーン境界も
+  光学的に柔らかくする。
+  */
+
+  sceneCtx.save();
+
+
+  sceneCtx.filter =
+    "blur(5px)";
+
+
+  sceneCtx.drawImage(
+
+    screenCanvas,
+
+    -screenWidth / 2,
+
+    -screenHeight / 2,
+
+    screenWidth,
+
+    screenHeight
+  );
+
+
+  sceneCtx.restore();
+
+
+  sceneCtx.restore();
+
+
+
+  /*
+  周辺減光
   */
 
   const vignette =
     sceneCtx.createRadialGradient(
 
-      w*0.52,
-      h*0.47,
-      w*0.24,
+      w * 0.52,
+      h * 0.46,
+      w * 0.28,
 
-      w*0.52,
-      h*0.50,
-      w*0.80
+      w * 0.52,
+      h * 0.49,
+      w * 0.86
     );
 
 
@@ -777,18 +1196,22 @@ function buildCinemaScene(time){
     "rgba(0,0,0,0)"
   );
 
+
   vignette.addColorStop(
-    0.65,
-    "rgba(0,0,0,0.12)"
+    0.67,
+    "rgba(0,0,0,0.11)"
   );
+
 
   vignette.addColorStop(
     1,
-    "rgba(0,0,0,0.72)"
+    "rgba(0,0,0,0.80)"
   );
+
 
   sceneCtx.fillStyle =
     vignette;
+
 
   sceneCtx.fillRect(
     0,
@@ -799,50 +1222,76 @@ function buildCinemaScene(time){
 }
 
 
-function drawFinalCamera(time){
 
-  const w = canvas.width;
-  const h = canvas.height;
+/*
+自然なカメラ手ブレ
+*/
+function drawFinalCamera(
+  time
+){
 
-
-  /*
-    基本手ブレ
-  */
-
-  const x =
-    Math.sin(time*7.3)*3.3 +
-    Math.sin(time*16.1)*1.2 +
-    Math.sin(time*1.43)*5;
+  const w =
+    canvas.width;
 
 
-  const y =
-    Math.cos(time*6.6)*2.6 +
-    Math.sin(time*13.3)*1.1 +
-    Math.cos(time*1.05)*3;
+  const h =
+    canvas.height;
 
 
   /*
-    時々少し大きく手が動く
+  微細な震え
   */
 
-  const occasional =
-    Math.sin(time*0.33)*5;
+  const microX =
+    Math.sin(
+      time * 8.1
+    ) * 2.2 +
+    Math.sin(
+      time * 16.4
+    ) * 0.9;
 
 
-  const rotation =
-    Math.sin(time*0.72)*0.006 +
-    Math.sin(time*3.1)*0.0017;
+  const microY =
+    Math.cos(
+      time * 7.0
+    ) * 1.9 +
+    Math.sin(
+      time * 13.7
+    ) * 0.8;
 
 
-  ctx.clearRect(
-    0,
-    0,
-    w,
-    h
-  );
+  /*
+  手首のゆっくりしたズレ
+  */
+
+  const driftX =
+    Math.sin(
+      time * 0.42
+    ) * 5.5;
 
 
-  ctx.fillStyle = "#000";
+  const driftY =
+    Math.cos(
+      time * 0.31
+    ) * 3.8;
+
+
+  /*
+  わずかな傾き
+  */
+
+  const angle =
+    Math.sin(
+      time * 0.68
+    ) * 0.0055 +
+    Math.sin(
+      time * 2.9
+    ) * 0.0014;
+
+
+  ctx.fillStyle =
+    "#000";
+
 
   ctx.fillRect(
     0,
@@ -856,27 +1305,44 @@ function drawFinalCamera(time){
 
 
   ctx.translate(
-    w/2 + x + occasional,
-    h/2 + y
+
+    w/2 +
+    microX +
+    driftX,
+
+    h/2 +
+    microY +
+    driftY
   );
 
 
   ctx.rotate(
-    rotation
+    angle
   );
 
 
+  /*
+  手ブレで黒い端が
+  見えないように
+  少しだけ拡大
+  */
+
   ctx.scale(
-    1.035,
-    1.035
+    1.045,
+    1.045
   );
 
 
   ctx.drawImage(
+
     sceneCanvas,
+
     -w/2,
+
     -h/2,
+
     w,
+
     h
   );
 
@@ -887,315 +1353,397 @@ function drawFinalCamera(time){
 
 
 processButton.addEventListener(
-"click",
-async function(){
+  "click",
+  async function(){
 
-  if(!selectedFile) return;
-
-
-  try{
-
-
-    if(!window.MediaRecorder){
-      throw new Error(
-        "MediaRecorderに対応していません"
-      );
+    if(!selectedFile){
+      return;
     }
 
 
-    if(!canvas.captureStream){
-      throw new Error(
-        "Canvas captureStreamに対応していません"
+    try{
+
+
+      if(!window.MediaRecorder){
+
+        throw new Error(
+          "MediaRecorderに対応していません"
+        );
+      }
+
+
+      if(!canvas.captureStream){
+
+        throw new Error(
+          "Canvas captureStreamに対応していません"
+        );
+      }
+
+
+      processButton.disabled =
+        true;
+
+
+      sourceVideo.controls =
+        false;
+
+
+      resultArea.style.display =
+        "none";
+
+
+      progressWrap.style.display =
+        "block";
+
+
+      progressBar.style.width =
+        "0%";
+
+
+      progressText.textContent =
+        "準備中";
+
+
+      status.textContent =
+        "動画加工の準備をしています。";
+
+
+      await prepareAudio();
+
+
+      sourceVideo.pause();
+
+
+      sourceVideo.currentTime =
+        0;
+
+
+      await new Promise(
+        resolve=>{
+
+          if(
+            sourceVideo.readyState >= 1
+          ){
+
+            resolve();
+
+          }else{
+
+            sourceVideo.onloadedmetadata =
+              resolve;
+          }
+        }
       );
-    }
 
 
-    processButton.disabled = true;
-
-    sourceVideo.controls = false;
-
-    resultArea.style.display =
-      "none";
-
-    progressWrap.style.display =
-      "block";
-
-    progressBar.style.width =
-      "0%";
-
-    progressText.textContent =
-      "準備中";
-
-    status.textContent =
-      "動画加工の準備をしています。";
+      const portrait =
+        sourceVideo.videoHeight >
+        sourceVideo.videoWidth;
 
 
-    await prepareAudio();
+      if(portrait){
 
+        canvas.width =
+          540;
 
-    sourceVideo.pause();
-
-    sourceVideo.currentTime = 0;
-
-
-    await new Promise(resolve=>{
-
-      if(sourceVideo.readyState>=1){
-
-        resolve();
+        canvas.height =
+          960;
 
       }else{
 
-        sourceVideo.onloadedmetadata =
-          resolve;
+        canvas.width =
+          960;
+
+        canvas.height =
+          540;
       }
-    });
 
 
-    const portrait =
-      sourceVideo.videoHeight >
-      sourceVideo.videoWidth;
+      sceneCanvas.width =
+        canvas.width;
 
 
-    if(portrait){
-
-      canvas.width = 540;
-      canvas.height = 960;
-
-    }else{
-
-      canvas.width = 960;
-      canvas.height = 540;
-    }
+      sceneCanvas.height =
+        canvas.height;
 
 
-    sceneCanvas.width =
-      canvas.width;
-
-    sceneCanvas.height =
-      canvas.height;
+      screenCanvas.width =
+        canvas.width;
 
 
-    const canvasStream =
-      canvas.captureStream(30);
+      screenCanvas.height =
+        canvas.height;
 
 
-    const finalStream =
-      new MediaStream();
+      bloomCanvas.width =
+        canvas.width;
 
 
-    canvasStream
-      .getVideoTracks()
-      .forEach(track=>
-        finalStream.addTrack(track)
-      );
+      bloomCanvas.height =
+        canvas.height;
 
 
-    if(audioDestination){
-
-      audioDestination.stream
-        .getAudioTracks()
-        .forEach(track=>
-          finalStream.addTrack(track)
+      const canvasStream =
+        canvas.captureStream(
+          30
         );
-    }
 
 
-    const mimeType =
-      chooseMimeType();
+      const finalStream =
+        new MediaStream();
 
 
-    const recorder =
-      new MediaRecorder(
+      canvasStream
+        .getVideoTracks()
+        .forEach(
+          track=>
+            finalStream.addTrack(
+              track
+            )
+        );
 
-        finalStream,
 
-        mimeType
-        ?{
-          mimeType,
-          videoBitsPerSecond:
-            3500000
+      if(audioDestination){
+
+        audioDestination.stream
+          .getAudioTracks()
+          .forEach(
+            track=>
+              finalStream.addTrack(
+                track
+              )
+          );
+      }
+
+
+      const mimeType =
+        chooseMimeType();
+
+
+      const recorder =
+        new MediaRecorder(
+
+          finalStream,
+
+          mimeType
+          ?{
+            mimeType,
+            videoBitsPerSecond:
+              4200000
+          }
+          :{
+            videoBitsPerSecond:
+              4200000
+          }
+        );
+
+
+      const chunks =
+        [];
+
+
+      recorder.ondataavailable =
+        event=>{
+
+          if(
+            event.data &&
+            event.data.size>0
+          ){
+
+            chunks.push(
+              event.data
+            );
+          }
+        };
+
+
+      recorder.onstop =
+        ()=>{
+
+
+          const actualType =
+            recorder.mimeType ||
+            mimeType ||
+            "video/mp4";
+
+
+          const blob =
+            new Blob(
+              chunks,
+              {
+                type:
+                  actualType
+              }
+            );
+
+
+          if(outputURL){
+
+            URL.revokeObjectURL(
+              outputURL
+            );
+          }
+
+
+          outputURL =
+            URL.createObjectURL(
+              blob
+            );
+
+
+          resultVideo.src =
+            outputURL;
+
+
+          saveButton.href =
+            outputURL;
+
+
+          saveButton.download =
+            actualType.includes(
+              "mp4"
+            )
+            ? "movie-leak.mp4"
+            : "movie-leak.webm";
+
+
+          resultArea.style.display =
+            "block";
+
+
+          progressBar.style.width =
+            "100%";
+
+
+          progressText.textContent =
+            "完成";
+
+
+          status.textContent =
+            "加工が完了しました。";
+
+
+          processButton.disabled =
+            false;
+
+
+          sourceVideo.controls =
+            true;
+        };
+
+
+      function drawFrame(){
+
+        if(
+          sourceVideo.paused ||
+          sourceVideo.ended
+        ){
+
+          return;
         }
-        :{
-          videoBitsPerSecond:
-            3500000
+
+
+        const t =
+          sourceVideo.currentTime;
+
+
+        buildCinemaScene(
+          t
+        );
+
+
+        drawFinalCamera(
+          t
+        );
+
+
+        if(
+          sourceVideo.duration
+        ){
+
+          const percent =
+            Math.min(
+              100,
+              Math.round(
+                sourceVideo.currentTime /
+                sourceVideo.duration *
+                100
+              )
+            );
+
+
+          progressBar.style.width =
+            percent+"%";
+
+
+          progressText.textContent =
+            "加工中 "+percent+"%";
         }
+
+
+        requestAnimationFrame(
+          drawFrame
+        );
+      }
+
+
+      sourceVideo.onended =
+        ()=>{
+
+          if(
+            recorder.state !==
+            "inactive"
+          ){
+
+            recorder.stop();
+          }
+        };
+
+
+      status.textContent =
+        "強いピンぼけ・光のにじみ・手ブレを加えています。";
+
+
+      recorder.start(
+        500
       );
 
 
-    const chunks = [];
-
-
-    recorder.ondataavailable =
-      e=>{
-
-        if(e.data && e.data.size>0){
-          chunks.push(e.data);
-        }
-      };
-
-
-    recorder.onstop =
-      ()=>{
-
-        const actualType =
-          recorder.mimeType ||
-          mimeType ||
-          "video/mp4";
-
-
-        const blob =
-          new Blob(
-            chunks,
-            {type:actualType}
-          );
-
-
-        if(outputURL){
-          URL.revokeObjectURL(outputURL);
-        }
-
-
-        outputURL =
-          URL.createObjectURL(blob);
-
-
-        resultVideo.src =
-          outputURL;
-
-
-        saveButton.href =
-          outputURL;
-
-
-        saveButton.download =
-          actualType.includes("mp4")
-          ? "movie-leak.mp4"
-          : "movie-leak.webm";
-
-
-        resultArea.style.display =
-          "block";
-
-
-        progressBar.style.width =
-          "100%";
-
-
-        progressText.textContent =
-          "完成";
-
-
-        status.textContent =
-          "加工が完了しました。";
-
-
-        processButton.disabled =
-          false;
-
-
-        sourceVideo.controls =
-          true;
-      };
-
-
-    function drawFrame(){
-
-      if(
-        sourceVideo.paused ||
-        sourceVideo.ended
-      ){
-        return;
-      }
-
-
-      const t =
-        sourceVideo.currentTime;
-
-
-      buildCinemaScene(t);
-
-      drawFinalCamera(t);
-
-
-      if(sourceVideo.duration){
-
-        const percent =
-          Math.min(
-            100,
-            Math.round(
-              sourceVideo.currentTime /
-              sourceVideo.duration *
-              100
-            )
-          );
-
-
-        progressBar.style.width =
-          percent+"%";
-
-
-        progressText.textContent =
-          "加工中 "+percent+"%";
-      }
+      await sourceVideo.play();
 
 
       requestAnimationFrame(
         drawFrame
       );
+
+
+    }catch(error){
+
+
+      console.error(
+        error
+      );
+
+
+      processButton.disabled =
+        false;
+
+
+      sourceVideo.controls =
+        true;
+
+
+      progressText.textContent =
+        "エラー";
+
+
+      status.textContent =
+        "エラー：" +
+        error.message;
     }
-
-
-    sourceVideo.onended =
-      ()=>{
-
-        if(
-          recorder.state !==
-          "inactive"
-        ){
-          recorder.stop();
-        }
-      };
-
-
-    status.textContent =
-      "強いピンぼけ・光のにじみ・カメラ手ブレを加えています。";
-
-
-    recorder.start(500);
-
-
-    await sourceVideo.play();
-
-
-    requestAnimationFrame(
-      drawFrame
-    );
-
-
-  }catch(error){
-
-
-    console.error(error);
-
-
-    processButton.disabled =
-      false;
-
-
-    sourceVideo.controls =
-      true;
-
-
-    progressText.textContent =
-      "エラー";
-
-
-    status.textContent =
-      "エラー："+error.message;
   }
+);
 
-});
 </script>
 
 </body>
