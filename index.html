@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="ja">
-
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,7 +7,6 @@
 <title>Movie Leak Maker</title>
 
 <style>
-
 * {
   box-sizing: border-box;
 }
@@ -17,12 +15,7 @@ body {
   margin: 0;
   background: #080808;
   color: white;
-  font-family:
-    -apple-system,
-    BlinkMacSystemFont,
-    "Helvetica Neue",
-    Arial,
-    sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
 }
 
 .container {
@@ -164,10 +157,8 @@ video {
   font-size: 12px;
   line-height: 1.6;
 }
-
 </style>
 </head>
-
 
 <body>
 
@@ -180,105 +171,55 @@ video {
 「海外試写会の流出映像風」に加工します
 </div>
 
-
 <div class="panel">
 
 <label class="file-label" for="videoInput">
 動画を選ぶ
 </label>
 
-<input
-  id="videoInput"
-  type="file"
-  accept="video/*"
->
+<input id="videoInput" type="file" accept="video/*">
 
 <div id="fileName">
 まだ動画は選択されていません
 </div>
 
-
-<div
-  class="preview-area"
-  id="previewArea"
->
+<div class="preview-area" id="previewArea">
 
 <div class="screen">
-
-<video
-  id="sourceVideo"
-  controls
-  playsinline
-></video>
-
+<video id="sourceVideo" controls playsinline></video>
 </div>
 
-
-<button
-  id="processButton"
-  class="process-button"
->
+<button id="processButton" class="process-button">
 流出映像風に加工する
 </button>
 
-
-<div
-  class="progress-wrap"
-  id="progressWrap"
->
+<div class="progress-wrap" id="progressWrap">
 
 <div class="progress-bg">
-
-<div
-  class="progress-bar"
-  id="progressBar"
-></div>
-
+<div class="progress-bar" id="progressBar"></div>
 </div>
 
-<div
-  class="progress-text"
-  id="progressText"
->
+<div class="progress-text" id="progressText">
 準備中
 </div>
 
 </div>
 
-
-<div
-  class="status"
-  id="status"
->
+<div class="status" id="status">
 動画を選んでください。
 </div>
 
 </div>
 
+<div class="result-area" id="resultArea">
 
-<div
-  class="result-area"
-  id="resultArea"
->
-
-<h2>
-完成動画
-</h2>
+<h2>完成動画</h2>
 
 <div class="screen">
-
-<video
-  id="resultVideo"
-  controls
-  playsinline
-></video>
-
+<video id="resultVideo" controls playsinline></video>
 </div>
 
-<a
-  id="saveButton"
-  class="save-button"
->
+<a id="saveButton" class="save-button">
 完成動画を保存
 </a>
 
@@ -286,13 +227,10 @@ video {
 
 </div>
 
-
 <canvas id="workCanvas"></canvas>
 
-
 <div class="notice">
-動画はサーバーへ送信せず、
-この端末の中で加工します。
+動画はサーバーへ送信せず、この端末の中で加工します。
 </div>
 
 </div>
@@ -300,150 +238,108 @@ video {
 
 <script>
 
-const videoInput =
-  document.getElementById("videoInput");
+const videoInput = document.getElementById("videoInput");
+const sourceVideo = document.getElementById("sourceVideo");
+const resultVideo = document.getElementById("resultVideo");
+const previewArea = document.getElementById("previewArea");
+const resultArea = document.getElementById("resultArea");
+const processButton = document.getElementById("processButton");
+const saveButton = document.getElementById("saveButton");
+const fileName = document.getElementById("fileName");
+const status = document.getElementById("status");
+const progressWrap = document.getElementById("progressWrap");
+const progressBar = document.getElementById("progressBar");
+const progressText = document.getElementById("progressText");
 
-const sourceVideo =
-  document.getElementById("sourceVideo");
+const canvas = document.getElementById("workCanvas");
+const ctx = canvas.getContext("2d");
 
-const resultVideo =
-  document.getElementById("resultVideo");
-
-const previewArea =
-  document.getElementById("previewArea");
-
-const resultArea =
-  document.getElementById("resultArea");
-
-const processButton =
-  document.getElementById("processButton");
-
-const saveButton =
-  document.getElementById("saveButton");
-
-const fileName =
-  document.getElementById("fileName");
-
-const status =
-  document.getElementById("status");
-
-const progressWrap =
-  document.getElementById("progressWrap");
-
-const progressBar =
-  document.getElementById("progressBar");
-
-const progressText =
-  document.getElementById("progressText");
-
-const canvas =
-  document.getElementById("workCanvas");
-
-const ctx =
-  canvas.getContext("2d");
-
-
-const tempCanvas =
-  document.createElement("canvas");
-
-const tempCtx =
-  tempCanvas.getContext("2d");
-
+const tempCanvas = document.createElement("canvas");
+const tempCtx = tempCanvas.getContext("2d");
 
 let selectedFile = null;
-
 let inputURL = null;
-
 let outputURL = null;
 
 let audioContext = null;
-
 let audioSource = null;
-
 let audioDestination = null;
 
 
+videoInput.addEventListener("change", function(event) {
 
-videoInput.addEventListener(
-  "change",
-  function(event) {
+  selectedFile = event.target.files[0];
 
-    selectedFile =
-      event.target.files[0];
+  if (!selectedFile) return;
 
-    if (!selectedFile) {
-      return;
-    }
-
-
-    if (inputURL) {
-      URL.revokeObjectURL(inputURL);
-    }
-
-
-    inputURL =
-      URL.createObjectURL(selectedFile);
-
-
-    sourceVideo.src =
-      inputURL;
-
-    sourceVideo.load();
-
-
-    fileName.textContent =
-      selectedFile.name;
-
-
-    previewArea.style.display =
-      "block";
-
-    resultArea.style.display =
-      "none";
-
-
-    status.textContent =
-      "動画を読み込みました。";
-
+  if (inputURL) {
+    URL.revokeObjectURL(inputURL);
   }
-);
 
+  inputURL = URL.createObjectURL(selectedFile);
+
+  sourceVideo.src = inputURL;
+  sourceVideo.load();
+
+  fileName.textContent = selectedFile.name;
+
+  previewArea.style.display = "block";
+  resultArea.style.display = "none";
+
+  status.textContent = "動画を読み込みました。";
+});
 
 
 function chooseMimeType() {
 
   const types = [
-
     'video/mp4;codecs="avc1.42E01E,mp4a.40.2"',
-
     'video/mp4',
-
     'video/webm;codecs=vp9,opus',
-
     'video/webm;codecs=vp8,opus',
-
     'video/webm'
-
   ];
-
 
   for (const type of types) {
 
-    if (
-      MediaRecorder.isTypeSupported(type)
-    ) {
-
+    if (MediaRecorder.isTypeSupported(type)) {
       return type;
-
     }
-
   }
 
-
   return "";
-
 }
 
+
+function makeImpulse(context, seconds, decay) {
+
+  const rate = context.sampleRate;
+  const length = rate * seconds;
+
+  const impulse = context.createBuffer(
+    2,
+    length,
+    rate
+  );
+
+  for (let channel = 0; channel < 2; channel++) {
+
+    const data =
+      impulse.getChannelData(channel);
+
+    for (let i = 0; i < length; i++) {
+
+      data[i] =
+        (Math.random() * 2 - 1) *
+        Math.pow(
+          1 - i / length,
+          decay
+        );
+    }
+  }
+
+  return impulse;
+}
 
 
 async function prepareAudio() {
@@ -455,12 +351,9 @@ async function prepareAudio() {
         window.AudioContext ||
         window.webkitAudioContext
       )();
-
   }
 
-
   await audioContext.resume();
-
 
   if (!audioSource) {
 
@@ -469,38 +362,75 @@ async function prepareAudio() {
         sourceVideo
       );
 
-
     audioDestination =
       audioContext.createMediaStreamDestination();
 
 
-    audioSource.connect(
-      audioDestination
-    );
+    const dry =
+      audioContext.createGain();
+
+    dry.gain.value = 0.72;
 
 
-    audioSource.connect(
-      audioContext.destination
-    );
+    const wet =
+      audioContext.createGain();
 
+    wet.gain.value = 0.34;
+
+
+    const convolver =
+      audioContext.createConvolver();
+
+    convolver.buffer =
+      makeImpulse(
+        audioContext,
+        1.5,
+        2.8
+      );
+
+
+    const delay =
+      audioContext.createDelay();
+
+    delay.delayTime.value = 0.055;
+
+
+    const highCut =
+      audioContext.createBiquadFilter();
+
+    highCut.type = "lowpass";
+    highCut.frequency.value = 5200;
+
+
+    audioSource.connect(highCut);
+
+    highCut.connect(dry);
+    dry.connect(audioDestination);
+
+    highCut.connect(delay);
+    delay.connect(convolver);
+    convolver.connect(wet);
+    wet.connect(audioDestination);
+
+
+    /*
+    端末からも音を聞けるようにする
+    */
+
+    dry.connect(audioContext.destination);
+    wet.connect(audioContext.destination);
   }
-
 }
-
 
 
 function lerp(a, b, t) {
-
   return a + (b - a) * t;
-
 }
 
 
+function drawCinemaBackground(w, h) {
 
-function drawCinemaBackground(w, h, time) {
-
-  ctx.fillStyle =
-    "#010101";
+  ctx.fillStyle = "#010101";
 
   ctx.fillRect(
     0,
@@ -510,28 +440,29 @@ function drawCinemaBackground(w, h, time) {
   );
 
 
+  /*
+  スクリーンから客席に漏れる光
+  */
+
   const glow =
     ctx.createRadialGradient(
+      w * 0.52,
+      h * 0.50,
+      w * 0.10,
 
       w * 0.52,
-      h * 0.43,
-      10,
-
-      w * 0.52,
-      h * 0.43,
-      w * 0.75
-
+      h * 0.60,
+      w * 0.78
     );
-
 
   glow.addColorStop(
     0,
-    "rgba(80,90,105,0.10)"
+    "rgba(105,115,125,0.12)"
   );
 
   glow.addColorStop(
-    0.45,
-    "rgba(25,25,30,0.06)"
+    0.55,
+    "rgba(45,45,50,0.07)"
   );
 
   glow.addColorStop(
@@ -539,9 +470,7 @@ function drawCinemaBackground(w, h, time) {
     "rgba(0,0,0,0)"
   );
 
-
-  ctx.fillStyle =
-    glow;
+  ctx.fillStyle = glow;
 
   ctx.fillRect(
     0,
@@ -549,317 +478,134 @@ function drawCinemaBackground(w, h, time) {
     w,
     h
   );
-
-
-  /*
-  ほんの少しだけ
-  暗い映画館の壁っぽい色
-  */
-
-  ctx.fillStyle =
-    "rgba(20,18,18,0.18)";
-
-  ctx.fillRect(
-    0,
-    h * 0.78,
-    w,
-    h * 0.22
-  );
-
 }
 
 
-
-function drawAudience(w, h, time) {
-
-  ctx.save();
-
-  ctx.fillStyle =
-    "rgba(0,0,0,0.92)";
-
+function createScreenPoints(w, h, t) {
 
   /*
-  左の観客
-  */
-
-  ctx.beginPath();
-
-  ctx.ellipse(
-    w * 0.10,
-    h * 0.88,
-    w * 0.085,
-    h * 0.075,
-    -0.1,
-    0,
-    Math.PI * 2
-  );
-
-  ctx.fill();
-
-
-  ctx.beginPath();
-
-  ctx.ellipse(
-    w * 0.12,
-    h * 1.02,
-    w * 0.16,
-    h * 0.15,
-    0,
-    0,
-    Math.PI * 2
-  );
-
-  ctx.fill();
-
-
-  /*
-  中央寄りの観客
-  */
-
-  ctx.beginPath();
-
-  ctx.ellipse(
-    w * 0.48,
-    h * 0.93,
-    w * 0.07,
-    h * 0.06,
-    0,
-    0,
-    Math.PI * 2
-  );
-
-  ctx.fill();
-
-
-  ctx.beginPath();
-
-  ctx.ellipse(
-    w * 0.48,
-    h * 1.04,
-    w * 0.15,
-    h * 0.13,
-    0,
-    0,
-    Math.PI * 2
-  );
-
-  ctx.fill();
-
-
-  /*
-  右側の観客
-  */
-
-  ctx.beginPath();
-
-  ctx.ellipse(
-    w * 0.91,
-    h * 0.86,
-    w * 0.095,
-    h * 0.085,
-    0.1,
-    0,
-    Math.PI * 2
-  );
-
-  ctx.fill();
-
-
-  ctx.beginPath();
-
-  ctx.ellipse(
-    w * 0.90,
-    h * 1.01,
-    w * 0.18,
-    h * 0.16,
-    0,
-    0,
-    Math.PI * 2
-  );
-
-  ctx.fill();
-
-
-  ctx.restore();
-
-}
-
-
-
-function drawNoise(w, h) {
-
-  ctx.save();
-
-  ctx.globalAlpha =
-    0.06;
-
-
-  for (
-    let i = 0;
-    i < 120;
-    i++
-  ) {
-
-    const gray =
-      Math.floor(
-        80 +
-        Math.random() * 120
-      );
-
-
-    ctx.fillStyle =
-      `rgb(${gray},${gray},${gray})`;
-
-
-    const x =
-      Math.random() * w;
-
-    const y =
-      Math.random() * h;
-
-
-    ctx.fillRect(
-      x,
-      y,
-      1 + Math.random() * 2,
-      1 + Math.random() * 2
-    );
-
-  }
-
-
-  ctx.restore();
-
-}
-
-
-
-function drawScreenWarp(
-  source,
-  w,
-  h,
-  time
-) {
-
-  /*
-  手持ち撮影らしい
-  不規則なブレ
+  小さい手ブレ
   */
 
   const shakeX =
-    Math.sin(time * 7.1) * 2.4
-    +
-    Math.sin(time * 17.3) * 1.1
-    +
-    Math.sin(time * 2.2) * 3.0;
-
+    Math.sin(t * 7.2) * 2.8 +
+    Math.sin(t * 15.6) * 1.2 +
+    Math.sin(t * 2.0) * 3.5;
 
   const shakeY =
-    Math.cos(time * 6.3) * 2.0
-    +
-    Math.sin(time * 14.7) * 0.9;
-
+    Math.cos(t * 6.6) * 2.2 +
+    Math.sin(t * 13.1) * 1.0;
 
   /*
-  ときどき少しだけ
-  カメラがずれる感じ
+  手で構えているため
+  ゆっくり位置が流れる
   */
 
   const driftX =
-    Math.sin(time * 0.72) * 5;
-
+    Math.sin(t * 0.48) * 5;
 
   const driftY =
-    Math.cos(time * 0.51) * 3;
+    Math.cos(t * 0.39) * 3;
 
 
   /*
-  スクリーン四隅
-
-  右側から斜めに撮っている
-  ような形
+  前回より大きなスクリーン
   */
 
-  const TL = {
-    x: w * 0.13 + shakeX + driftX,
-    y: h * 0.18 + shakeY + driftY
+  return {
+
+    TL: {
+      x:
+        w * 0.045 +
+        shakeX +
+        driftX,
+
+      y:
+        h * 0.115 +
+        shakeY +
+        driftY
+    },
+
+    TR: {
+      x:
+        w * 0.975 +
+        shakeX +
+        driftX,
+
+      y:
+        h * 0.035 +
+        shakeY +
+        driftY
+    },
+
+    BL: {
+      x:
+        w * 0.075 +
+        shakeX +
+        driftX,
+
+      y:
+        h * 0.835 +
+        shakeY +
+        driftY
+    },
+
+    BR: {
+      x:
+        w * 0.985 +
+        shakeX +
+        driftX,
+
+      y:
+        h * 0.755 +
+        shakeY +
+        driftY
+    }
+
   };
-
-  const TR = {
-    x: w * 0.91 + shakeX + driftX,
-    y: h * 0.10 + shakeY + driftY
-  };
-
-  const BL = {
-    x: w * 0.17 + shakeX + driftX,
-    y: h * 0.76 + shakeY + driftY
-  };
-
-  const BR = {
-    x: w * 0.94 + shakeX + driftX,
-    y: h * 0.69 + shakeY + driftY
-  };
+}
 
 
-  /*
-  スクリーンの弱い光
-  */
+function drawScreenGlow(points) {
+
+  const {TL, TR, BL, BR} = points;
 
   ctx.save();
 
   ctx.shadowColor =
-    "rgba(190,200,220,0.22)";
+    "rgba(180,195,215,0.35)";
 
-  ctx.shadowBlur =
-    22;
-
+  ctx.shadowBlur = 30;
 
   ctx.fillStyle =
-    "rgba(160,170,180,0.06)";
-
+    "rgba(130,145,160,0.10)";
 
   ctx.beginPath();
 
-  ctx.moveTo(
-    TL.x,
-    TL.y
-  );
-
-  ctx.lineTo(
-    TR.x,
-    TR.y
-  );
-
-  ctx.lineTo(
-    BR.x,
-    BR.y
-  );
-
-  ctx.lineTo(
-    BL.x,
-    BL.y
-  );
+  ctx.moveTo(TL.x, TL.y);
+  ctx.lineTo(TR.x, TR.y);
+  ctx.lineTo(BR.x, BR.y);
+  ctx.lineTo(BL.x, BL.y);
 
   ctx.closePath();
-
   ctx.fill();
 
   ctx.restore();
+}
 
 
+function prepareUglyVideo(source, time) {
 
   /*
-  低画質化用
-  一度小さなキャンバスに縮小
+  解像度をわざと落とす
   */
 
+  const landscape =
+    source.videoWidth >=
+    source.videoHeight;
 
   const tempWidth =
-    source.videoWidth >
-    source.videoHeight
-      ? 420
-      : 260;
-
+    landscape ? 320 : 210;
 
   const tempHeight =
     Math.max(
@@ -871,32 +617,30 @@ function drawScreenWarp(
       )
     );
 
-
-  tempCanvas.width =
-    tempWidth;
-
-  tempCanvas.height =
-    tempHeight;
+  tempCanvas.width = tempWidth;
+  tempCanvas.height = tempHeight;
 
 
   /*
-  時々ピントが少し揺れる
+  ピントがずっと微妙に呼吸する
   */
 
-  const focusBreath =
-    1.4 +
+  const blurAmount =
+    2.2 +
     (
-      Math.sin(
-        time * 0.75
-      ) + 1
-    ) * 0.55;
+      Math.sin(time * 0.67) + 1
+    ) * 0.75;
 
 
-  const exposure =
-    76 +
-    Math.sin(
-      time * 5.4
-    ) * 3;
+  /*
+  スマホの自動露出が
+  少し迷っている感じ
+  */
+
+  const brightness =
+    72 +
+    Math.sin(time * 4.8) * 4 +
+    Math.sin(time * 1.1) * 2;
 
 
   tempCtx.clearRect(
@@ -909,15 +653,15 @@ function drawScreenWarp(
 
   tempCtx.filter =
     "brightness(" +
-    exposure +
+    brightness +
     "%) " +
 
-    "contrast(82%) " +
+    "contrast(78%) " +
 
-    "saturate(62%) " +
+    "saturate(55%) " +
 
     "blur(" +
-    focusBreath +
+    blurAmount +
     "px)";
 
 
@@ -931,16 +675,60 @@ function drawScreenWarp(
 
 
   /*
-  台形スクリーンを
-  細い縦線に分割して描画。
-
-  Canvasだけで
-  遠近変形っぽく見せる方法。
+  薄い霞
   */
 
+  tempCtx.fillStyle =
+    "rgba(200,210,215,0.045)";
 
-  const strips =
-    100;
+  tempCtx.fillRect(
+    0,
+    0,
+    tempWidth,
+    tempHeight
+  );
+}
+
+
+function drawWarpedVideo(source, w, h, time) {
+
+  const points =
+    createScreenPoints(
+      w,
+      h,
+      time
+    );
+
+  const {TL, TR, BL, BR} = points;
+
+
+  drawScreenGlow(points);
+
+  prepareUglyVideo(
+    source,
+    time
+  );
+
+
+  /*
+  台形からはみ出さないように
+  クリップ
+  */
+
+  ctx.save();
+
+  ctx.beginPath();
+
+  ctx.moveTo(TL.x, TL.y);
+  ctx.lineTo(TR.x, TR.y);
+  ctx.lineTo(BR.x, BR.y);
+  ctx.lineTo(BL.x, BL.y);
+
+  ctx.closePath();
+  ctx.clip();
+
+
+  const strips = 150;
 
 
   for (
@@ -963,7 +751,6 @@ function drawScreenWarp(
         u1
       );
 
-
     const topX2 =
       lerp(
         TL.x,
@@ -971,14 +758,12 @@ function drawScreenWarp(
         u2
       );
 
-
     const bottomX1 =
       lerp(
         BL.x,
         BR.x,
         u1
       );
-
 
     const bottomX2 =
       lerp(
@@ -995,7 +780,6 @@ function drawScreenWarp(
         u1
       );
 
-
     const topY2 =
       lerp(
         TL.y,
@@ -1003,14 +787,12 @@ function drawScreenWarp(
         u2
       );
 
-
     const bottomY1 =
       lerp(
         BL.y,
         BR.y,
         u1
       );
-
 
     const bottomY2 =
       lerp(
@@ -1021,31 +803,23 @@ function drawScreenWarp(
 
 
     const destX =
-      (
-        topX1 +
+      Math.min(
+        topX1,
         bottomX1
-      ) / 2;
-
+      );
 
     const nextDestX =
-      (
-        topX2 +
+      Math.max(
+        topX2,
         bottomX2
-      ) / 2;
+      );
 
 
     const destY =
-      (
-        topY1 +
-        topY2
-      ) / 2;
+      (topY1 + topY2) / 2;
 
-
-    const bottomY =
-      (
-        bottomY1 +
-        bottomY2
-      ) / 2;
+    const destBottom =
+      (bottomY1 + bottomY2) / 2;
 
 
     const destW =
@@ -1053,19 +827,18 @@ function drawScreenWarp(
         2,
         nextDestX -
         destX +
-        2
+        3
       );
 
-
     const destH =
-      bottomY -
+      destBottom -
       destY;
 
 
     const srcX =
       Math.floor(
         u1 *
-        tempWidth
+        tempCanvas.width
       );
 
 
@@ -1073,9 +846,9 @@ function drawScreenWarp(
       Math.max(
         1,
         Math.ceil(
-          tempWidth /
+          tempCanvas.width /
           strips
-        )
+        ) + 1
       );
 
 
@@ -1085,105 +858,22 @@ function drawScreenWarp(
       srcX,
       0,
       srcW,
-      tempHeight,
+      tempCanvas.height,
 
       destX,
       destY,
       destW,
       destH
     );
-
   }
 
 
-
   /*
-  スクリーン全体に
-  少し白っぽいかぶり
+  スクリーンの白浮き
   */
 
-  ctx.save();
-
-
-  ctx.globalAlpha =
-    0.055 +
-    Math.random() * 0.025;
-
-
   ctx.fillStyle =
-    "#d8dfdf";
-
-
-  ctx.beginPath();
-
-  ctx.moveTo(
-    TL.x,
-    TL.y
-  );
-
-  ctx.lineTo(
-    TR.x,
-    TR.y
-  );
-
-  ctx.lineTo(
-    BR.x,
-    BR.y
-  );
-
-  ctx.lineTo(
-    BL.x,
-    BL.y
-  );
-
-  ctx.closePath();
-
-  ctx.fill();
-
-
-  ctx.restore();
-
-}
-
-
-
-function drawVignette(w, h) {
-
-  const gradient =
-    ctx.createRadialGradient(
-
-      w * 0.5,
-      h * 0.43,
-      w * 0.18,
-
-      w * 0.5,
-      h * 0.48,
-      w * 0.78
-
-    );
-
-
-  gradient.addColorStop(
-    0,
-    "rgba(0,0,0,0)"
-  );
-
-
-  gradient.addColorStop(
-    0.62,
-    "rgba(0,0,0,0.12)"
-  );
-
-
-  gradient.addColorStop(
-    1,
-    "rgba(0,0,0,0.72)"
-  );
-
-
-  ctx.fillStyle =
-    gradient;
-
+    "rgba(210,220,225,0.045)";
 
   ctx.fillRect(
     0,
@@ -1192,67 +882,295 @@ function drawVignette(w, h) {
     h
   );
 
+
+  ctx.restore();
+
+
+  /*
+  スクリーンの縁を
+  あえてシャープにしすぎない
+  */
+
+  ctx.save();
+
+  ctx.strokeStyle =
+    "rgba(150,160,170,0.08)";
+
+  ctx.lineWidth = 7;
+
+  ctx.filter =
+    "blur(4px)";
+
+  ctx.beginPath();
+
+  ctx.moveTo(TL.x, TL.y);
+  ctx.lineTo(TR.x, TR.y);
+  ctx.lineTo(BR.x, BR.y);
+  ctx.lineTo(BL.x, BL.y);
+
+  ctx.closePath();
+  ctx.stroke();
+
+  ctx.restore();
 }
 
+
+function drawAudience(w, h, time) {
+
+  /*
+  客席をスクリーンへ少し重ねる。
+  前回より明確に見える位置。
+  */
+
+  ctx.save();
+
+
+  /*
+  輪郭にスクリーンの反射光
+  */
+
+  ctx.shadowColor =
+    "rgba(100,115,125,0.25)";
+
+  ctx.shadowBlur = 5;
+
+  ctx.fillStyle =
+    "rgba(0,0,0,0.97)";
+
+
+  /*
+  左
+  */
+
+  ctx.beginPath();
+
+  ctx.ellipse(
+    w * 0.075,
+    h * 0.80,
+    w * 0.075,
+    h * 0.105,
+    -0.08,
+    0,
+    Math.PI * 2
+  );
+
+  ctx.fill();
+
+
+  ctx.beginPath();
+
+  ctx.ellipse(
+    w * 0.08,
+    h * 0.99,
+    w * 0.16,
+    h * 0.19,
+    0,
+    0,
+    Math.PI * 2
+  );
+
+  ctx.fill();
+
+
+  /*
+  左中央
+  */
+
+  ctx.beginPath();
+
+  ctx.ellipse(
+    w * 0.31,
+    h * 0.90,
+    w * 0.055,
+    h * 0.075,
+    0,
+    0,
+    Math.PI * 2
+  );
+
+  ctx.fill();
+
+
+  /*
+  中央
+  */
+
+  ctx.beginPath();
+
+  ctx.ellipse(
+    w * 0.53,
+    h * 0.865,
+    w * 0.075,
+    h * 0.095,
+    0.03,
+    0,
+    Math.PI * 2
+  );
+
+  ctx.fill();
+
+
+  ctx.beginPath();
+
+  ctx.ellipse(
+    w * 0.53,
+    h * 1.01,
+    w * 0.15,
+    h * 0.16,
+    0,
+    0,
+    Math.PI * 2
+  );
+
+  ctx.fill();
+
+
+  /*
+  右
+  */
+
+  ctx.beginPath();
+
+  ctx.ellipse(
+    w * 0.91,
+    h * 0.79,
+    w * 0.085,
+    h * 0.11,
+    0.08,
+    0,
+    Math.PI * 2
+  );
+
+  ctx.fill();
+
+
+  ctx.beginPath();
+
+  ctx.ellipse(
+    w * 0.91,
+    h * 0.99,
+    w * 0.18,
+    h * 0.19,
+    0,
+    0,
+    Math.PI * 2
+  );
+
+  ctx.fill();
+
+
+  ctx.restore();
+}
+
+
+function drawVignette(w, h) {
+
+  const gradient =
+    ctx.createRadialGradient(
+      w * 0.52,
+      h * 0.43,
+      w * 0.20,
+
+      w * 0.52,
+      h * 0.48,
+      w * 0.77
+    );
+
+  gradient.addColorStop(
+    0,
+    "rgba(0,0,0,0)"
+  );
+
+  gradient.addColorStop(
+    0.57,
+    "rgba(0,0,0,0.08)"
+  );
+
+  gradient.addColorStop(
+    1,
+    "rgba(0,0,0,0.67)"
+  );
+
+  ctx.fillStyle = gradient;
+
+  ctx.fillRect(
+    0,
+    0,
+    w,
+    h
+  );
+}
+
+
+function drawNoise(w, h) {
+
+  ctx.save();
+
+  ctx.globalAlpha = 0.085;
+
+  for (
+    let i = 0;
+    i < 190;
+    i++
+  ) {
+
+    const gray =
+      Math.floor(
+        65 +
+        Math.random() * 150
+      );
+
+    ctx.fillStyle =
+      `rgb(${gray},${gray},${gray})`;
+
+    ctx.fillRect(
+      Math.random() * w,
+      Math.random() * h,
+      1 + Math.random() * 2,
+      1 + Math.random() * 2
+    );
+  }
+
+  ctx.restore();
+}
 
 
 processButton.addEventListener(
   "click",
   async function() {
 
-    if (!selectedFile) {
-      return;
-    }
-
+    if (!selectedFile) return;
 
     try {
 
-
-      if (
-        !window.MediaRecorder
-      ) {
-
+      if (!window.MediaRecorder) {
         throw new Error(
           "MediaRecorderに対応していません"
         );
-
       }
 
-
-      if (
-        !canvas.captureStream
-      ) {
-
+      if (!canvas.captureStream) {
         throw new Error(
           "Canvas captureStreamに対応していません"
         );
-
       }
 
 
-      processButton.disabled =
-        true;
+      processButton.disabled = true;
 
-
-      sourceVideo.controls =
-        false;
-
+      sourceVideo.controls = false;
 
       resultArea.style.display =
         "none";
 
-
       progressWrap.style.display =
         "block";
-
 
       progressBar.style.width =
         "0%";
 
-
       progressText.textContent =
         "準備中";
-
 
       status.textContent =
         "動画加工の準備をしています。";
@@ -1263,31 +1181,23 @@ processButton.addEventListener(
 
       sourceVideo.pause();
 
-      sourceVideo.currentTime =
-        0;
+      sourceVideo.currentTime = 0;
 
 
+      await new Promise(resolve => {
 
-      await new Promise(
-        resolve => {
+        if (
+          sourceVideo.readyState >= 1
+        ) {
 
-          if (
-            sourceVideo.readyState >= 1
-          ) {
+          resolve();
 
-            resolve();
+        } else {
 
-          }
-
-          else {
-
-            sourceVideo.onloadedmetadata =
-              resolve;
-
-          }
-
+          sourceVideo.onloadedmetadata =
+            resolve;
         }
-      );
+      });
 
 
       const isPortrait =
@@ -1295,33 +1205,16 @@ processButton.addEventListener(
         sourceVideo.videoWidth;
 
 
-
-      /*
-      縦動画なら縦
-      横動画なら横で出力
-      */
-
-
       if (isPortrait) {
 
-        canvas.width =
-          540;
+        canvas.width = 540;
+        canvas.height = 960;
 
-        canvas.height =
-          960;
+      } else {
 
+        canvas.width = 960;
+        canvas.height = 540;
       }
-
-      else {
-
-        canvas.width =
-          960;
-
-        canvas.height =
-          540;
-
-      }
-
 
 
       const canvasStream =
@@ -1332,64 +1225,42 @@ processButton.addEventListener(
         new MediaStream();
 
 
-
       canvasStream
         .getVideoTracks()
-        .forEach(
-          track => {
+        .forEach(track => {
 
-            finalStream.addTrack(
-              track
-            );
+          finalStream.addTrack(track);
 
-          }
-        );
-
+        });
 
 
       if (audioDestination) {
 
         audioDestination.stream
           .getAudioTracks()
-          .forEach(
-            track => {
+          .forEach(track => {
 
-              finalStream.addTrack(
-                track
-              );
+            finalStream.addTrack(track);
 
-            }
-          );
-
+          });
       }
-
 
 
       const mimeType =
         chooseMimeType();
 
 
-
       const recorderOptions =
         mimeType
         ? {
             mimeType: mimeType,
-
-            /*
-            わざと少し低めの
-            ビットレート
-            */
             videoBitsPerSecond:
-              1800000
-
+              1350000
           }
         : {
-
             videoBitsPerSecond:
-              1800000
-
+              1350000
           };
-
 
 
       const recorder =
@@ -1399,9 +1270,7 @@ processButton.addEventListener(
         );
 
 
-      const chunks =
-        [];
-
+      const chunks = [];
 
 
       recorder.ondataavailable =
@@ -1415,16 +1284,12 @@ processButton.addEventListener(
             chunks.push(
               event.data
             );
-
           }
-
         };
-
 
 
       recorder.onstop =
         function() {
-
 
           const actualType =
             recorder.mimeType ||
@@ -1436,8 +1301,7 @@ processButton.addEventListener(
             new Blob(
               chunks,
               {
-                type:
-                  actualType
+                type: actualType
               }
             );
 
@@ -1447,7 +1311,6 @@ processButton.addEventListener(
             URL.revokeObjectURL(
               outputURL
             );
-
           }
 
 
@@ -1466,9 +1329,7 @@ processButton.addEventListener(
 
 
           saveButton.download =
-            actualType.includes(
-              "mp4"
-            )
+            actualType.includes("mp4")
               ? "movie-leak.mp4"
               : "movie-leak.webm";
 
@@ -1495,27 +1356,21 @@ processButton.addEventListener(
 
           sourceVideo.controls =
             true;
-
         };
 
 
-
       function drawFrame() {
-
 
         if (
           sourceVideo.paused ||
           sourceVideo.ended
         ) {
-
           return;
-
         }
 
 
         const t =
           sourceVideo.currentTime;
-
 
         const w =
           canvas.width;
@@ -1524,15 +1379,13 @@ processButton.addEventListener(
           canvas.height;
 
 
-
         drawCinemaBackground(
           w,
-          h,
-          t
+          h
         );
 
 
-        drawScreenWarp(
+        drawWarpedVideo(
           sourceVideo,
           w,
           h,
@@ -1560,16 +1413,16 @@ processButton.addEventListener(
 
 
         /*
-        ごく薄い露出変動
+        スマホの露出が
+        ときどき一瞬迷う
         */
 
         if (
-          Math.random() <
-          0.08
+          Math.random() < 0.06
         ) {
 
           ctx.fillStyle =
-            "rgba(255,255,255,0.012)";
+            "rgba(255,255,255,0.015)";
 
           ctx.fillRect(
             0,
@@ -1577,14 +1430,10 @@ processButton.addEventListener(
             w,
             h
           );
-
         }
 
 
-
-        if (
-          sourceVideo.duration
-        ) {
+        if (sourceVideo.duration) {
 
           const percent =
             Math.min(
@@ -1605,16 +1454,13 @@ processButton.addEventListener(
             "加工中 " +
             percent +
             "%";
-
         }
 
 
         requestAnimationFrame(
           drawFrame
         );
-
       }
-
 
 
       sourceVideo.onended =
@@ -1626,11 +1472,8 @@ processButton.addEventListener(
           ) {
 
             recorder.stop();
-
           }
-
         };
-
 
 
       status.textContent =
@@ -1647,36 +1490,25 @@ processButton.addEventListener(
         drawFrame
       );
 
-
     }
-
 
     catch(error) {
 
-
-      console.error(
-        error
-      );
-
+      console.error(error);
 
       processButton.disabled =
         false;
 
-
       sourceVideo.controls =
         true;
-
 
       progressText.textContent =
         "エラー";
 
-
       status.textContent =
         "エラー：" +
         error.message;
-
     }
-
   }
 );
 
