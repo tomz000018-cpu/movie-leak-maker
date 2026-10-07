@@ -7,6 +7,7 @@
 <title>Movie Leak Maker</title>
 
 <style>
+
 *{
   box-sizing:border-box;
 }
@@ -14,7 +15,7 @@
 body{
   margin:0;
   background:#080808;
-  color:#fff;
+  color:white;
   font-family:
     -apple-system,
     BlinkMacSystemFont,
@@ -30,23 +31,23 @@ body{
 }
 
 h1{
-  text-align:center;
   margin:0 0 8px;
+  text-align:center;
   font-size:30px;
 }
 
 .subtitle{
+  margin-bottom:30px;
   text-align:center;
   color:#aaa;
   line-height:1.6;
-  margin-bottom:30px;
 }
 
 .panel{
-  background:#161616;
+  padding:20px;
   border:1px solid #333;
   border-radius:18px;
-  padding:20px;
+  background:#161616;
 }
 
 .file-label,
@@ -54,16 +55,16 @@ h1{
 .save-button{
   display:block;
   width:100%;
+  padding:16px;
   border:0;
   border-radius:12px;
-  padding:16px;
   font-size:17px;
   font-weight:bold;
   text-align:center;
 }
 
 .file-label{
-  background:#fff;
+  background:white;
   color:#111;
 }
 
@@ -85,17 +86,17 @@ h1{
 }
 
 .screen{
-  background:#000;
   padding:8px;
-  border-radius:10px;
   overflow:hidden;
+  border-radius:10px;
+  background:black;
 }
 
 video{
   display:block;
   width:100%;
   max-height:65vh;
-  background:#000;
+  background:black;
 }
 
 #workCanvas{
@@ -115,7 +116,7 @@ video{
 
 .save-button{
   margin-top:16px;
-  background:#fff;
+  background:white;
   color:#111;
   text-decoration:none;
 }
@@ -126,8 +127,8 @@ video{
   border-radius:10px;
   background:#101010;
   color:#ccc;
-  line-height:1.6;
   font-size:14px;
+  line-height:1.6;
 }
 
 .progress-wrap{
@@ -137,9 +138,9 @@ video{
 
 .progress-bg{
   height:12px;
-  background:#333;
-  border-radius:10px;
   overflow:hidden;
+  border-radius:10px;
+  background:#333;
 }
 
 .progress-bar{
@@ -162,8 +163,10 @@ video{
   font-size:12px;
   line-height:1.6;
 }
+
 </style>
 </head>
+
 
 <body>
 
@@ -192,10 +195,8 @@ video{
 まだ動画は選択されていません
 </div>
 
-<div
-  id="previewArea"
-  class="preview-area"
->
+
+<div id="previewArea" class="preview-area">
 
 <div class="screen">
 
@@ -207,12 +208,14 @@ video{
 
 </div>
 
+
 <button
   id="processButton"
   class="process-button"
 >
 流出映像風に加工する
 </button>
+
 
 <div
   id="progressWrap"
@@ -237,20 +240,16 @@ video{
 
 </div>
 
-<div
-  id="status"
-  class="status"
->
+
+<div id="status" class="status">
 動画を選んでください。
 </div>
 
 </div>
 
 
-<div
-  id="resultArea"
-  class="result-area"
->
+
+<div id="resultArea" class="result-area">
 
 <h2>完成動画</h2>
 
@@ -333,7 +332,7 @@ const ctx =
 
 
 /*
-映画館の一枚絵
+映画館全体
 */
 const sceneCanvas =
   document.createElement("canvas");
@@ -343,7 +342,7 @@ const sceneCtx =
 
 
 /*
-スクリーン映像
+スクリーン本体
 */
 const screenCanvas =
   document.createElement("canvas");
@@ -353,13 +352,33 @@ const screenCtx =
 
 
 /*
-強い光の滲み
+ぼかし用
+*/
+const blurCanvas =
+  document.createElement("canvas");
+
+const blurCtx =
+  blurCanvas.getContext("2d");
+
+
+/*
+ブルーム用
 */
 const bloomCanvas =
   document.createElement("canvas");
 
 const bloomCtx =
   bloomCanvas.getContext("2d");
+
+
+/*
+色収差用
+*/
+const colorCanvas =
+  document.createElement("canvas");
+
+const colorCtx =
+  colorCanvas.getContext("2d");
 
 
 let selectedFile = null;
@@ -554,48 +573,42 @@ async function prepareAudio(){
   const dry =
     audioContext.createGain();
 
-
   dry.gain.value =
-    0.68;
+    0.60;
 
 
   const wet =
     audioContext.createGain();
 
-
   wet.gain.value =
-    0.26;
+    0.32;
 
 
   const lowpass =
     audioContext.createBiquadFilter();
 
-
   lowpass.type =
     "lowpass";
 
-
   lowpass.frequency.value =
-    4500;
+    4200;
 
 
   const delay =
     audioContext.createDelay();
 
-
   delay.delayTime.value =
-    0.045;
+    0.055;
 
 
   const convolver =
     audioContext.createConvolver();
 
-
   convolver.buffer =
     makeImpulse(
       audioContext,
-      1.4,
-      2.9
+      1.55,
+      2.7
     );
 
 
@@ -647,16 +660,15 @@ async function prepareAudio(){
 
 
 /*
-映像を画面いっぱいへ。
-
-黒帯を作らず、
-多少切れてもスクリーンを満たす。
+動画をクロップしながら
+全面に表示
 */
 function drawVideoCover(
   targetCtx,
   video,
   width,
-  height
+  height,
+  extraScale = 1
 ){
 
   const videoRatio =
@@ -671,16 +683,15 @@ function drawVideoCover(
 
   let sourceX = 0;
   let sourceY = 0;
+
   let sourceW =
     video.videoWidth;
+
   let sourceH =
     video.videoHeight;
 
 
-  if(
-    videoRatio >
-    targetRatio
-  ){
+  if(videoRatio > targetRatio){
 
     sourceW =
       video.videoHeight *
@@ -708,6 +719,24 @@ function drawVideoCover(
   }
 
 
+  const dw =
+    width *
+    extraScale;
+
+
+  const dh =
+    height *
+    extraScale;
+
+
+  const dx =
+    (width-dw)/2;
+
+
+  const dy =
+    (height-dh)/2;
+
+
   targetCtx.drawImage(
     video,
 
@@ -716,19 +745,19 @@ function drawVideoCover(
     sourceW,
     sourceH,
 
-    0,
-    0,
-    width,
-    height
+    dx,
+    dy,
+    dw,
+    dh
   );
 }
 
 
 
 /*
-本物のピンぼけ映像を作る
+映画館のスクリーン画像を作る
 */
-function renderOutOfFocusScreen(
+function renderScreen(
   time
 ){
 
@@ -748,74 +777,152 @@ function renderOutOfFocusScreen(
   );
 
 
-  /*
-  ピントが数秒かけて
-  ゆっくり呼吸する
-  */
-
-  const focus1 =
-    (
-      Math.sin(
-        time * 0.43
-      ) + 1
-    ) / 2;
-
-
-  const focus2 =
-    (
-      Math.sin(
-        time * 0.17 + 1.8
-      ) + 1
-    ) / 2;
-
-
-  /*
-  今回はかなり強い。
-
-  約12〜22px。
-  */
-
-  const blurAmount =
-    12 +
-    focus1 * 7 +
-    focus2 * 3;
-
-
-  const brightness =
-    97 +
-    Math.sin(
-      time * 0.77
-    ) * 5 +
-    Math.sin(
-      time * 4.1
-    ) * 2;
-
-
-  /*
-  メイン映像
-  */
-
-  screenCtx.save();
-
-
-  screenCtx.filter =
-    `
-    brightness(${brightness}%)
-    contrast(84%)
-    saturate(67%)
-    blur(${blurAmount}px)
-    `;
-
-
-  drawVideoCover(
-    screenCtx,
-    sourceVideo,
+  blurCtx.clearRect(
+    0,
+    0,
     w,
     h
   );
 
 
-  screenCtx.restore();
+  bloomCtx.clearRect(
+    0,
+    0,
+    w,
+    h
+  );
+
+
+  colorCtx.clearRect(
+    0,
+    0,
+    w,
+    h
+  );
+
+
+
+  /*
+  ピントがかなり外れている。
+
+  今回は15〜29px。
+  */
+
+  const focusA =
+    (
+      Math.sin(
+        time * 0.38
+      ) + 1
+    ) / 2;
+
+
+  const focusB =
+    (
+      Math.sin(
+        time * 0.14 + 2.1
+      ) + 1
+    ) / 2;
+
+
+  const blur =
+    15 +
+    focusA * 9 +
+    focusB * 5;
+
+
+
+  /*
+  明るさもゆっくり暴れる
+  */
+
+  const brightness =
+    108 +
+    Math.sin(
+      time * 0.62
+    ) * 8 +
+    Math.sin(
+      time * 3.7
+    ) * 3;
+
+
+
+  /*
+  ベース映像
+  */
+
+  blurCtx.save();
+
+
+  blurCtx.filter =
+    `
+    brightness(${brightness}%)
+    contrast(79%)
+    saturate(64%)
+    blur(${blur}px)
+    `;
+
+
+  drawVideoCover(
+    blurCtx,
+    sourceVideo,
+    w,
+    h,
+    1.06
+  );
+
+
+  blurCtx.restore();
+
+
+
+  /*
+  Haze（ヘイズ）
+  白い霞
+  */
+
+  blurCtx.save();
+
+
+  const haze =
+    blurCtx.createLinearGradient(
+      0,
+      0,
+      w,
+      h
+    );
+
+
+  haze.addColorStop(
+    0,
+    "rgba(210,220,230,0.10)"
+  );
+
+
+  haze.addColorStop(
+    0.45,
+    "rgba(235,235,225,0.16)"
+  );
+
+
+  haze.addColorStop(
+    1,
+    "rgba(180,200,215,0.08)"
+  );
+
+
+  blurCtx.fillStyle =
+    haze;
+
+
+  blurCtx.fillRect(
+    0,
+    0,
+    w,
+    h
+  );
+
+
+  blurCtx.restore();
 
 
 
@@ -823,84 +930,69 @@ function renderOutOfFocusScreen(
   第一Bloom
   */
 
-  bloomCtx.clearRect(
-    0,
-    0,
-    w,
-    h
-  );
-
-
   bloomCtx.save();
 
 
   bloomCtx.filter =
-    "brightness(175%) blur(28px)";
+    "brightness(190%) blur(32px)";
 
 
   drawVideoCover(
     bloomCtx,
     sourceVideo,
     w,
-    h
+    h,
+    1.08
   );
 
 
   bloomCtx.restore();
-
-
-  screenCtx.save();
-
-
-  screenCtx.globalCompositeOperation =
-    "screen";
-
-
-  screenCtx.globalAlpha =
-    0.42;
-
-
-  screenCtx.drawImage(
-    bloomCanvas,
-    0,
-    0
-  );
-
-
-  screenCtx.restore();
 
 
 
   /*
   第二Bloom
-  白い部分をさらに大きく滲ませる
   */
-
-  bloomCtx.clearRect(
-    0,
-    0,
-    w,
-    h
-  );
-
 
   bloomCtx.save();
 
 
+  bloomCtx.globalAlpha =
+    0.55;
+
+
   bloomCtx.filter =
-    "brightness(230%) blur(52px)";
+    "brightness(260%) blur(62px)";
 
 
   drawVideoCover(
     bloomCtx,
     sourceVideo,
     w,
-    h
+    h,
+    1.10
   );
 
 
   bloomCtx.restore();
 
+
+
+  /*
+  ベース
+  */
+
+  screenCtx.drawImage(
+    blurCanvas,
+    0,
+    0
+  );
+
+
+
+  /*
+  Bloomを加算
+  */
 
   screenCtx.save();
 
@@ -910,7 +1002,7 @@ function renderOutOfFocusScreen(
 
 
   screenCtx.globalAlpha =
-    0.15;
+    0.44;
 
 
   screenCtx.drawImage(
@@ -925,10 +1017,106 @@ function renderOutOfFocusScreen(
 
 
   /*
-  スクリーンの縁そのものを
-  フェザー処理。
+  色収差
 
-  黒との境目をくっきり残さない。
+  赤と青を数pxずらす。
+  かなり弱く。
+  */
+
+  colorCtx.save();
+
+
+  colorCtx.globalCompositeOperation =
+    "source-over";
+
+
+  colorCtx.globalAlpha =
+    0.11;
+
+
+  colorCtx.filter =
+    "sepia(100%) saturate(500%) hue-rotate(-35deg)";
+
+
+  colorCtx.drawImage(
+    blurCanvas,
+    4,
+    1
+  );
+
+
+  colorCtx.restore();
+
+
+  colorCtx.save();
+
+
+  colorCtx.globalCompositeOperation =
+    "screen";
+
+
+  colorCtx.globalAlpha =
+    0.08;
+
+
+  colorCtx.filter =
+    "sepia(100%) saturate(500%) hue-rotate(170deg)";
+
+
+  colorCtx.drawImage(
+    blurCanvas,
+    -4,
+    -1
+  );
+
+
+  colorCtx.restore();
+
+
+  screenCtx.save();
+
+
+  screenCtx.globalCompositeOperation =
+    "screen";
+
+
+  screenCtx.drawImage(
+    colorCanvas,
+    0,
+    0
+  );
+
+
+  screenCtx.restore();
+
+
+
+  /*
+  画面全体に白っぽい膜
+  */
+
+  screenCtx.save();
+
+
+  screenCtx.fillStyle =
+    "rgba(215,220,215,0.095)";
+
+
+  screenCtx.fillRect(
+    0,
+    0,
+    w,
+    h
+  );
+
+
+  screenCtx.restore();
+
+
+
+  /*
+  スクリーンの端を
+  極端にぼかして消す
   */
 
   screenCtx.save();
@@ -939,18 +1127,18 @@ function renderOutOfFocusScreen(
 
 
   screenCtx.filter =
-    "blur(26px)";
+    "blur(38px)";
 
 
   screenCtx.fillStyle =
-    "rgba(255,255,255,1)";
+    "white";
 
 
   screenCtx.fillRect(
-    28,
-    28,
-    w-56,
-    h-56
+    46,
+    40,
+    w-92,
+    h-80
   );
 
 
@@ -960,9 +1148,9 @@ function renderOutOfFocusScreen(
 
 
 /*
-映画館空間を作る
+映画館の一枚を作る
 */
-function buildCinemaScene(
+function buildScene(
   time
 ){
 
@@ -982,8 +1170,13 @@ function buildCinemaScene(
   );
 
 
+  /*
+  完全な黒ではなく
+  暗いグレー
+  */
+
   sceneCtx.fillStyle =
-    "#000";
+    "rgb(5,6,7)";
 
 
   sceneCtx.fillRect(
@@ -994,38 +1187,45 @@ function buildCinemaScene(
   );
 
 
-  renderOutOfFocusScreen(
+  renderScreen(
     time
   );
 
 
 
   /*
-  スクリーンから周囲の闇へ漏れる光
+  スクリーン外へ漏れる
+  光
   */
 
   const roomGlow =
     sceneCtx.createRadialGradient(
 
-      w * 0.53,
-      h * 0.49,
-      w * 0.16,
+      w*0.52,
+      h*0.47,
+      w*0.10,
 
-      w * 0.53,
-      h * 0.49,
-      w * 0.90
+      w*0.52,
+      h*0.50,
+      w*0.95
     );
 
 
   roomGlow.addColorStop(
     0,
-    "rgba(130,145,160,0.10)"
+    "rgba(135,150,165,0.16)"
   );
 
 
   roomGlow.addColorStop(
-    0.44,
-    "rgba(65,72,80,0.055)"
+    0.38,
+    "rgba(85,95,105,0.075)"
+  );
+
+
+  roomGlow.addColorStop(
+    0.72,
+    "rgba(35,40,45,0.035)"
   );
 
 
@@ -1049,85 +1249,65 @@ function buildCinemaScene(
 
 
   /*
-  スクリーン本体。
+  斜めスクリーン
 
-  前回よりかなり大きくする。
-
-  左右端は原則として
-  撮影フレーム外へ追い出す。
+  端は完全に画面外へ。
   */
 
   sceneCtx.save();
 
 
   sceneCtx.translate(
-    w * 0.51,
-    h * 0.48
+    w*0.51,
+    h*0.48
   );
 
 
-  /*
-  映画館の座席から
-  少し斜めに撮影
-  */
-
   sceneCtx.rotate(
-    -0.045
+    -0.048
   );
 
 
   sceneCtx.transform(
-
     1,
-
-    -0.025,
-
-    0.10,
-
+    -0.022,
+    0.115,
     1,
-
     0,
-
     0
   );
 
 
-  /*
-  大胆にOverscan
-  */
-
   const screenWidth =
-    w * 1.34;
+    w * 1.46;
 
 
   const screenHeight =
-    h * 1.11;
+    h * 1.18;
 
 
 
   /*
-  スクリーン周囲の
-  巨大な光の滲み
+  超大型Glow
   */
 
   sceneCtx.save();
 
 
   sceneCtx.globalAlpha =
-    0.30;
+    0.26;
 
 
   sceneCtx.filter =
-    "blur(45px) brightness(150%)";
+    "blur(65px) brightness(175%)";
 
 
   sceneCtx.drawImage(
-
     screenCanvas,
 
-    -screenWidth / 2,
+    -screenWidth/2,
 
-    -screenHeight / 2,
+    -screenHeight/2,
 
     screenWidth,
 
@@ -1140,26 +1320,22 @@ function buildCinemaScene(
 
 
   /*
-  本体も最後にさらにぼかす。
-
-  これでスクリーン境界も
-  光学的に柔らかくする。
+  メインスクリーン
   */
 
   sceneCtx.save();
 
 
   sceneCtx.filter =
-    "blur(5px)";
+    "blur(7px)";
 
 
   sceneCtx.drawImage(
-
     screenCanvas,
 
-    -screenWidth / 2,
+    -screenWidth/2,
 
-    -screenHeight / 2,
+    -screenHeight/2,
 
     screenWidth,
 
@@ -1168,6 +1344,56 @@ function buildCinemaScene(
 
 
   sceneCtx.restore();
+
+
+  sceneCtx.restore();
+
+
+
+  /*
+  レンズの霞
+  */
+
+  sceneCtx.save();
+
+
+  const lensHaze =
+    sceneCtx.createLinearGradient(
+      0,
+      0,
+      w,
+      h
+    );
+
+
+  lensHaze.addColorStop(
+    0,
+    "rgba(160,175,190,0.055)"
+  );
+
+
+  lensHaze.addColorStop(
+    0.5,
+    "rgba(220,220,205,0.075)"
+  );
+
+
+  lensHaze.addColorStop(
+    1,
+    "rgba(120,140,160,0.035)"
+  );
+
+
+  sceneCtx.fillStyle =
+    lensHaze;
+
+
+  sceneCtx.fillRect(
+    0,
+    0,
+    w,
+    h
+  );
 
 
   sceneCtx.restore();
@@ -1181,13 +1407,13 @@ function buildCinemaScene(
   const vignette =
     sceneCtx.createRadialGradient(
 
-      w * 0.52,
-      h * 0.46,
-      w * 0.28,
+      w*0.52,
+      h*0.47,
+      w*0.27,
 
-      w * 0.52,
-      h * 0.49,
-      w * 0.86
+      w*0.52,
+      h*0.50,
+      w*0.87
     );
 
 
@@ -1198,14 +1424,14 @@ function buildCinemaScene(
 
 
   vignette.addColorStop(
-    0.67,
-    "rgba(0,0,0,0.11)"
+    0.68,
+    "rgba(0,0,0,0.10)"
   );
 
 
   vignette.addColorStop(
     1,
-    "rgba(0,0,0,0.80)"
+    "rgba(0,0,0,0.76)"
   );
 
 
@@ -1224,9 +1450,9 @@ function buildCinemaScene(
 
 
 /*
-自然なカメラ手ブレ
+カメラ本体の手ブレ
 */
-function drawFinalCamera(
+function drawCamera(
   time
 ){
 
@@ -1238,55 +1464,61 @@ function drawFinalCamera(
     canvas.height;
 
 
-  /*
-  微細な震え
-  */
 
   const microX =
     Math.sin(
-      time * 8.1
-    ) * 2.2 +
+      time*8.3
+    ) * 2.5
+    +
     Math.sin(
-      time * 16.4
-    ) * 0.9;
+      time*16.9
+    ) * 1.0;
 
 
   const microY =
     Math.cos(
-      time * 7.0
-    ) * 1.9 +
+      time*7.1
+    ) * 2.0
+    +
     Math.sin(
-      time * 13.7
-    ) * 0.8;
+      time*13.5
+    ) * 0.9;
 
-
-  /*
-  手首のゆっくりしたズレ
-  */
 
   const driftX =
     Math.sin(
-      time * 0.42
-    ) * 5.5;
+      time*0.39
+    ) * 6.5;
 
 
   const driftY =
     Math.cos(
-      time * 0.31
-    ) * 3.8;
+      time*0.28
+    ) * 4.2;
 
-
-  /*
-  わずかな傾き
-  */
 
   const angle =
     Math.sin(
-      time * 0.68
-    ) * 0.0055 +
+      time*0.63
+    ) * 0.0062
+    +
     Math.sin(
-      time * 2.9
-    ) * 0.0014;
+      time*2.8
+    ) * 0.0018;
+
+
+
+  /*
+  ゆっくりズームが
+  微妙に前後
+  */
+
+  const breathingZoom =
+    1.055 +
+    Math.sin(
+      time*0.24
+    ) * 0.008;
+
 
 
   ctx.fillStyle =
@@ -1313,6 +1545,7 @@ function drawFinalCamera(
     h/2 +
     microY +
     driftY
+
   );
 
 
@@ -1321,15 +1554,9 @@ function drawFinalCamera(
   );
 
 
-  /*
-  手ブレで黒い端が
-  見えないように
-  少しだけ拡大
-  */
-
   ctx.scale(
-    1.045,
-    1.045
+    breathingZoom,
+    breathingZoom
   );
 
 
@@ -1344,6 +1571,7 @@ function drawFinalCamera(
     w,
 
     h
+
   );
 
 
@@ -1462,7 +1690,6 @@ processButton.addEventListener(
       sceneCanvas.width =
         canvas.width;
 
-
       sceneCanvas.height =
         canvas.height;
 
@@ -1470,17 +1697,30 @@ processButton.addEventListener(
       screenCanvas.width =
         canvas.width;
 
-
       screenCanvas.height =
+        canvas.height;
+
+
+      blurCanvas.width =
+        canvas.width;
+
+      blurCanvas.height =
         canvas.height;
 
 
       bloomCanvas.width =
         canvas.width;
 
-
       bloomCanvas.height =
         canvas.height;
+
+
+      colorCanvas.width =
+        canvas.width;
+
+      colorCanvas.height =
+        canvas.height;
+
 
 
       const canvasStream =
@@ -1528,12 +1768,13 @@ processButton.addEventListener(
           mimeType
           ?{
             mimeType,
+
             videoBitsPerSecond:
-              4200000
+              4500000
           }
           :{
             videoBitsPerSecond:
-              4200000
+              4500000
           }
         );
 
@@ -1647,12 +1888,12 @@ processButton.addEventListener(
           sourceVideo.currentTime;
 
 
-        buildCinemaScene(
+        buildScene(
           t
         );
 
 
-        drawFinalCamera(
+        drawCamera(
           t
         );
 
@@ -1701,7 +1942,7 @@ processButton.addEventListener(
 
 
       status.textContent =
-        "強いピンぼけ・光のにじみ・手ブレを加えています。";
+        "映画館スクリーンのピンぼけ・光漏れ・色ズレを強く加工しています。";
 
 
       recorder.start(
