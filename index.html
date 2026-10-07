@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Movie Leak Maker</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: #090909;
+      color: #ffffff;
+      font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "Helvetica Neue",
+        Arial,
+        sans-serif;
+    }
+
+    .container {
+      width: min(92%, 800px);
+      margin: 0 auto;
+      padding: 40px 0 80px;
+    }
+
+    h1 {
+      text-align: center;
+      font-size: 30px;
+      margin-bottom: 8px;
+    }
+
+    .subtitle {
+      text-align: center;
+      color: #aaaaaa;
+      margin-bottom: 35px;
+      line-height: 1.6;
+    }
+
+    .panel {
+      background: #161616;
+      border: 1px solid #333333;
+      border-radius: 18px;
+      padding: 22px;
+    }
+
+    .file-label {
+      display: block;
+      width: 100%;
+      background: #ffffff;
+      color: #111111;
+      font-weight: bold;
+      text-align: center;
+      padding: 16px;
+      border-radius: 12px;
+      cursor: pointer;
+      font-size: 17px;
+    }
+
+    #videoInput {
+      display: none;
+    }
+
+    #fileName {
+      text-align: center;
+      color: #aaaaaa;
+      margin-top: 14px;
+      word-break: break-all;
+    }
+
+    .preview-area {
+      margin-top: 25px;
+      display: none;
+    }
+
+    .screen {
+      background: #000000;
+      padding: 8px;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow:
+        0 0 40px rgba(255,255,255,0.08);
+    }
+
+    video {
+      display: block;
+      width: 100%;
+      max-height: 60vh;
+      background: #000000;
+      border-radius: 6px;
+
+      filter:
+        brightness(0.85)
+        contrast(0.9)
+        saturate(0.72)
+        blur(0.4px);
+    }
+
+    .status {
+      margin-top: 20px;
+      padding: 15px;
+      background: #101010;
+      border-radius: 10px;
+      color: #cccccc;
+      line-height: 1.7;
+      font-size: 14px;
+    }
+
+    .next-button {
+      width: 100%;
+      margin-top: 20px;
+      border: 0;
+      border-radius: 12px;
+      padding: 16px;
+      font-size: 17px;
+      font-weight: bold;
+      background: #444444;
+      color: #999999;
+    }
+
+    .notice {
+      margin-top: 25px;
+      color: #777777;
+      font-size: 12px;
+      text-align: center;
+      line-height: 1.6;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="container">
+
+    <h1>Movie Leak Maker</h1>
+
+    <div class="subtitle">
+      普通の動画を<br>
+      「海外の試写会で撮影された流出映像風」に加工します
+    </div>
+
+    <div class="panel">
+
+      <label class="file-label" for="videoInput">
+        動画を選ぶ
+      </label>
+
+      <input
+        type="file"
+        id="videoInput"
+        accept="video/*"
+      >
+
+      <div id="fileName">
+        まだ動画は選択されていません
+      </div>
+
+      <div
+        class="preview-area"
+        id="previewArea"
+      >
+
+        <div class="screen">
+          <video
+            id="videoPreview"
+            controls
+            playsinline
+          ></video>
+        </div>
+
+        <div class="status" id="status">
+          動画を読み込みました。<br>
+          次の段階で、手ブレ・ぼかし・映画館音響・観客の歓声を追加します。
+        </div>
+
+        <button
+          class="next-button"
+          type="button"
+          disabled
+        >
+          流出映像を作る（次の段階で実装）
+        </button>
+
+      </div>
+
+    </div>
+
+    <div class="notice">
+      動画は現在、あなたの端末内だけで読み込んでいます。
+    </div>
+
+  </div>
+
+
+<script>
+
+const videoInput =
+  document.getElementById("videoInput");
+
+const videoPreview =
+  document.getElementById("videoPreview");
+
+const previewArea =
+  document.getElementById("previewArea");
+
+const fileName =
+  document.getElementById("fileName");
+
+
+videoInput.addEventListener(
+  "change",
+  function(event) {
+
+    const file =
+      event.target.files[0];
+
+    if (!file) {
+      return;
+    }
+
+    fileName.textContent =
+      file.name;
+
+    const videoURL =
+      URL.createObjectURL(file);
+
+    videoPreview.src =
+      videoURL;
+
+    previewArea.style.display =
+      "block";
+  }
+);
+
+</script>
+
+</body>
+</html>
