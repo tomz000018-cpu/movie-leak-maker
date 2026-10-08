@@ -2490,4 +2490,1208 @@ function renderScreen(
   );
 
 
- 
+  bloomCtx.restore();
+
+
+
+  bloomCtx.save();
+
+
+  bloomCtx.globalAlpha =
+    0.55;
+
+
+  bloomCtx.filter =
+    "brightness(260%) blur(62px)";
+
+
+  drawVideoCover(
+
+    bloomCtx,
+
+    sourceVideo,
+
+    w,
+
+    h,
+
+    1.10
+
+  );
+
+
+  bloomCtx.restore();
+
+
+
+  screenCtx.drawImage(
+    blurCanvas,
+    0,
+    0
+  );
+
+
+
+  screenCtx.save();
+
+
+  screenCtx
+    .globalCompositeOperation =
+      "screen";
+
+
+  screenCtx.globalAlpha =
+    0.44;
+
+
+  screenCtx.drawImage(
+    bloomCanvas,
+    0,
+    0
+  );
+
+
+  screenCtx.restore();
+
+
+
+  colorCtx.save();
+
+
+  colorCtx.globalAlpha =
+    0.11;
+
+
+  colorCtx.filter =
+    "sepia(100%) saturate(500%) hue-rotate(-35deg)";
+
+
+  colorCtx.drawImage(
+    blurCanvas,
+    4,
+    1
+  );
+
+
+  colorCtx.restore();
+
+
+
+  colorCtx.save();
+
+
+  colorCtx
+    .globalCompositeOperation =
+      "screen";
+
+
+  colorCtx.globalAlpha =
+    0.08;
+
+
+  colorCtx.filter =
+    "sepia(100%) saturate(500%) hue-rotate(170deg)";
+
+
+  colorCtx.drawImage(
+    blurCanvas,
+    -4,
+    -1
+  );
+
+
+  colorCtx.restore();
+
+
+
+  screenCtx.save();
+
+
+  screenCtx
+    .globalCompositeOperation =
+      "screen";
+
+
+  screenCtx.drawImage(
+    colorCanvas,
+    0,
+    0
+  );
+
+
+  screenCtx.restore();
+
+
+
+  screenCtx.fillStyle =
+    "rgba(215,220,215,0.095)";
+
+
+  screenCtx.fillRect(
+    0,
+    0,
+    w,
+    h
+  );
+
+
+
+  screenCtx.save();
+
+
+  screenCtx
+    .globalCompositeOperation =
+      "destination-in";
+
+
+  screenCtx.filter =
+    "blur(38px)";
+
+
+  screenCtx.fillStyle =
+    "white";
+
+
+  screenCtx.fillRect(
+    46,
+    40,
+    w -
+    92,
+    h -
+    80
+  );
+
+
+  screenCtx.restore();
+
+}
+
+
+
+
+
+function buildScene(
+  time
+){
+
+
+  const w =
+    sceneCanvas.width;
+
+
+  const h =
+    sceneCanvas.height;
+
+
+
+  sceneCtx.clearRect(
+    0,
+    0,
+    w,
+    h
+  );
+
+
+  sceneCtx.fillStyle =
+    "rgb(5,6,7)";
+
+
+  sceneCtx.fillRect(
+    0,
+    0,
+    w,
+    h
+  );
+
+
+
+  renderScreen(
+    time
+  );
+
+
+
+  const roomGlow =
+    sceneCtx
+      .createRadialGradient(
+
+        w * 0.52,
+        h * 0.47,
+        w * 0.10,
+
+        w * 0.52,
+        h * 0.50,
+        w * 0.95
+
+      );
+
+
+  roomGlow.addColorStop(
+    0,
+    "rgba(135,150,165,0.16)"
+  );
+
+
+  roomGlow.addColorStop(
+    0.38,
+    "rgba(85,95,105,0.075)"
+  );
+
+
+  roomGlow.addColorStop(
+    0.72,
+    "rgba(35,40,45,0.035)"
+  );
+
+
+  roomGlow.addColorStop(
+    1,
+    "rgba(0,0,0,0)"
+  );
+
+
+  sceneCtx.fillStyle =
+    roomGlow;
+
+
+  sceneCtx.fillRect(
+    0,
+    0,
+    w,
+    h
+  );
+
+
+
+  sceneCtx.save();
+
+
+  sceneCtx.translate(
+    w * 0.51,
+    h * 0.48
+  );
+
+
+  sceneCtx.rotate(
+    -0.048
+  );
+
+
+  sceneCtx.transform(
+
+    1,
+
+    -0.022,
+
+    0.115,
+
+    1,
+
+    0,
+
+    0
+
+  );
+
+
+
+  const screenWidth =
+    w *
+    1.46;
+
+
+  const screenHeight =
+    h *
+    1.18;
+
+
+
+  sceneCtx.save();
+
+
+  sceneCtx.globalAlpha =
+    0.26;
+
+
+  sceneCtx.filter =
+    "blur(65px) brightness(175%)";
+
+
+  sceneCtx.drawImage(
+
+    screenCanvas,
+
+    -screenWidth /
+    2,
+
+    -screenHeight /
+    2,
+
+    screenWidth,
+
+    screenHeight
+
+  );
+
+
+  sceneCtx.restore();
+
+
+
+  sceneCtx.save();
+
+
+  sceneCtx.filter =
+    "blur(7px)";
+
+
+  sceneCtx.drawImage(
+
+    screenCanvas,
+
+    -screenWidth /
+    2,
+
+    -screenHeight /
+    2,
+
+    screenWidth,
+
+    screenHeight
+
+  );
+
+
+  sceneCtx.restore();
+
+
+  sceneCtx.restore();
+
+
+
+  const lensHaze =
+    sceneCtx
+      .createLinearGradient(
+        0,
+        0,
+        w,
+        h
+      );
+
+
+  lensHaze.addColorStop(
+    0,
+    "rgba(160,175,190,0.055)"
+  );
+
+
+  lensHaze.addColorStop(
+    0.5,
+    "rgba(220,220,205,0.075)"
+  );
+
+
+  lensHaze.addColorStop(
+    1,
+    "rgba(120,140,160,0.035)"
+  );
+
+
+  sceneCtx.fillStyle =
+    lensHaze;
+
+
+  sceneCtx.fillRect(
+    0,
+    0,
+    w,
+    h
+  );
+
+
+
+  const vignette =
+    sceneCtx
+      .createRadialGradient(
+
+        w * 0.52,
+        h * 0.47,
+        w * 0.27,
+
+        w * 0.52,
+        h * 0.50,
+        w * 0.87
+
+      );
+
+
+  vignette.addColorStop(
+    0,
+    "rgba(0,0,0,0)"
+  );
+
+
+  vignette.addColorStop(
+    0.68,
+    "rgba(0,0,0,0.10)"
+  );
+
+
+  vignette.addColorStop(
+    1,
+    "rgba(0,0,0,0.76)"
+  );
+
+
+  sceneCtx.fillStyle =
+    vignette;
+
+
+  sceneCtx.fillRect(
+    0,
+    0,
+    w,
+    h
+  );
+
+}
+
+
+
+
+
+function drawCamera(
+  time
+){
+
+
+  const w =
+    canvas.width;
+
+
+  const h =
+    canvas.height;
+
+
+
+  const microX =
+    Math.sin(
+      time *
+      8.3
+    ) *
+    2.5
+    +
+    Math.sin(
+      time *
+      16.9
+    ) *
+    1.0;
+
+
+  const microY =
+    Math.cos(
+      time *
+      7.1
+    ) *
+    2.0
+    +
+    Math.sin(
+      time *
+      13.5
+    ) *
+    0.9;
+
+
+
+  const driftX =
+    Math.sin(
+      time *
+      0.39
+    ) *
+    6.5;
+
+
+  const driftY =
+    Math.cos(
+      time *
+      0.28
+    ) *
+    4.2;
+
+
+
+  const angle =
+    Math.sin(
+      time *
+      0.63
+    ) *
+    0.0062
+    +
+    Math.sin(
+      time *
+      2.8
+    ) *
+    0.0018;
+
+
+
+  const breathingZoom =
+    1.055
+    +
+    Math.sin(
+      time *
+      0.24
+    ) *
+    0.008;
+
+
+
+  ctx.fillStyle =
+    "#000";
+
+
+  ctx.fillRect(
+    0,
+    0,
+    w,
+    h
+  );
+
+
+  ctx.save();
+
+
+  ctx.translate(
+
+    w /
+    2
+    +
+    microX
+    +
+    driftX,
+
+    h /
+    2
+    +
+    microY
+    +
+    driftY
+
+  );
+
+
+  ctx.rotate(
+    angle
+  );
+
+
+  ctx.scale(
+    breathingZoom,
+    breathingZoom
+  );
+
+
+  ctx.drawImage(
+
+    sceneCanvas,
+
+    -w /
+    2,
+
+    -h /
+    2,
+
+    w,
+
+    h
+
+  );
+
+
+  ctx.restore();
+
+}
+
+
+
+
+
+processButton.addEventListener(
+
+  "click",
+
+  async function(){
+
+
+    if(
+      !selectedFile
+    ){
+
+      return;
+    }
+
+
+
+    try{
+
+
+      if(
+        !window.MediaRecorder
+      ){
+
+        throw new Error(
+          "MediaRecorderに対応していません"
+        );
+
+      }
+
+
+      if(
+        !canvas.captureStream
+      ){
+
+        throw new Error(
+          "Canvas captureStreamに対応していません"
+        );
+
+      }
+
+
+
+      stopAudienceSounds();
+
+
+
+      processButton.disabled =
+        true;
+
+
+      sourceVideo.controls =
+        false;
+
+
+      resultArea.style.display =
+        "none";
+
+
+      progressWrap.style.display =
+        "block";
+
+
+      progressBar.style.width =
+        "0%";
+
+
+      progressText.textContent =
+        "準備中";
+
+
+      status.textContent =
+        "映画館映像と観客音を準備しています。";
+
+
+
+      await prepareAudio();
+
+
+
+      sourceVideo.pause();
+
+
+      sourceVideo.currentTime =
+        0;
+
+
+
+      await new Promise(
+
+        resolve => {
+
+
+          if(
+            sourceVideo.readyState >=
+            1
+          ){
+
+
+            resolve();
+
+
+          }else{
+
+
+            sourceVideo.onloadedmetadata =
+              resolve;
+
+          }
+
+        }
+
+      );
+
+
+
+      const portrait =
+        sourceVideo.videoHeight >
+        sourceVideo.videoWidth;
+
+
+
+      if(
+        portrait
+      ){
+
+
+        canvas.width =
+          540;
+
+
+        canvas.height =
+          960;
+
+
+      }else{
+
+
+        canvas.width =
+          960;
+
+
+        canvas.height =
+          540;
+
+      }
+
+
+
+      sceneCanvas.width =
+        canvas.width;
+
+
+      sceneCanvas.height =
+        canvas.height;
+
+
+
+      screenCanvas.width =
+        canvas.width;
+
+
+      screenCanvas.height =
+        canvas.height;
+
+
+
+      blurCanvas.width =
+        canvas.width;
+
+
+      blurCanvas.height =
+        canvas.height;
+
+
+
+      bloomCanvas.width =
+        canvas.width;
+
+
+      bloomCanvas.height =
+        canvas.height;
+
+
+
+      colorCanvas.width =
+        canvas.width;
+
+
+      colorCanvas.height =
+        canvas.height;
+
+
+
+      const canvasStream =
+        canvas.captureStream(
+          30
+        );
+
+
+
+      const finalStream =
+        new MediaStream();
+
+
+
+      canvasStream
+        .getVideoTracks()
+        .forEach(
+          track => {
+
+
+            finalStream
+              .addTrack(
+                track
+              );
+
+
+          }
+        );
+
+
+
+      if(
+        audioDestination
+      ){
+
+
+        audioDestination.stream
+          .getAudioTracks()
+          .forEach(
+            track => {
+
+
+              finalStream
+                .addTrack(
+                  track
+                );
+
+
+            }
+          );
+
+      }
+
+
+
+      const mimeType =
+        chooseMimeType();
+
+
+
+      const recorder =
+        new MediaRecorder(
+
+          finalStream,
+
+          mimeType
+          ?
+            {
+
+              mimeType,
+
+              videoBitsPerSecond:
+                4500000
+
+            }
+          :
+            {
+
+              videoBitsPerSecond:
+                4500000
+
+            }
+
+        );
+
+
+
+      const chunks =
+        [];
+
+
+
+      recorder.ondataavailable =
+        event => {
+
+
+          if(
+            event.data &&
+            event.data.size >
+            0
+          ){
+
+
+            chunks.push(
+              event.data
+            );
+
+
+          }
+
+        };
+
+
+
+      recorder.onstop =
+        () => {
+
+
+          const actualType =
+            recorder.mimeType
+            ||
+            mimeType
+            ||
+            "video/mp4";
+
+
+
+          const blob =
+            new Blob(
+
+              chunks,
+
+              {
+                type:
+                  actualType
+              }
+
+            );
+
+
+
+          if(
+            outputURL
+          ){
+
+
+            URL.revokeObjectURL(
+              outputURL
+            );
+
+
+          }
+
+
+
+          outputURL =
+            URL.createObjectURL(
+              blob
+            );
+
+
+
+          resultVideo.src =
+            outputURL;
+
+
+
+          saveButton.href =
+            outputURL;
+
+
+
+          saveButton.download =
+            actualType
+              .includes(
+                "mp4"
+              )
+            ?
+              "movie-leak.mp4"
+            :
+              "movie-leak.webm";
+
+
+
+          resultArea.style.display =
+            "block";
+
+
+
+          progressBar.style.width =
+            "100%";
+
+
+
+          progressText.textContent =
+            "完成";
+
+
+
+          status.textContent =
+            "観客歓声入りの動画が完成しました。";
+
+
+
+          processButton.disabled =
+            false;
+
+
+
+          sourceVideo.controls =
+            true;
+
+        };
+
+
+
+      function drawFrame(){
+
+
+        if(
+          sourceVideo.paused
+          ||
+          sourceVideo.ended
+        ){
+
+
+          return;
+
+        }
+
+
+
+        const time =
+          sourceVideo.currentTime;
+
+
+
+        buildScene(
+          time
+        );
+
+
+
+        drawCamera(
+          time
+        );
+
+
+
+        if(
+          sourceVideo.duration
+        ){
+
+
+          const percent =
+            Math.min(
+
+              100,
+
+              Math.round(
+
+                sourceVideo.currentTime
+                /
+                sourceVideo.duration
+                *
+                100
+
+              )
+
+            );
+
+
+
+          progressBar.style.width =
+            percent +
+            "%";
+
+
+
+          progressText.textContent =
+            "加工中 "
+            +
+            percent
+            +
+            "%";
+
+        }
+
+
+
+        requestAnimationFrame(
+          drawFrame
+        );
+
+      }
+
+
+
+      sourceVideo.onended =
+        () => {
+
+
+          if(
+            recorder.state !==
+            "inactive"
+          ){
+
+
+            recorder.stop();
+
+
+          }
+
+        };
+
+
+
+      status.textContent =
+        "劇場音響・観客のざわめき・歓声・拍手を合成しています。";
+
+
+
+      recorder.start(
+        500
+      );
+
+
+
+      await sourceVideo.play();
+
+
+
+      scheduleAudience(
+        sourceVideo.duration
+      );
+
+
+
+      requestAnimationFrame(
+        drawFrame
+      );
+
+
+    }
+    catch(error){
+
+
+      console.error(
+        error
+      );
+
+
+      stopAudienceSounds();
+
+
+
+      processButton.disabled =
+        false;
+
+
+
+      sourceVideo.controls =
+        true;
+
+
+
+      progressText.textContent =
+        "エラー";
+
+
+
+      status.textContent =
+        "エラー："
+        +
+        error.message;
+
+    }
+
+  }
+
+);
+
+</script>
+
+
+</body>
+
+</html>
