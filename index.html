@@ -8,7 +8,7 @@
 
 <meta name="viewport" content="width=device-width,initial-scale=1">
 
-<title>Movie Leak Maker V16</title>
+<title>Movie Leak Maker V17</title>
 
 <style>
 
@@ -26,7 +26,9 @@ body{
 
 .container{
 
- width:min(92%,800px);margin:auto;padding:35px 0 80px
+ width:min(92%,800px);margin:auto;
+
+ padding:35px 0 80px
 
 }
 
@@ -62,13 +64,13 @@ h1{text-align:center;margin:0 0 8px}
 
 .file-label.secondary{
 
- background:#343434;color:#fff;margin-top:20px
+ margin-top:20px;background:#343434;color:#fff
 
 }
 
 .file-label.optional{
 
- background:#30353a;color:#fff;margin-top:18px
+ margin-top:18px;background:#303b42;color:#fff
 
 }
 
@@ -92,17 +94,17 @@ h1{text-align:center;margin:0 0 8px}
 
 .screen{
 
- padding:8px;border-radius:10px;background:#000;
+ padding:8px;border-radius:10px;
 
- overflow:hidden
+ background:#000;overflow:hidden
 
 }
 
 video{
 
- display:block;width:100%;max-height:65vh;
+ display:block;width:100%;
 
- background:#000
+ max-height:65vh;background:#000
 
 }
 
@@ -156,7 +158,7 @@ input[type=range]{
 
 }
 
-.progress-bar{height:100%;width:0;background:white}
+.progress-bar{height:100%;width:0;background:#fff}
 
 .progress-text{
 
@@ -206,7 +208,9 @@ input[type=range]{
 
 .seek-row{
 
- display:flex;gap:10px;align-items:center;margin-top:10px
+ display:flex;gap:10px;
+
+ align-items:center;margin-top:10px
 
 }
 
@@ -240,9 +244,9 @@ input[type=range]{
 
  font-size:13px;background:#363636;
 
- border:2px solid transparent;border-radius:9px;
+ border:2px solid transparent;
 
- cursor:pointer
+ border-radius:9px;cursor:pointer
 
 }
 
@@ -256,7 +260,7 @@ input[type=range]{
 
 .add-button{
 
- background:#fff;color:#111;margin-top:16px
+ margin-top:16px;background:#fff;color:#111
 
 }
 
@@ -284,9 +288,11 @@ input[type=range]{
 
 .marker-time{
 
- min-width:64px;padding:8px 4px;color:#fff;
+ min-width:64px;padding:8px 4px;
 
- font-weight:bold;font-variant-numeric:tabular-nums;
+ color:#fff;font-weight:bold;
+
+ font-variant-numeric:tabular-nums;
 
  background:none;border:0;text-align:left
 
@@ -314,11 +320,27 @@ input[type=range]{
 
 }
 
-.new-feature{
+.voice-test{
 
- color:#ddd;font-size:12px;line-height:1.7;
+ display:none;width:100%;
 
- margin-top:10px
+ padding:12px;margin-top:12px;
+
+ border:1px solid #777;border-radius:10px;
+
+ background:#292929;color:#fff;
+
+ font-size:14px
+
+}
+
+#voicePlayers{
+
+ position:absolute;
+
+ width:1px;height:1px;
+
+ overflow:hidden;left:-9999px
 
 }
 
@@ -342,13 +364,13 @@ input[type=range]{
 
 <div class="version">
 
-Version 16 — 超大歓声・突然終了・人声対応
+Version 17 — 動画から観客の声を直接追加
 
 </div>
 
 <div class="panel">
 
-<label for="videoInput" class="file-label">
+<label class="file-label" for="videoInput">
 
 ① 動画を選ぶ
 
@@ -372,7 +394,7 @@ Version 16 — 超大歓声・突然終了・人声対応
 
 </div>
 
-<label for="audioInput" class="file-label secondary">
+<label class="file-label secondary" for="audioInput">
 
 ② 観客音をまとめて選ぶ（7本）
 
@@ -404,9 +426,9 @@ Version 16 — 超大歓声・突然終了・人声対応
 
 </div>
 
-<label for="voiceInput" class="file-label optional">
+<label class="file-label optional" for="voiceInput">
 
-＋ 英語の観客の声を追加（任意）
+＋ 観客の声を追加（MP4・MOV・音声）
 
 </label>
 
@@ -418,7 +440,7 @@ Version 16 — 超大歓声・突然終了・人声対応
 
  type="file"
 
- accept="audio/*,.mp3,.m4a,.wav,.ogg"
+ accept="video/*,audio/*,.mp4,.mov,.m4v,.mp3,.m4a,.wav"
 
  multiple
 
@@ -426,19 +448,33 @@ Version 16 — 超大歓声・突然終了・人声対応
 
 <div class="filename" id="voiceNames">
 
-まだ英語の声は追加されていません
+まだ追加の声は選択されていません
 
 </div>
 
-<div class="new-feature">
+<div class="help">
 
-「Oh my God!」「No way!」などの録音がある場合、
+iPadの写真アプリに保存した動画も選べます。<br>
 
-ここで選ぶと歓声に混ぜられます。
-
-今は選ばなくても加工できます。
+動画の映像は使わず、音声だけを歓声に混ぜます。
 
 </div>
+
+<button
+
+ id="voiceTest"
+
+ class="voice-test"
+
+ type="button"
+
+>
+
+選んだ声を試聴する
+
+</button>
+
+<div class="help" id="voiceStatus"></div>
 
 <div class="setting">
 
@@ -502,9 +538,9 @@ Version 16 — 超大歓声・突然終了・人声対応
 
 動画を再生し、盛り上げたい場面で一時停止してください。<br>
 
-時間バーや±1秒ボタンで時刻を調整できます。<br>
+時間バーや±1秒ボタンで調整できます。<br>
 
-最大10か所まで追加できます。
+最大10か所まで指定できます。
 
 </div>
 
@@ -564,7 +600,7 @@ Version 16 — 超大歓声・突然終了・人声対応
 
 <div class="timeline-note">
 
-盛り上げたい時刻で、歓声の強さを選んでください。
+追加する歓声の強さを選んでください。
 
 </div>
 
@@ -642,19 +678,11 @@ Version 16 — 超大歓声・突然終了・人声対応
 
 </div>
 
-<div id="markerList">
-
-<div class="marker-empty">
-
-まだポイントはありません。
-
-</div>
-
-</div>
+<div id="markerList"></div>
 
 <div class="timeline-note">
 
-登録した時刻をタップすると、その場面に移動できます。<br>
+時刻を押すとその場面に移動します。<br>
 
 削除して設定し直すこともできます。
 
@@ -674,33 +702,15 @@ Version 16 — 超大歓声・突然終了・人声対応
 
 </button>
 
-<div
-
- id="progressWrap"
-
- class="progress-wrap"
-
->
+<div id="progressWrap" class="progress-wrap">
 
 <div class="progress-track">
 
-<div
-
- id="progressBar"
-
- class="progress-bar"
-
-></div>
+<div id="progressBar" class="progress-bar"></div>
 
 </div>
 
-<div
-
- id="progressText"
-
- class="progress-text"
-
->
+<div id="progressText" class="progress-text">
 
 準備中
 
@@ -752,13 +762,15 @@ Version 16 — 超大歓声・突然終了・人声対応
 
 <canvas id="workCanvas"></canvas>
 
+<div id="voicePlayers"></div>
+
 <div class="notice">
 
-映像と音声は端末内で処理します。<br>
+動画と音声は端末内で処理します。<br>
 
-観客音・人声音源は、利用権の確認が済むまでは
+音声素材の利用権を確認するまでは
 
-個人用テストに限定してください。
+個人用テストとしてお使いください。
 
 </div>
 
@@ -809,6 +821,12 @@ const addMarkerButton = $("addMarkerButton");
 const markerList = $("markerList");
 
 const markerCount = $("markerCount");
+
+const voiceTest = $("voiceTest");
+
+const voiceStatus = $("voiceStatus");
+
+const voicePlayers = $("voicePlayers");
 
 const canvas = $("workCanvas");
 
@@ -870,15 +888,17 @@ let processing = false;
 
 let frameId = 0;
 
-let recorder = null;
-
-let videoStream = null;
-
 let markers = [];
 
 let nextMarkerId = 1;
 
 let editingSeek = false;
+
+let voiceEntries = [];
+
+let voiceIndex = 0;
+
+let activeLibrary = null;
 
 const names = [
 
@@ -910,35 +930,29 @@ function formatTime(seconds){
 
  const t = Math.max(0,Math.floor(seconds||0));
 
- const minutes = Math.floor(t/60);
+ return Math.floor(t/60)+":"+
 
- const secs = String(t%60).padStart(2,"0");
-
- return minutes+":"+secs;
+  String(t%60).padStart(2,"0");
 
 }
 
 function updateTimeDisplay(){
 
- const duration = Number.isFinite(sourceVideo.duration)
+ const d = Number.isFinite(sourceVideo.duration)
 
-  ?sourceVideo.duration
+  ? sourceVideo.duration : 0;
 
-  :0;
+ const t = Number.isFinite(sourceVideo.currentTime)
 
- const time = Number.isFinite(sourceVideo.currentTime)
-
-  ?sourceVideo.currentTime
-
-  :0;
+  ? sourceVideo.currentTime : 0;
 
  timeDisplay.textContent =
 
-  formatTime(time)+" / "+formatTime(duration);
+  formatTime(t)+" / "+formatTime(d);
 
- if(!editingSeek && duration>0){
+ if(!editingSeek&&d>0){
 
-  seekSlider.value = Math.round(time/duration*1000);
+  seekSlider.value = Math.round(t/d*1000);
 
  }
 
@@ -960,15 +974,15 @@ function renderMarkers(){
 
  if(!markers.length){
 
-  const empty = document.createElement("div");
+  const e = document.createElement("div");
 
-  empty.className = "marker-empty";
+  e.className = "marker-empty";
 
-  empty.textContent =
+  e.textContent =
 
    "まだポイントはありません。指定なしでも加工できます。";
 
-  markerList.appendChild(empty);
+  markerList.appendChild(e);
 
   return;
 
@@ -1024,11 +1038,7 @@ function renderMarkers(){
 
   };
 
-  row.appendChild(timeButton);
-
-  row.appendChild(info);
-
-  row.appendChild(deleteButton);
+  row.append(timeButton,info,deleteButton);
 
   markerList.appendChild(row);
 
@@ -1052,11 +1062,7 @@ videoInput.onchange = e => {
 
  if(!selectedVideo)return;
 
- if(videoURL){
-
-  URL.revokeObjectURL(videoURL);
-
- }
+ if(videoURL)URL.revokeObjectURL(videoURL);
 
  videoURL = URL.createObjectURL(selectedVideo);
 
@@ -1076,9 +1082,7 @@ videoInput.onchange = e => {
 
  renderMarkers();
 
- statusBox.textContent =
-
-  "動画を読み込みました。盛り上がりポイントを設定できます。";
+ statusBox.textContent = "動画を読み込みました。";
 
 };
 
@@ -1090,7 +1094,7 @@ audioInput.onchange = e => {
 
   f=>/\.(mp3|m4a|wav|ogg|aac)$/i.test(f.name)
 
-  ||f.type.startsWith("audio/")
+   ||f.type.startsWith("audio/")
 
  );
 
@@ -1102,47 +1106,187 @@ audioInput.onchange = e => {
 
 };
 
-voiceInput.onchange = e => {
+// MP4・MOV動画も追加の声として受け付ける
 
- if(processing)return;
+function isVoiceFile(f){
 
- voiceFiles = [...(e.target.files||[])].filter(
+ return (
 
-  f=>/\.(mp3|m4a|wav|ogg|aac)$/i.test(f.name)
+  /\.(mp4|mov|m4v|mp3|m4a|wav|aac|ogg|webm)$/i.test(f.name)
+
+  ||f.type.startsWith("video/")
 
   ||f.type.startsWith("audio/")
 
  );
 
+}
+
+function cleanupVoiceEntries(){
+
+ for(const entry of voiceEntries){
+
+  try{entry.element.pause()}catch(e){}
+
+  try{entry.element.removeAttribute("src")}catch(e){}
+
+  try{entry.element.load()}catch(e){}
+
+  try{entry.element.remove()}catch(e){}
+
+  if(entry.url)URL.revokeObjectURL(entry.url);
+
+ }
+
+ voiceEntries = [];
+
+ voicePlayers.innerHTML = "";
+
+}
+
+// 写真アプリの動画を再生できる隠しプレーヤーを作成
+
+function prepareVoiceEntries(){
+
+ cleanupVoiceEntries();
+
+ for(const file of voiceFiles){
+
+  const url = URL.createObjectURL(file);
+
+  const isVideo =
+
+   file.type.startsWith("video/") ||
+
+   /\.(mp4|mov|m4v|webm)$/i.test(file.name);
+
+  const el = document.createElement(isVideo?"video":"audio");
+
+  el.preload = "auto";
+
+  el.controls = false;
+
+  el.loop = false;
+
+  el.volume = 1;
+
+  el.muted = false;
+
+  el.src = url;
+
+  if(isVideo){
+
+   el.playsInline = true;
+
+   el.setAttribute("playsinline","");
+
+   el.setAttribute("webkit-playsinline","");
+
+  }
+
+  voicePlayers.appendChild(el);
+
+  voiceEntries.push({
+
+   file,
+
+   url,
+
+   element:el,
+
+   node:null,
+
+   gain:null
+
+  });
+
+ }
+
+ voiceIndex = 0;
+
+}
+
+voiceInput.onchange = e => {
+
+ if(processing)return;
+
+ voiceFiles = [...(e.target.files||[])].filter(isVoiceFile);
+
+ prepareVoiceEntries();
+
  $("voiceNames").textContent = voiceFiles.length
 
-  ?`${voiceFiles.length}本の英語リアクション音声を選択`
+  ?`${voiceFiles.length}本選択：${voiceFiles.map(f=>f.name).join("、")}`
 
-  :"まだ英語の声は追加されていません";
+  :"まだ追加の声は選択されていません";
+
+ voiceTest.style.display =
+
+  voiceFiles.length?"block":"none";
+
+ voiceStatus.textContent = voiceFiles.length
+
+  ?"動画の声は試聴してから加工できます。"
+
+  :"";
+
+};
+
+// 試聴をユーザー操作から開始することで
+
+// iPadでの動画音声再生を許可しやすくする
+
+voiceTest.onclick = async () => {
+
+ if(processing||!voiceEntries.length)return;
+
+ for(const entry of voiceEntries){
+
+  entry.element.pause();
+
+ }
+
+ const entry = voiceEntries[voiceIndex%voiceEntries.length];
+
+ voiceIndex++;
+
+ try{
+
+  entry.element.currentTime = 0;
+
+  await entry.element.play();
+
+  voiceStatus.textContent =
+
+   "試聴中："+entry.file.name;
+
+ }catch(err){
+
+  voiceStatus.textContent =
+
+   "この音声を再生できませんでした。"+
+
+   "別の動画またはファイルから試してください。";
+
+ }
 
 };
 
 sourceVideo.addEventListener(
 
- "loadedmetadata",
-
- updateTimeDisplay
+ "loadedmetadata",updateTimeDisplay
 
 );
 
 sourceVideo.addEventListener(
 
- "timeupdate",
-
- updateTimeDisplay
+ "timeupdate",updateTimeDisplay
 
 );
 
 sourceVideo.addEventListener(
 
- "seeked",
-
- updateTimeDisplay
+ "seeked",updateTimeDisplay
 
 );
 
@@ -1150,15 +1294,17 @@ seekSlider.addEventListener("input",()=>{
 
  if(processing)return;
 
- const duration = sourceVideo.duration;
+ const d = sourceVideo.duration;
 
- if(!Number.isFinite(duration)||duration<=0)return;
+ if(!Number.isFinite(d)||d<=0)return;
 
  editingSeek = true;
 
+ sourceVideo.pause();
+
  sourceVideo.currentTime =
 
-  duration*Number(seekSlider.value)/1000;
+  d*Number(seekSlider.value)/1000;
 
  updateTimeDisplay();
 
@@ -1172,21 +1318,19 @@ seekSlider.addEventListener("change",()=>{
 
 });
 
-function moveTime(seconds){
+function moveTime(amount){
 
  if(processing)return;
 
- const duration = sourceVideo.duration;
+ const d = sourceVideo.duration;
 
- if(!Number.isFinite(duration)||duration<=0)return;
+ if(!Number.isFinite(d)||d<=0)return;
 
  sourceVideo.pause();
 
  sourceVideo.currentTime = Math.max(
 
-  0,
-
-  Math.min(duration,sourceVideo.currentTime+seconds)
+  0,Math.min(d,sourceVideo.currentTime+amount)
 
  );
 
@@ -1202,19 +1346,11 @@ addMarkerButton.onclick = () => {
 
  if(processing)return;
 
- if(markers.length>=10){
+ if(markers.length>=10)return;
 
-  statusBox.textContent =
+ const d = sourceVideo.duration;
 
-   "盛り上がりポイントは最大10か所です。";
-
-  return;
-
- }
-
- const duration = sourceVideo.duration;
-
- if(!Number.isFinite(duration)||duration<=0){
+ if(!Number.isFinite(d)||d<=0){
 
   statusBox.textContent =
 
@@ -1226,14 +1362,6 @@ addMarkerButton.onclick = () => {
 
  sourceVideo.pause();
 
- const time = Math.max(
-
-  0,
-
-  Math.min(duration,sourceVideo.currentTime)
-
- );
-
  const selected = document.querySelector(
 
   'input[name="reactionLevel"]:checked'
@@ -1241,6 +1369,12 @@ addMarkerButton.onclick = () => {
  );
 
  const level = selected?Number(selected.value):2;
+
+ const time = Math.max(
+
+  0,Math.min(d,sourceVideo.currentTime)
+
+ );
 
  markers.push({
 
@@ -1264,11 +1398,7 @@ function impulse(seconds,decay){
 
  const n = Math.floor(ac.sampleRate*seconds);
 
- const b = ac.createBuffer(
-
-  2,n,ac.sampleRate
-
- );
+ const b = ac.createBuffer(2,n,ac.sampleRate);
 
  for(let c=0;c<2;c++){
 
@@ -1276,7 +1406,9 @@ function impulse(seconds,decay){
 
   for(let i=0;i<n;i++){
 
-   d[i] = (Math.random()*2-1)*
+   d[i] =
+
+    (Math.random()*2-1)*
 
     Math.pow(1-i/n,decay);
 
@@ -1392,17 +1524,17 @@ async function audioSetup(){
 
  mixMaster = ac.createGain();
 
- const compress = ac.createDynamicsCompressor();
+ const compressor = ac.createDynamicsCompressor();
 
- compress.threshold.value = -9;
+ compressor.threshold.value = -9;
 
- compress.knee.value = 8;
+ compressor.knee.value = 8;
 
- compress.ratio.value = 8;
+ compressor.ratio.value = 8;
 
- compress.attack.value = .004;
+ compressor.attack.value = .004;
 
- compress.release.value = .25;
+ compressor.release.value = .25;
 
  manualMovieDuck.connect(mix);
 
@@ -1410,9 +1542,9 @@ async function audioSetup(){
 
  aw.connect(mix);
 
- mix.connect(compress);
+ mix.connect(compressor);
 
- compress.connect(mixMaster);
+ compressor.connect(mixMaster);
 
  mixMaster.connect(destination);
 
@@ -1420,13 +1552,101 @@ async function audioSetup(){
 
 }
 
-async function decodeFiles(files){
+// 動画プレーヤーの音声を
 
- const decoded = [];
+// 観客音と同じ回路に接続する
+
+function connectVideoVoices(){
+
+ for(const entry of voiceEntries){
+
+  if(entry.node)continue;
+
+  const el = entry.element;
+
+  entry.node = ac.createMediaElementSource(el);
+
+  entry.gain = ac.createGain();
+
+  entry.gain.gain.value = 1.2;
+
+  entry.node.connect(entry.gain);
+
+  entry.gain.connect(audienceInput);
+
+ }
+
+}
+
+// 写真アプリの動画を、映像を出さず音声再生する
+
+function playVideoVoice(intensity=1){
+
+ if(!voiceEntries.length)return;
+
+ const available = voiceEntries.filter(
+
+  entry=>entry.element.paused||entry.element.ended
+
+ );
+
+ if(!available.length)return;
+
+ const entry = available[
+
+  Math.floor(Math.random()*available.length)
+
+ ];
+
+ const el = entry.element;
+
+ try{
+
+  el.currentTime = 0;
+
+  entry.gain.gain.value = intensity;
+
+  const attempt = el.play();
+
+  if(attempt&&typeof attempt.catch==="function"){
+
+   attempt.catch(err=>{
+
+    voiceStatus.textContent =
+
+     "動画音声の自動再生が制限されました。"+
+
+     "加工前に「選んだ声を試聴する」を押してみてください。";
+
+    console.warn(err);
+
+   });
+
+  }
+
+ }catch(err){
+
+  console.warn("追加音声の再生失敗",err);
+
+ }
+
+}
+
+async function loadSounds(){
+
+ const lib = {
+
+  cheer:[],
+
+  applause:[],
+
+  other:[]
+
+ };
 
  const failed = [];
 
- for(const f of files){
+ for(const f of audioFiles){
 
   try{
 
@@ -1438,11 +1658,7 @@ async function decodeFiles(files){
 
    if(b.numberOfChannels>1){
 
-    const m = ac.createBuffer(
-
-     1,b.length,b.sampleRate
-
-    );
+    const m = ac.createBuffer(1,b.length,b.sampleRate);
 
     const dest = m.getChannelData(0);
 
@@ -1462,15 +1678,19 @@ async function decodeFiles(files){
 
    }
 
-   decoded.push({
+   const kind = /applause|clap/i.test(f.name)
 
-    name:f.name,
+    ?"applause"
 
-    buffer:b
+    :/cheer|crowd|whoa|wow/i.test(f.name)
 
-   });
+     ?"cheer"
 
-  }catch(e){
+     :"other";
+
+   lib[kind].push(b);
+
+  }catch(err){
 
    failed.push(f.name);
 
@@ -1478,77 +1698,13 @@ async function decodeFiles(files){
 
  }
 
- return {decoded,failed};
+ if(!Object.values(lib).some(a=>a.length)){
 
-}
-
-async function loadSounds(){
-
- const lib = {
-
-  cheer:[],
-
-  applause:[],
-
-  other:[],
-
-  voices:[]
-
- };
-
- const ordinary = await decodeFiles(audioFiles);
-
- const phrases = await decodeFiles(voiceFiles);
-
- for(const item of ordinary.decoded){
-
-  const kind = /applause|clap/i.test(item.name)
-
-   ?"applause"
-
-   :/cheer|crowd|whoa|wow/i.test(item.name)
-
-    ?"cheer"
-
-    :"other";
-
-  lib[kind].push(item.buffer);
+  throw Error("観客音7本を読み込めませんでした。");
 
  }
 
- for(const item of phrases.decoded){
-
-  lib.voices.push(item.buffer);
-
- }
-
- if(
-
-  !lib.cheer.length&&
-
-  !lib.applause.length&&
-
-  !lib.other.length
-
- ){
-
-  throw Error("観客音を読み込めませんでした。");
-
- }
-
- return {
-
-  lib,
-
-  failed:[
-
-   ...ordinary.failed,
-
-   ...phrases.failed
-
-  ]
-
- };
+ return {lib,failed};
 
 }
 
@@ -1556,15 +1712,17 @@ function stopSounds(){
 
  for(const s of playingSources){
 
-  try{
-
-   s.stop();
-
-  }catch(e){}
+  try{s.stop()}catch(e){}
 
  }
 
  playingSources = [];
+
+ for(const entry of voiceEntries){
+
+  entry.element.pause();
+
+ }
 
 }
 
@@ -1578,17 +1736,13 @@ function clip(
 
  buffer,start,len,volume,
 
- fadeIn=.6,fadeOut=2.5,offset=0
+ fadeIn=.6,fadeOut=2.5
 
 ){
 
  if(!buffer||len<.1)return;
 
- const actual = Math.min(
-
-  len,buffer.duration-offset
-
- );
+ const actual = Math.min(len,buffer.duration);
 
  if(actual<.1)return;
 
@@ -1598,31 +1752,17 @@ function clip(
 
  src.buffer = buffer;
 
- const i = Math.min(
+ const i = Math.min(fadeIn,actual*.35);
 
-  fadeIn,actual*.35
-
- );
-
- const o = Math.min(
-
-  fadeOut,actual*.47
-
- );
+ const o = Math.min(fadeOut,actual*.47);
 
  g.gain.setValueAtTime(.0001,start);
 
- g.gain.linearRampToValueAtTime(
-
-  volume,start+i
-
- );
+ g.gain.linearRampToValueAtTime(volume,start+i);
 
  g.gain.setValueAtTime(
 
-  volume,
-
-  start+Math.max(i,actual-o)
+  volume,start+Math.max(i,actual-o)
 
  );
 
@@ -1636,7 +1776,7 @@ function clip(
 
  g.connect(audienceInput);
 
- src.start(start,offset,actual);
+ src.start(start,0,actual);
 
  src.stop(start+actual+.02);
 
@@ -1678,23 +1818,19 @@ function ambience(lib,start,total,level){
 
  if(!bank.length)return;
 
- const step = 1.1;
-
- const clipLength = 5.7;
-
  const base = [
 
   0,.08,.13,.20,.27,.34
 
  ][level];
 
- for(let t=0;t<total;t+=step){
+ for(let t=0;t<total;t+=1.1){
 
   const b = pick(bank);
 
   const length = Math.min(
 
-   clipLength,total-t,b.duration
+   5.7,total-t,b.duration
 
   );
 
@@ -1702,11 +1838,7 @@ function ambience(lib,start,total,level){
 
   clip(
 
-   b,
-
-   start+t,
-
-   length,
+   b,start+t,length,
 
    base*(.55+Math.random()*.4),
 
@@ -1724,15 +1856,11 @@ function opening(lib,start,duration,level){
 
  const cheers = lib.cheer.length
 
-  ?lib.cheer
-
-  :lib.other;
+  ?lib.cheer:lib.other;
 
  const applause = lib.applause.length
 
-  ?lib.applause
-
-  :lib.other;
+  ?lib.applause:lib.other;
 
  const scale = [
 
@@ -1740,21 +1868,15 @@ function opening(lib,start,duration,level){
 
  ][level];
 
- const openingLength = Math.min(
+ const length = Math.min(
 
-  12,
-
-  Math.max(4,duration*.16)
+  12,Math.max(4,duration*.16)
 
  );
 
  randomClip(
 
-  cheers,start,
-
-  openingLength,
-
-  .95*scale,.12,4
+  cheers,start,length,.95*scale,.12,4
 
  );
 
@@ -1762,7 +1884,7 @@ function opening(lib,start,duration,level){
 
   applause,start+.15,
 
-  Math.max(2,openingLength-1),
+  Math.max(2,length-1),
 
   1.2*scale,.15,4.5
 
@@ -1774,7 +1896,7 @@ function opening(lib,start,duration,level){
 
    applause,start+2.2,
 
-   Math.min(7,openingLength),
+   Math.min(7,length),
 
    .65*scale,.5,4
 
@@ -1784,31 +1906,29 @@ function opening(lib,start,duration,level){
 
  const g = movieMaster.gain;
 
- const down = level>=4?.30:.55;
+ g.setValueAtTime(
 
- g.setValueAtTime(down,start);
+  level>=4?.30:.55,start
+
+ );
 
  g.linearRampToValueAtTime(
 
-  1,start+openingLength
+  1,start+length
 
  );
 
 }
 
-function reaction(time,lib,level,big=false){
+function reaction(time,lib,level){
 
  const cheers = lib.cheer.length
 
-  ?lib.cheer
-
-  :lib.other;
+  ?lib.cheer:lib.other;
 
  const applause = lib.applause.length
 
-  ?lib.applause
-
-  :lib.other;
+  ?lib.applause:lib.other;
 
  const scale = [
 
@@ -1818,29 +1938,15 @@ function reaction(time,lib,level,big=false){
 
  randomClip(
 
-  cheers,time,
-
-  big?7:5,
-
-  (big?1.30:.90)*scale,
-
-  .2,big?4:3
+  cheers,time,5,.9*scale,.2,3
 
  );
 
- if(big||Math.random()<.4){
+ if(Math.random()<.4){
 
   randomClip(
 
-   applause,
-
-   time+.7,
-
-   big?7:4,
-
-   (big?.92:.4)*scale,
-
-   .25,big?4:2.7
+   applause,time+.7,4,.4*scale,.25,2.7
 
   );
 
@@ -1848,49 +1954,15 @@ function reaction(time,lib,level,big=false){
 
 }
 
-function addVoice(time,lib,intensity=1){
-
- if(!lib.voices.length)return;
-
- const b = pick(lib.voices);
-
- clip(
-
-  b,
-
-  time,
-
-  Math.min(4.5,b.duration),
-
-  intensity,
-
-  .07,
-
-  .35
-
- );
-
-}
-
-function manualReaction(
-
- time,lib,pointLevel,overallLevel,
-
- videoDuration,start
-
-){
+function manualReaction(time,lib,pointLevel,overallLevel){
 
  const cheers = lib.cheer.length
 
-  ?lib.cheer
-
-  :lib.other;
+  ?lib.cheer:lib.other;
 
  const applause = lib.applause.length
 
-  ?lib.applause
-
-  :lib.other;
+  ?lib.applause:lib.other;
 
  const scale = [
 
@@ -1902,17 +1974,9 @@ function manualReaction(
 
   randomClip(
 
-   cheers,time,4.5,
-
-   .72*scale,.15,2.8
+   cheers,time,4.5,.72*scale,.15,2.8
 
   );
-
-  if(lib.voices.length && Math.random()<.35){
-
-   addVoice(time+.30,lib,.85*scale);
-
-  }
 
  }
 
@@ -1920,119 +1984,61 @@ function manualReaction(
 
   randomClip(
 
-   cheers,time,7,
-
-   1.35*scale,.12,3.8
+   cheers,time,7,1.35*scale,.12,3.8
 
   );
 
   randomClip(
 
-   applause,time+.65,6,
-
-   .90*scale,.3,3.5
+   applause,time+.65,6,.90*scale,.3,3.5
 
   );
-
-  if(lib.voices.length){
-
-   addVoice(time+.35,lib,1.35*scale);
-
-  }
 
  }
 
  if(pointLevel===3){
 
-  // 旧版よりも重ねる声と音量を大幅に増強
-
   randomClip(
 
-   cheers,time,10,
-
-   2.25*scale,.10,4
+   cheers,time,10,2.25*scale,.10,4
 
   );
 
   randomClip(
 
-   cheers,time+.25,9,
-
-   2.00*scale,.15,4
+   cheers,time+.25,9,2.0*scale,.15,4
 
   );
 
   randomClip(
 
-   cheers,time+.75,9,
-
-   1.85*scale,.18,4
+   cheers,time+.75,9,1.85*scale,.18,4
 
   );
 
   randomClip(
 
-   cheers,time+1.5,8,
-
-   1.70*scale,.25,4
+   cheers,time+1.5,8,1.7*scale,.25,4
 
   );
 
   randomClip(
 
-   applause,time+.35,10,
-
-   1.85*scale,.20,4
+   applause,time+.35,10,1.85*scale,.2,4
 
   );
 
   randomClip(
 
-   applause,time+1.2,9,
-
-   1.55*scale,.30,4
+   applause,time+1.2,9,1.55*scale,.3,4
 
   );
-
-  if(lib.voices.length){
-
-   addVoice(
-
-    time+.15,
-
-    lib,
-
-    1.85*scale
-
-   );
-
-   addVoice(
-
-    time+1.0,
-
-    lib,
-
-    1.65*scale
-
-   );
-
-  }
-
-  // 映画の音を強く抑え、歓声を主役にする
-
-  // 手動ポイントが近接する場合は
-
-  // ダッキングの予約を重ねない
 
  }
 
 }
 
-function scheduleManualDucking(
-
- start,duration,points,overallLevel
-
-){
+function scheduleDucking(start,duration,points,level){
 
  const g = manualMovieDuck.gain;
 
@@ -2042,23 +2048,27 @@ function scheduleManualDucking(
 
  const intervals = [];
 
- for(const point of points){
+ for(const p of points){
 
-  if(point.level===1)continue;
-
-  const length = point.level===3?9:5.5;
+  if(p.level===1)continue;
 
   intervals.push({
 
-   begin:Math.max(0,point.time),
+   begin:Math.max(0,p.time),
 
-   end:Math.min(duration,point.time+length),
+   end:Math.min(
 
-   strength:point.level===3
+    duration,
 
-    ?(overallLevel>=4?.07:.14)
+    p.time+(p.level===3?9:5.5)
 
-    :(.40)
+   ),
+
+   strength:p.level===3
+
+    ?(level>=4?.07:.14)
+
+    :.4
 
   });
 
@@ -2066,55 +2076,45 @@ function scheduleManualDucking(
 
  intervals.sort((a,b)=>a.begin-b.begin);
 
- // 近接した歓声の減音区間をまとめる
-
  const merged = [];
 
- for(const interval of intervals){
+ for(const part of intervals){
 
   const prev = merged[merged.length-1];
 
-  if(prev && interval.begin<=prev.end+.2){
+  if(prev&&part.begin<=prev.end+.2){
 
-   prev.end=Math.max(prev.end,interval.end);
+   prev.end = Math.max(prev.end,part.end);
 
-   prev.strength=Math.min(
+   prev.strength = Math.min(
 
-    prev.strength,interval.strength
+    prev.strength,part.strength
 
    );
 
   }else{
 
-   merged.push({...interval});
+   merged.push({...part});
 
   }
 
  }
 
- let lastEnd=0;
-
  for(const part of merged){
 
-  const begin=start+part.begin;
+  const begin = start+part.begin;
 
-  const end=start+part.end;
+  const end = start+part.end;
 
-  const rampIn=Math.min(.22,(end-begin)*.2);
+  const fadeIn = Math.min(.22,(end-begin)*.2);
 
-  const rampOut=Math.min(1.1,(end-begin)*.3);
+  const fadeOut = Math.min(1.1,(end-begin)*.3);
 
-  if(part.begin>lastEnd){
-
-   g.setValueAtTime(1,begin);
-
-  }
+  g.setValueAtTime(1,begin);
 
   g.linearRampToValueAtTime(
 
-   part.strength,
-
-   begin+rampIn
+   part.strength,begin+fadeIn
 
   );
 
@@ -2122,35 +2122,25 @@ function scheduleManualDucking(
 
    part.strength,
 
-   Math.max(begin+rampIn,end-rampOut)
+   Math.max(begin+fadeIn,end-fadeOut)
 
   );
 
   g.linearRampToValueAtTime(1,end);
 
-  lastEnd=part.end;
-
  }
 
 }
 
-function longFinale(
-
- lib,start,duration,level
-
-){
+function finale(lib,start,duration,level){
 
  const cheers = lib.cheer.length
 
-  ?lib.cheer
-
-  :lib.other;
+  ?lib.cheer:lib.other;
 
  const applause = lib.applause.length
 
-  ?lib.applause
-
-  :lib.other;
+  ?lib.applause:lib.other;
 
  const scale = [
 
@@ -2158,107 +2148,53 @@ function longFinale(
 
  ][level];
 
- const finaleLength = Math.min(
+ const length = Math.min(30,duration*.35);
 
-  30,duration*.35
+ const beginAt = Math.max(0,duration-length);
 
- );
-
- const finaleStart = Math.max(
-
-  0,duration-finaleLength
-
- );
-
- // 動画終了時まで歓声を重ねる
-
- // フェードアウトは録画にはかけない
-
- for(
-
-  let t=finaleStart;
-
-  t<duration;
-
-  t+=2.1
-
- ){
+ for(let t=beginAt;t<duration;t+=2.1){
 
   const progress = Math.min(
 
-   1,
-
-   (t-finaleStart)/
-
-   Math.max(1,finaleLength)
+   1,(t-beginAt)/Math.max(1,length)
 
   );
 
   randomClip(
 
-   cheers,
+   cheers,start+t,8,
 
-   start+t,
-
-   8,
-
-   (.60+progress*1.35)*scale,
-
-   .4,
-
-   3.5
+   (.60+progress*1.35)*scale,.4,3.5
 
   );
 
  }
 
- const clapStart = Math.max(
+ const clapAt = Math.max(
 
-  finaleStart,
+  beginAt,
 
   duration-Math.min(12,duration*.18)
 
  );
 
- for(
-
-  let t=clapStart;
-
-  t<duration;
-
-  t+=2.5
-
- ){
+ for(let t=clapAt;t<duration;t+=2.5){
 
   const progress = Math.min(
 
-   1,
-
-   (t-clapStart)/
-
-   Math.max(1,duration-clapStart)
+   1,(t-clapAt)/Math.max(1,duration-clapAt)
 
   );
 
   randomClip(
 
-   applause,
+   applause,start+t,9,
 
-   start+t,
-
-   9,
-
-   (.75+progress*1.50)*scale,
-
-   .35,
-
-   4
+   (.75+progress*1.5)*scale,.35,4
 
   );
 
  }
-
- // 動画終了直前も強い拍手を鳴らし続ける
 
  randomClip(
 
@@ -2266,33 +2202,13 @@ function longFinale(
 
   start+Math.max(0,duration-4),
 
-  10,
-
-  1.95*scale,
-
-  .25,
-
-  3.5
+  10,1.95*scale,.25,3.5
 
  );
 
- if(lib.voices.length && duration>12){
-
-  addVoice(
-
-   start+Math.max(0,duration-10),
-
-   lib,
-
-   1.30*scale
-
-  );
-
- }
-
  const g = movieMaster.gain;
 
- const begin = start+finaleStart;
+ const begin = start+beginAt;
 
  const end = start+duration;
 
@@ -2316,7 +2232,7 @@ function longFinale(
 
 }
 
-// 映像処理：第15版の見た目を維持
+// 映像の見た目は旧版を維持
 
 function cover(target,video,w,h,extra=1){
 
@@ -2404,23 +2320,11 @@ function renderScreen(t){
 
  const haze=b.createLinearGradient(0,0,w,h);
 
- haze.addColorStop(
+ haze.addColorStop(0,"rgba(210,220,230,.10)");
 
-  0,"rgba(210,220,230,.10)"
+ haze.addColorStop(.45,"rgba(235,235,225,.16)");
 
- );
-
- haze.addColorStop(
-
-  .45,"rgba(235,235,225,.16)"
-
- );
-
- haze.addColorStop(
-
-  1,"rgba(180,200,215,.08)"
-
- );
+ haze.addColorStop(1,"rgba(180,200,215,.08)");
 
  b.fillStyle=haze;
 
@@ -2532,29 +2436,13 @@ function buildScene(t){
 
  );
 
- glow.addColorStop(
+ glow.addColorStop(0,"rgba(135,150,165,.16)");
 
-  0,"rgba(135,150,165,.16)"
+ glow.addColorStop(.38,"rgba(85,95,105,.075)");
 
- );
+ glow.addColorStop(.72,"rgba(35,40,45,.035)");
 
- glow.addColorStop(
-
-  .38,"rgba(85,95,105,.075)"
-
- );
-
- glow.addColorStop(
-
-  .72,"rgba(35,40,45,.035)"
-
- );
-
- glow.addColorStop(
-
-  1,"rgba(0,0,0,0)"
-
- );
+ glow.addColorStop(1,"rgba(0,0,0,0)");
 
  s.fillStyle=glow;
 
@@ -2594,23 +2482,11 @@ function buildScene(t){
 
  const lens=s.createLinearGradient(0,0,w,h);
 
- lens.addColorStop(
+ lens.addColorStop(0,"rgba(160,175,190,.055)");
 
-  0,"rgba(160,175,190,.055)"
+ lens.addColorStop(.5,"rgba(220,220,205,.075)");
 
- );
-
- lens.addColorStop(
-
-  .5,"rgba(220,220,205,.075)"
-
- );
-
- lens.addColorStop(
-
-  1,"rgba(120,140,160,.035)"
-
- );
+ lens.addColorStop(1,"rgba(120,140,160,.035)");
 
  s.fillStyle=lens;
 
@@ -2624,23 +2500,11 @@ function buildScene(t){
 
  );
 
- vignette.addColorStop(
+ vignette.addColorStop(0,"rgba(0,0,0,0)");
 
-  0,"rgba(0,0,0,0)"
+ vignette.addColorStop(.68,"rgba(0,0,0,.10)");
 
- );
-
- vignette.addColorStop(
-
-  .68,"rgba(0,0,0,.10)"
-
- );
-
- vignette.addColorStop(
-
-  1,"rgba(0,0,0,.76)"
-
- );
+ vignette.addColorStop(1,"rgba(0,0,0,.76)");
 
  s.fillStyle=vignette;
 
@@ -2654,17 +2518,9 @@ function drawCamera(t){
 
  const h=canvas.height;
 
- const mx=
+ const mx=Math.sin(t*8.3)*2.5+Math.sin(t*16.9);
 
-  Math.sin(t*8.3)*2.5+
-
-  Math.sin(t*16.9);
-
- const my=
-
-  Math.cos(t*7.1)*2+
-
-  Math.sin(t*13.5)*.9;
+ const my=Math.cos(t*7.1)*2+Math.sin(t*13.5)*.9;
 
  const dx=Math.sin(t*.39)*6.5;
 
@@ -2676,9 +2532,7 @@ function drawCamera(t){
 
   Math.sin(t*2.8)*.0018;
 
- const zoom=
-
-  1.055+Math.sin(t*.24)*.008;
+ const zoom=1.055+Math.sin(t*.24)*.008;
 
  ctx.fillStyle="#000";
 
@@ -2686,25 +2540,13 @@ function drawCamera(t){
 
  ctx.save();
 
- ctx.translate(
-
-  w/2+mx+dx,
-
-  h/2+my+dy
-
- );
+ ctx.translate(w/2+mx+dx,h/2+my+dy);
 
  ctx.rotate(angle);
 
  ctx.scale(zoom,zoom);
 
- ctx.drawImage(
-
-  scene.canvas,
-
-  -w/2,-h/2,w,h
-
- );
+ ctx.drawImage(scene.canvas,-w/2,-h/2,w,h);
 
  ctx.restore();
 
@@ -2758,7 +2600,7 @@ processButton.onclick=async()=>{
 
  if(!selectedVideo||!audioFiles.length){
 
-  statusBox.textContent=
+  statusBox.textContent =
 
    "動画と観客音の両方を選んでください。";
 
@@ -2804,13 +2646,7 @@ processButton.onclick=async()=>{
 
   stopped=true;
 
-  if(
-
-   localRecorder&&
-
-   localRecorder.state!=="inactive"
-
-  ){
+  if(localRecorder&&localRecorder.state!=="inactive"){
 
    localRecorder.stop();
 
@@ -2820,17 +2656,11 @@ processButton.onclick=async()=>{
 
  try{
 
-  if(
-
-   !window.MediaRecorder||
-
-   !canvas.captureStream
-
-  ){
+  if(!window.MediaRecorder||!canvas.captureStream){
 
    throw Error(
 
-    "動画録画に対応していないブラウザです。"
+    "このブラウザは動画録画に対応していません。"
 
    );
 
@@ -2842,7 +2672,19 @@ processButton.onclick=async()=>{
 
   const lib=loaded.lib;
 
-  const bad=loaded.failed;
+  activeLibrary=lib;
+
+  // 追加動画の音声を合成回路につなぐ
+
+  connectVideoVoices();
+
+  for(const entry of voiceEntries){
+
+   entry.element.pause();
+
+   try{entry.element.currentTime=0}catch(e){}
+
+  }
 
   sourceVideo.pause();
 
@@ -2864,41 +2706,21 @@ processButton.onclick=async()=>{
 
   const duration=sourceVideo.duration;
 
-  if(
+  if(!Number.isFinite(duration)||duration<=0){
 
-   !Number.isFinite(duration)||
-
-   duration<=0
-
-  ){
-
-   throw Error(
-
-    "動画の長さを取得できません。"
-
-   );
+   throw Error("動画の長さを取得できません。");
 
   }
 
   const portrait=
 
-   sourceVideo.videoHeight>
-
-   sourceVideo.videoWidth;
+   sourceVideo.videoHeight>sourceVideo.videoWidth;
 
   canvas.width=portrait?540:960;
 
   canvas.height=portrait?960:540;
 
-  for(
-
-   const l of [
-
-    scene,screen,blurred,bloom,color
-
-   ]
-
-  ){
+  for(const l of [scene,screen,blurred,bloom,color]){
 
    l.canvas.width=canvas.width;
 
@@ -2946,10 +2768,6 @@ processButton.onclick=async()=>{
 
   );
 
-  recorder=localRecorder;
-
-  videoStream=stream;
-
   localRecorder.ondataavailable=e=>{
 
    if(e.data&&e.data.size){
@@ -2964,11 +2782,9 @@ processButton.onclick=async()=>{
 
    failed=true;
 
-   statusBox.textContent=
+   statusBox.textContent =
 
-    "録画エラー："+
-
-    (e.error?.message||"不明");
+    "録画エラー："+(e.error?.message||"不明");
 
   };
 
@@ -2978,11 +2794,7 @@ processButton.onclick=async()=>{
 
    stopSounds();
 
-   stream.getTracks().forEach(
-
-    t=>t.stop()
-
-   );
+   stream.getTracks().forEach(t=>t.stop());
 
    reset();
 
@@ -2990,7 +2802,7 @@ processButton.onclick=async()=>{
 
     if(!failed){
 
-     statusBox.textContent=
+     statusBox.textContent =
 
       "録画データがありません。";
 
@@ -3002,23 +2814,11 @@ processButton.onclick=async()=>{
 
    const actual=
 
-    localRecorder.mimeType||
+    localRecorder.mimeType||type||"video/mp4";
 
-    type||
+   const blob=new Blob(chunks,{type:actual});
 
-    "video/mp4";
-
-   const blob=new Blob(
-
-    chunks,{type:actual}
-
-   );
-
-   if(resultURL){
-
-    URL.revokeObjectURL(resultURL);
-
-   }
+   if(resultURL)URL.revokeObjectURL(resultURL);
 
    resultURL=URL.createObjectURL(blob);
 
@@ -3026,13 +2826,11 @@ processButton.onclick=async()=>{
 
    saveButton.href=resultURL;
 
-   saveButton.download=
+   saveButton.download=actual.includes("mp4")
 
-    actual.includes("mp4")
+    ?"movie-leak-v17.mp4"
 
-     ?"movie-leak-v16.mp4"
-
-     :"movie-leak-v16.webm";
+    :"movie-leak-v17.webm";
 
    resultArea.style.display="block";
 
@@ -3040,9 +2838,9 @@ processButton.onclick=async()=>{
 
    progressText.textContent="完成";
 
-   statusBox.textContent=
+   statusBox.textContent =
 
-    "超大歓声と突然終了を反映した動画が完成しました。";
+    "観客の声を追加した動画が完成しました。";
 
   };
 
@@ -3050,41 +2848,17 @@ processButton.onclick=async()=>{
 
   stopSounds();
 
-  movieMaster.gain.cancelScheduledValues(
+  movieMaster.gain.cancelScheduledValues(ac.currentTime);
 
-   ac.currentTime
+  movieMaster.gain.setValueAtTime(1,ac.currentTime);
 
-  );
+  manualMovieDuck.gain.cancelScheduledValues(ac.currentTime);
 
-  movieMaster.gain.setValueAtTime(
+  manualMovieDuck.gain.setValueAtTime(1,ac.currentTime);
 
-   1,ac.currentTime
+  mixMaster.gain.cancelScheduledValues(ac.currentTime);
 
-  );
-
-  manualMovieDuck.gain.cancelScheduledValues(
-
-   ac.currentTime
-
-  );
-
-  manualMovieDuck.gain.setValueAtTime(
-
-   1,ac.currentTime
-
-  );
-
-  mixMaster.gain.cancelScheduledValues(
-
-   ac.currentTime
-
-  );
-
-  mixMaster.gain.setValueAtTime(
-
-   1,ac.currentTime
-
-  );
+  mixMaster.gain.setValueAtTime(1,ac.currentTime);
 
   const data=new Uint8Array(analyser.fftSize);
 
@@ -3098,23 +2872,23 @@ processButton.onclick=async()=>{
 
   const finaleTime=Math.max(
 
-   0,
-
-   duration-Math.min(30,duration*.35)
+   0,duration-Math.min(30,duration*.35)
 
   );
 
+  // 手動指定を再生時に一度だけ発火する
+
+  const pendingMarkers=markers.map(m=>({
+
+   ...m,
+
+   fired:false
+
+  }));
+
   function frame(){
 
-   if(
-
-    !processing||
-
-    sourceVideo.ended||
-
-    sourceVideo.paused
-
-   ){
+   if(!processing||sourceVideo.ended||sourceVideo.paused){
 
     return;
 
@@ -3128,25 +2902,43 @@ processButton.onclick=async()=>{
 
    const pct=Math.min(
 
-    100,
-
-    Math.round(t/duration*100)
+    100,Math.round(t/duration*100)
 
    );
 
    progressBar.style.width=pct+"%";
 
-   progressText.textContent=
+   progressText.textContent="加工中 "+pct+"%";
 
-    "加工中 "+pct+"%";
+   // 指定した場面で動画から声を再生
 
-   if(
+   for(const marker of pendingMarkers){
 
-    t-prevTime>.09&&
+    if(marker.fired||t<marker.time)continue;
 
-    t<finaleTime-1
+    marker.fired=true;
 
-   ){
+    if(voiceEntries.length){
+
+     const intensity =
+
+      marker.level===3?2.1:
+
+      marker.level===2?1.5:.9;
+
+     playVideoVoice(
+
+      intensity*[0,.5,.75,1,1.4,1.8][level]
+
+     );
+
+    }
+
+   }
+
+   // 従来の小さな自動歓声も維持
+
+   if(t-prevTime>.09&&t<finaleTime-1){
 
     analyser.getByteTimeDomainData(data);
 
@@ -3160,23 +2952,15 @@ processButton.onclick=async()=>{
 
     }
 
-    const rms=Math.sqrt(
+    const rms=Math.sqrt(sum/data.length);
 
-     sum/data.length
-
-    );
-
-    smoothed=
-
-     smoothed*.83+rms*.17;
+    smoothed=smoothed*.83+rms*.17;
 
     if(smoothed<.036){
 
      wasQuiet=Math.min(
 
-      3,
-
-      wasQuiet+(t-prevTime)
+      3,wasQuiet+(t-prevTime)
 
      );
 
@@ -3198,9 +2982,7 @@ processButton.onclick=async()=>{
 
       lib,
 
-      Math.max(1,level-2),
-
-      false
+      Math.max(1,level-2)
 
      );
 
@@ -3222,17 +3004,15 @@ processButton.onclick=async()=>{
 
   }
 
-  // 動画の終了と同時に録画も終了。
-
-  // 余韻の追加もフェードアウトも行わない。
-
   sourceVideo.onended=()=>{
 
    cancelAnimationFrame(frameId);
 
-   progressText.textContent=
+   progressText.textContent =
 
     "録画を終了しています…";
+
+   // 第16版同様、フェードせず突然終了
 
    endRecording();
 
@@ -3244,31 +3024,13 @@ processButton.onclick=async()=>{
 
   const startNow=ac.currentTime+.05;
 
-  // 基本の客席音
+  ambience(lib,startNow,duration,level);
 
-  ambience(
+  opening(lib,startNow,duration,level);
 
-   lib,startNow,duration,level
+  finale(lib,startNow,duration,level);
 
-  );
-
-  // 冒頭の歓声と拍手
-
-  opening(
-
-   lib,startNow,duration,level
-
-  );
-
-  // 最後まで続く大歓声と拍手
-
-  longFinale(
-
-   lib,startNow,duration,level
-
-  );
-
-  // 手動で指定した盛り上がりポイント
+  // 従来の3段階の盛り上がり指定
 
   for(const marker of markers){
 
@@ -3280,49 +3042,35 @@ processButton.onclick=async()=>{
 
     marker.level,
 
-    level,
-
-    duration,
-
-    startNow
+    level
 
    );
 
   }
 
-  // 特大歓声では映画の音をさらに下げる
+  scheduleDucking(
 
-  scheduleManualDucking(
-
-   startNow,
-
-   duration,
-
-   markers,
-
-   level
+   startNow,duration,markers,level
 
   );
 
-  statusBox.textContent=bad.length
+  statusBox.textContent =
 
-   ?"一部読めなかった音声："+bad.join("、")
+   voiceEntries.length
 
-   :"自動演出と指定した歓声を合成しています。";
+    ?"動画の声も使って観客音を合成しています。"
+
+    :"通常の観客音を合成しています。";
 
   frameId=requestAnimationFrame(frame);
 
- }catch(e){
+ }catch(err){
 
-  console.error(e);
+  console.error(err);
 
-  statusBox.textContent=
+  statusBox.textContent =
 
-   "エラー："+(
-
-    e.message||String(e)
-
-   );
+   "エラー："+(err.message||String(err));
 
   cancelAnimationFrame(frameId);
 
@@ -3330,29 +3078,15 @@ processButton.onclick=async()=>{
 
   stopSounds();
 
-  if(
+  if(localRecorder&&localRecorder.state!=="inactive"){
 
-   localRecorder&&
-
-   localRecorder.state!=="inactive"
-
-  ){
-
-   try{
-
-    localRecorder.stop();
-
-   }catch(_){}
+   try{localRecorder.stop()}catch(e){}
 
   }
 
   if(stream){
 
-   stream.getTracks().forEach(
-
-    t=>t.stop()
-
-   );
+   stream.getTracks().forEach(t=>t.stop());
 
   }
 
