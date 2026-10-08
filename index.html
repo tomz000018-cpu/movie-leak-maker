@@ -8,7 +8,7 @@
 
 <meta name="viewport" content="width=device-width,initial-scale=1">
 
-<title>Movie Leak Maker V14</title>
+<title>Movie Leak Maker V15</title>
 
 <style>
 
@@ -16,7 +16,11 @@
 
 body{
 
- margin:0;background:#080808;color:#fff;
+ margin:0;
+
+ background:#080808;
+
+ color:#fff;
 
  font-family:-apple-system,BlinkMacSystemFont,
 
@@ -24,35 +28,93 @@ body{
 
 }
 
-.container{width:min(92%,800px);margin:auto;padding:35px 0 80px}
+.container{
 
-h1{text-align:center;margin:0 0 8px}
+ width:min(92%,800px);
 
-.subtitle,.version{text-align:center;color:#aaa;line-height:1.6}
+ margin:auto;
 
-.version{margin:8px 0 25px;font-size:13px}
+ padding:35px 0 80px
+
+}
+
+h1{
+
+ text-align:center;
+
+ margin:0 0 8px
+
+}
+
+.subtitle,.version{
+
+ text-align:center;
+
+ color:#aaa;
+
+ line-height:1.6
+
+}
+
+.version{
+
+ margin:8px 0 25px;
+
+ font-size:13px
+
+}
 
 .panel{
 
- background:#161616;border:1px solid #333;
+ background:#161616;
 
- border-radius:18px;padding:20px
+ border:1px solid #333;
 
-}
+ border-radius:18px;
 
-.file-label,.process-button,.save-button{
-
- display:block;width:100%;padding:16px;border:0;
-
- border-radius:12px;font-size:16px;font-weight:bold;text-align:center
+ padding:20px
 
 }
 
-.file-label{background:#fff;color:#111}
+.file-label,.process-button,.save-button,
+
+.add-button{
+
+ display:block;
+
+ width:100%;
+
+ padding:16px;
+
+ border:0;
+
+ border-radius:12px;
+
+ font-size:16px;
+
+ font-weight:bold;
+
+ text-align:center;
+
+ cursor:pointer
+
+}
+
+.file-label{
+
+ background:#fff;
+
+ color:#111
+
+}
 
 .file-label.secondary{
 
- background:#343434;color:#fff;margin-top:20px
+ background:#343434;
+
+ color:#fff;
+
+ margin-top:20px
 
 }
 
@@ -60,39 +122,81 @@ h1{text-align:center;margin:0 0 8px}
 
 .filename,.help{
 
- margin-top:10px;color:#aaa;font-size:13px;
+ margin-top:10px;
 
- line-height:1.6;word-break:break-word
+ color:#aaa;
+
+ font-size:13px;
+
+ line-height:1.6;
+
+ word-break:break-word
 
 }
 
 .filename{text-align:center}
 
-.preview-area,.result-area{display:none;margin-top:22px}
+.preview-area,.result-area{
+
+ display:none;
+
+ margin-top:22px
+
+}
 
 .screen{
 
- padding:8px;border-radius:10px;background:#000;
+ padding:8px;
+
+ border-radius:10px;
+
+ background:#000;
 
  overflow:hidden
 
 }
 
-video{display:block;width:100%;max-height:65vh}
+video{
+
+ display:block;
+
+ width:100%;
+
+ max-height:65vh
+
+}
 
 #workCanvas{display:none}
 
 .process-button{
 
- margin-top:20px;background:#f2f2f2;color:#111
+ margin-top:22px;
+
+ background:#f2f2f2;
+
+ color:#111
 
 }
 
-.process-button:disabled{background:#444;color:#aaa}
+.process-button:disabled,
+
+.add-button:disabled{
+
+ background:#444;
+
+ color:#aaa;
+
+ cursor:default
+
+}
 
 .save-button{
 
- margin-top:16px;color:#111;background:#fff;
+ margin-top:16px;
+
+ color:#111;
+
+ background:#fff;
 
  text-decoration:none
 
@@ -100,9 +204,15 @@ video{display:block;width:100%;max-height:65vh}
 
 .status,.setting{
 
- background:#252525;padding:14px;
+ background:#252525;
 
- border-radius:11px;margin-top:20px;line-height:1.6
+ padding:14px;
+
+ border-radius:11px;
+
+ margin-top:20px;
+
+ line-height:1.6
 
 }
 
@@ -112,33 +222,309 @@ video{display:block;width:100%;max-height:65vh}
 
 input[type=range]{
 
- width:100%;margin:16px 0 4px;accent-color:#fff
+ width:100%;
+
+ margin:16px 0 4px;
+
+ accent-color:#fff
 
 }
 
-.progress-wrap{display:none;margin-top:18px}
+.progress-wrap{
+
+ display:none;
+
+ margin-top:18px
+
+}
 
 .progress-track{
 
- height:12px;border-radius:12px;
+ height:12px;
 
- background:#333;overflow:hidden
+ border-radius:12px;
+
+ background:#333;
+
+ overflow:hidden
 
 }
 
-.progress-bar{height:100%;width:0;background:white}
+.progress-bar{
+
+ height:100%;
+
+ width:0;
+
+ background:white
+
+}
 
 .progress-text{
 
- text-align:center;color:#aaa;margin-top:8px;font-size:13px
+ text-align:center;
+
+ color:#aaa;
+
+ margin-top:8px;
+
+ font-size:13px
 
 }
 
 .notice{
 
- text-align:center;color:#777;font-size:12px;
+ text-align:center;
 
- margin-top:24px;line-height:1.6
+ color:#777;
+
+ font-size:12px;
+
+ margin-top:24px;
+
+ line-height:1.6
+
+}
+
+.marker-panel{
+
+ margin-top:22px;
+
+ padding:16px;
+
+ border:1px solid #484848;
+
+ border-radius:13px;
+
+ background:#202020
+
+}
+
+.marker-title{
+
+ font-weight:bold;
+
+ font-size:17px;
+
+ margin-bottom:8px
+
+}
+
+.marker-desc{
+
+ color:#aaa;
+
+ font-size:13px;
+
+ line-height:1.7
+
+}
+
+.time-display{
+
+ margin-top:12px;
+
+ font-size:22px;
+
+ text-align:center;
+
+ font-weight:bold;
+
+ font-variant-numeric:tabular-nums
+
+}
+
+.seek-row{
+
+ display:flex;
+
+ gap:10px;
+
+ align-items:center;
+
+ margin-top:10px
+
+}
+
+.seek-row input{flex:1}
+
+.seek-button{
+
+ padding:10px 13px;
+
+ border-radius:9px;
+
+ border:0;
+
+ background:#444;
+
+ color:white;
+
+ font-size:13px
+
+}
+
+.level-options{
+
+ display:flex;
+
+ gap:7px;
+
+ margin-top:15px
+
+}
+
+.level-option{
+
+ flex:1;
+
+ min-width:0
+
+}
+
+.level-option input{
+
+ position:absolute;
+
+ opacity:0
+
+}
+
+.level-option span{
+
+ display:block;
+
+ padding:13px 3px;
+
+ text-align:center;
+
+ font-size:13px;
+
+ background:#363636;
+
+ border:2px solid transparent;
+
+ border-radius:9px;
+
+ cursor:pointer
+
+}
+
+.level-option input:checked+span{
+
+ background:#eee;
+
+ color:#111;
+
+ border-color:#fff;
+
+ font-weight:bold
+
+}
+
+.add-button{
+
+ background:#fff;
+
+ color:#111;
+
+ margin-top:16px
+
+}
+
+.marker-count{
+
+ margin:18px 0 10px;
+
+ font-size:14px;
+
+ font-weight:bold
+
+}
+
+.marker-empty{
+
+ font-size:13px;
+
+ color:#999;
+
+ padding:12px 0
+
+}
+
+.marker-row{
+
+ display:flex;
+
+ gap:10px;
+
+ align-items:center;
+
+ padding:10px;
+
+ background:#303030;
+
+ border-radius:10px;
+
+ margin-bottom:8px
+
+}
+
+.marker-time{
+
+ min-width:64px;
+
+ padding:8px 4px;
+
+ color:#fff;
+
+ font-weight:bold;
+
+ font-variant-numeric:tabular-nums;
+
+ background:none;
+
+ border:0;
+
+ text-align:left
+
+}
+
+.marker-info{
+
+ flex:1;
+
+ font-size:13px;
+
+ line-height:1.5
+
+}
+
+.delete-button{
+
+ padding:9px 12px;
+
+ border:0;
+
+ border-radius:8px;
+
+ background:#505050;
+
+ color:#fff;
+
+ font-size:13px
+
+}
+
+.timeline-note{
+
+ font-size:12px;
+
+ color:#aaa;
+
+ margin-top:12px;
+
+ line-height:1.6
 
 }
 
@@ -154,13 +540,15 @@ input[type=range]{
 
 <div class="subtitle">
 
-普通の動画を「海外試写会の流出映像風」に加工します
+普通の動画を<br>
+
+「海外試写会の流出映像風」に加工します
 
 </div>
 
 <div class="version">
 
-Version 14 — オープニング拍手・終盤大歓声
+Version 15 — 盛り上がりポイント指定版
 
 </div>
 
@@ -172,9 +560,17 @@ Version 14 — オープニング拍手・終盤大歓声
 
 </label>
 
-<input id="videoInput" class="file-input"
+<input
 
- type="file" accept="video/*">
+ id="videoInput"
+
+ class="file-input"
+
+ type="file"
+
+ accept="video/*"
+
+>
 
 <div class="filename" id="fileName">
 
@@ -188,9 +584,19 @@ Version 14 — オープニング拍手・終盤大歓声
 
 </label>
 
-<input id="audioInput" class="file-input"
+<input
 
- type="file" accept="audio/*,.mp3,.m4a,.wav,.ogg" multiple>
+ id="audioInput"
+
+ class="file-input"
+
+ type="file"
+
+ accept="audio/*,.mp3,.m4a,.wav,.ogg"
+
+ multiple
+
+>
 
 <div class="filename" id="audioNames">
 
@@ -208,13 +614,25 @@ ZIPを展開し、MP3を7本まとめて選択してください。
 
 <label for="crowdLevel">
 
-③ 観客の盛り上がり
+③ 全体の観客の盛り上がり
 
 </label>
 
-<input id="crowdLevel" type="range"
+<input
 
- min="1" max="5" value="4">
+ id="crowdLevel"
+
+ type="range"
+
+ min="1"
+
+ max="5"
+
+ step="1"
+
+ value="4"
+
+>
 
 <div id="crowdValue">
 
@@ -228,27 +646,231 @@ ZIPを展開し、MP3を7本まとめて選択してください。
 
 <div class="screen">
 
-<video id="sourceVideo"
+<video
 
- playsinline controls preload="metadata"></video>
+ id="sourceVideo"
+
+ playsinline
+
+ controls
+
+ preload="metadata"
+
+></video>
 
 </div>
 
-<button id="processButton" class="process-button">
+<div class="marker-panel">
 
-④ 観客音入り動画を作る
+<div class="marker-title">
+
+④ 特別な盛り上がりポイント
+
+</div>
+
+<div class="marker-desc">
+
+動画を再生し、盛り上げたい場面で一時停止してください。<br>
+
+下の時間バーを動かして細かく調整することもできます。<br>
+
+ポイントは最大10か所登録できます。
+
+</div>
+
+<div class="time-display" id="timeDisplay">
+
+0:00 / 0:00
+
+</div>
+
+<div class="seek-row">
+
+<button
+
+ class="seek-button"
+
+ id="backButton"
+
+ type="button"
+
+>
+
+−1秒
 
 </button>
 
-<div class="progress-wrap" id="progressWrap">
+<input
 
-<div class="progress-track">
+ id="seekSlider"
 
-<div class="progress-bar" id="progressBar"></div>
+ type="range"
+
+ min="0"
+
+ max="1000"
+
+ value="0"
+
+ step="1"
+
+>
+
+<button
+
+ class="seek-button"
+
+ id="forwardButton"
+
+ type="button"
+
+>
+
+＋1秒
+
+</button>
 
 </div>
 
-<div class="progress-text" id="progressText">
+<div class="timeline-note">
+
+時刻を合わせ、追加する歓声の強さを選んでください。
+
+</div>
+
+<div class="level-options">
+
+<label class="level-option">
+
+<input
+
+ type="radio"
+
+ name="reactionLevel"
+
+ value="1"
+
+>
+
+<span>① 小歓声</span>
+
+</label>
+
+<label class="level-option">
+
+<input
+
+ type="radio"
+
+ name="reactionLevel"
+
+ value="2"
+
+ checked
+
+>
+
+<span>② 大歓声</span>
+
+</label>
+
+<label class="level-option">
+
+<input
+
+ type="radio"
+
+ name="reactionLevel"
+
+ value="3"
+
+>
+
+<span>③ 超大歓声</span>
+
+</label>
+
+</div>
+
+<button
+
+ id="addMarkerButton"
+
+ class="add-button"
+
+ type="button"
+
+>
+
+＋ この時刻に盛り上がりを追加
+
+</button>
+
+<div class="marker-count" id="markerCount">
+
+登録ポイント：0 / 10
+
+</div>
+
+<div id="markerList">
+
+<div class="marker-empty">
+
+まだポイントはありません。指定なしでも加工できます。
+
+</div>
+
+</div>
+
+<div class="timeline-note">
+
+登録した時刻をタップすると、その場面へ移動できます。<br>
+
+変更したい場合は、削除してから設定し直してください。
+
+</div>
+
+</div>
+
+<button
+
+ id="processButton"
+
+ class="process-button"
+
+>
+
+⑤ 観客音入り動画を作る
+
+</button>
+
+<div
+
+ id="progressWrap"
+
+ class="progress-wrap"
+
+>
+
+<div class="progress-track">
+
+<div
+
+ id="progressBar"
+
+ class="progress-bar"
+
+></div>
+
+</div>
+
+<div
+
+ id="progressText"
+
+ class="progress-text"
+
+>
 
 準備中
 
@@ -270,11 +892,25 @@ ZIPを展開し、MP3を7本まとめて選択してください。
 
 <div class="screen">
 
-<video id="resultVideo" controls playsinline></video>
+<video
+
+ id="resultVideo"
+
+ controls
+
+ playsinline
+
+></video>
 
 </div>
 
-<a id="saveButton" class="save-button">
+<a
+
+ id="saveButton"
+
+ class="save-button"
+
+>
 
 完成動画を保存
 
@@ -288,7 +924,9 @@ ZIPを展開し、MP3を7本まとめて選択してください。
 
 <div class="notice">
 
-素材は端末内で処理します。音声素材の権利確認が済むまでは
+映像と観客音は端末内で処理します。<br>
+
+音声素材の利用権を確認するまでは
 
 個人用テストとしてお使いください。
 
@@ -330,59 +968,81 @@ const crowdLevel = $("crowdLevel");
 
 const crowdValue = $("crowdValue");
 
+const seekSlider = $("seekSlider");
+
+const timeDisplay = $("timeDisplay");
+
+const addMarkerButton = $("addMarkerButton");
+
+const markerList = $("markerList");
+
+const markerCount = $("markerCount");
+
 const canvas = $("workCanvas");
 
 const ctx = canvas.getContext("2d",{alpha:false});
 
 function layer(){
 
- const canvas=document.createElement("canvas");
+ const canvas = document.createElement("canvas");
 
- return {canvas,ctx:canvas.getContext("2d")};
+ return {
+
+  canvas,
+
+  ctx:canvas.getContext("2d")
+
+ };
 
 }
 
-const scene=layer();
+const scene = layer();
 
-const screen=layer();
+const screen = layer();
 
-const blurred=layer();
+const blurred = layer();
 
-const bloom=layer();
+const bloom = layer();
 
-const color=layer();
+const color = layer();
 
-let selectedVideo=null;
+let selectedVideo = null;
 
-let audioFiles=[];
+let audioFiles = [];
 
-let videoURL=null;
+let videoURL = null;
 
-let resultURL=null;
+let resultURL = null;
 
-let ac=null;
+let ac = null;
 
-let sourceNode=null;
+let sourceNode = null;
 
-let destination=null;
+let destination = null;
 
-let movieMaster=null;
+let movieMaster = null;
 
-let audienceInput=null;
+let audienceInput = null;
 
-let mixMaster=null;
+let mixMaster = null;
 
-let analyser=null;
+let analyser = null;
 
-let playingSources=[];
+let playingSources = [];
 
-let processing=false;
+let processing = false;
 
-let frameId=0;
+let frameId = 0;
 
-let holdTimer=null;
+let holdTimer = null;
 
-const names=[
+let markers = [];
+
+let nextMarkerId = 1;
+
+let editingSeek = false;
+
+const names = [
 
  "",
 
@@ -398,45 +1058,191 @@ const names=[
 
 ];
 
-crowdLevel.oninput=()=>{
+const markerNames = {
 
- crowdValue.textContent=
+ 1:"小歓声",
+
+ 2:"大歓声",
+
+ 3:"超大歓声"
+
+};
+
+function formatTime(seconds){
+
+ const t = Math.max(0,Math.floor(seconds||0));
+
+ const minutes = Math.floor(t/60);
+
+ const secs = String(t%60).padStart(2,"0");
+
+ return minutes + ":" + secs;
+
+}
+
+function updateTimeDisplay(){
+
+ const duration = Number.isFinite(sourceVideo.duration)
+
+  ?sourceVideo.duration
+
+  :0;
+
+ const time = Number.isFinite(sourceVideo.currentTime)
+
+  ?sourceVideo.currentTime
+
+  :0;
+
+ timeDisplay.textContent =
+
+  formatTime(time)+" / "+formatTime(duration);
+
+ if(!editingSeek && duration>0){
+
+  seekSlider.value = Math.round(time/duration*1000);
+
+ }
+
+}
+
+function renderMarkers(){
+
+ markers.sort((a,b)=>a.time-b.time);
+
+ markerCount.textContent =
+
+  "登録ポイント："+markers.length+" / 10";
+
+ addMarkerButton.disabled = processing || markers.length>=10;
+
+ markerList.innerHTML = "";
+
+ if(!markers.length){
+
+  const empty = document.createElement("div");
+
+  empty.className = "marker-empty";
+
+  empty.textContent =
+
+   "まだポイントはありません。指定なしでも加工できます。";
+
+  markerList.appendChild(empty);
+
+  return;
+
+ }
+
+ for(const marker of markers){
+
+  const row = document.createElement("div");
+
+  row.className = "marker-row";
+
+  const timeButton = document.createElement("button");
+
+  timeButton.type = "button";
+
+  timeButton.className = "marker-time";
+
+  timeButton.textContent = formatTime(marker.time);
+
+  timeButton.onclick = () => {
+
+   if(processing)return;
+
+   sourceVideo.pause();
+
+   sourceVideo.currentTime = marker.time;
+
+   updateTimeDisplay();
+
+  };
+
+  const info = document.createElement("div");
+
+  info.className = "marker-info";
+
+  info.textContent = markerNames[marker.level];
+
+  const deleteButton = document.createElement("button");
+
+  deleteButton.type = "button";
+
+  deleteButton.className = "delete-button";
+
+  deleteButton.textContent = "削除";
+
+  deleteButton.onclick = () => {
+
+   if(processing)return;
+
+   markers = markers.filter(m=>m.id!==marker.id);
+
+   renderMarkers();
+
+  };
+
+  row.appendChild(timeButton);
+
+  row.appendChild(info);
+
+  row.appendChild(deleteButton);
+
+  markerList.appendChild(row);
+
+ }
+
+}
+
+crowdLevel.oninput = () => {
+
+ crowdValue.textContent =
 
   `レベル${crowdLevel.value}：${names[+crowdLevel.value]}`;
 
 };
 
-videoInput.onchange=e=>{
+videoInput.onchange = e => {
 
  if(processing)return;
 
- selectedVideo=e.target.files?.[0];
+ selectedVideo = e.target.files?.[0];
 
  if(!selectedVideo)return;
 
  if(videoURL)URL.revokeObjectURL(videoURL);
 
- videoURL=URL.createObjectURL(selectedVideo);
+ videoURL = URL.createObjectURL(selectedVideo);
 
- sourceVideo.src=videoURL;
+ sourceVideo.src = videoURL;
 
  sourceVideo.load();
 
- $("fileName").textContent=selectedVideo.name;
+ $("fileName").textContent = selectedVideo.name;
 
- previewArea.style.display="block";
+ previewArea.style.display = "block";
 
- resultArea.style.display="none";
+ resultArea.style.display = "none";
 
- statusBox.textContent="動画を読み込みました。";
+ markers = [];
+
+ nextMarkerId = 1;
+
+ renderMarkers();
+
+ statusBox.textContent =
+
+  "動画を読み込みました。盛り上がりポイントを設定できます。";
 
 };
 
-audioInput.onchange=e=>{
+audioInput.onchange = e => {
 
  if(processing)return;
 
- audioFiles=[...(e.target.files||[])].filter(
+ audioFiles = [...(e.target.files||[])].filter(
 
   f=>/\.(mp3|m4a|wav|ogg|aac)$/i.test(f.name)
 
@@ -444,7 +1250,7 @@ audioInput.onchange=e=>{
 
  );
 
- $("audioNames").textContent=audioFiles.length
+ $("audioNames").textContent = audioFiles.length
 
   ?`${audioFiles.length}本選択：${audioFiles.map(f=>f.name).join("、")}`
 
@@ -452,19 +1258,159 @@ audioInput.onchange=e=>{
 
 };
 
+sourceVideo.addEventListener(
+
+ "loadedmetadata",
+
+ updateTimeDisplay
+
+);
+
+sourceVideo.addEventListener(
+
+ "timeupdate",
+
+ updateTimeDisplay
+
+);
+
+sourceVideo.addEventListener(
+
+ "seeked",
+
+ updateTimeDisplay
+
+);
+
+seekSlider.addEventListener("input",()=>{
+
+ if(processing)return;
+
+ const duration = sourceVideo.duration;
+
+ if(!Number.isFinite(duration)||duration<=0)return;
+
+ editingSeek = true;
+
+ sourceVideo.currentTime =
+
+  duration*Number(seekSlider.value)/1000;
+
+ updateTimeDisplay();
+
+});
+
+seekSlider.addEventListener("change",()=>{
+
+ editingSeek = false;
+
+ updateTimeDisplay();
+
+});
+
+function moveTime(seconds){
+
+ if(processing)return;
+
+ const duration = sourceVideo.duration;
+
+ if(!Number.isFinite(duration)||duration<=0)return;
+
+ sourceVideo.pause();
+
+ sourceVideo.currentTime = Math.max(
+
+  0,
+
+  Math.min(duration,sourceVideo.currentTime+seconds)
+
+ );
+
+ updateTimeDisplay();
+
+}
+
+$("backButton").onclick = () => moveTime(-1);
+
+$("forwardButton").onclick = () => moveTime(1);
+
+addMarkerButton.onclick = () => {
+
+ if(processing)return;
+
+ if(markers.length>=10){
+
+  statusBox.textContent =
+
+   "盛り上がりポイントは最大10か所です。";
+
+  return;
+
+ }
+
+ const duration = sourceVideo.duration;
+
+ if(!Number.isFinite(duration)||duration<=0){
+
+  statusBox.textContent =
+
+   "動画の読み込みが終わるまでお待ちください。";
+
+  return;
+
+ }
+
+ sourceVideo.pause();
+
+ const time = Math.max(
+
+  0,
+
+  Math.min(duration,sourceVideo.currentTime)
+
+ );
+
+ const selected = document.querySelector(
+
+  'input[name="reactionLevel"]:checked'
+
+ );
+
+ const level = selected?Number(selected.value):2;
+
+ markers.push({
+
+  id:nextMarkerId++,
+
+  time,
+
+  level
+
+ });
+
+ renderMarkers();
+
+ statusBox.textContent =
+
+  `${formatTime(time)} に「${markerNames[level]}」を追加しました。`;
+
+};
+
 function impulse(seconds,decay){
 
- const n=Math.floor(ac.sampleRate*seconds);
+ const n = Math.floor(ac.sampleRate*seconds);
 
- const b=ac.createBuffer(2,n,ac.sampleRate);
+ const b = ac.createBuffer(2,n,ac.sampleRate);
 
  for(let c=0;c<2;c++){
 
-  const d=b.getChannelData(c);
+  const d = b.getChannelData(c);
 
   for(let i=0;i<n;i++){
 
-   d[i]=(Math.random()*2-1)*Math.pow(1-i/n,decay);
+   d[i] = (Math.random()*2-1)*
+
+    Math.pow(1-i/n,decay);
 
   }
 
@@ -478,7 +1424,13 @@ async function audioSetup(){
 
  if(!ac){
 
-  ac=new(window.AudioContext||window.webkitAudioContext)();
+  ac = new(
+
+   window.AudioContext||
+
+   window.webkitAudioContext
+
+  )();
 
  }
 
@@ -486,39 +1438,39 @@ async function audioSetup(){
 
  if(sourceNode)return;
 
- sourceNode=ac.createMediaElementSource(sourceVideo);
+ sourceNode = ac.createMediaElementSource(sourceVideo);
 
- destination=ac.createMediaStreamDestination();
+ destination = ac.createMediaStreamDestination();
 
- const low=ac.createBiquadFilter();
+ const low = ac.createBiquadFilter();
 
- low.type="lowpass";
+ low.type = "lowpass";
 
- low.frequency.value=3900;
+ low.frequency.value = 3900;
 
- analyser=ac.createAnalyser();
+ analyser = ac.createAnalyser();
 
- analyser.fftSize=1024;
+ analyser.fftSize = 1024;
 
- analyser.smoothingTimeConstant=.28;
+ analyser.smoothingTimeConstant = .28;
 
- movieMaster=ac.createGain();
+ movieMaster = ac.createGain();
 
- const dry=ac.createGain();
+ const dry = ac.createGain();
 
- const wet=ac.createGain();
+ const wet = ac.createGain();
 
- const delay=ac.createDelay();
+ const delay = ac.createDelay();
 
- const rev=ac.createConvolver();
+ const rev = ac.createConvolver();
 
- dry.gain.value=.54;
+ dry.gain.value = .54;
 
- wet.gain.value=.43;
+ wet.gain.value = .43;
 
- delay.delayTime.value=.075;
+ delay.delayTime.value = .075;
 
- rev.buffer=impulse(2,2.2);
+ rev.buffer = impulse(2,2.2);
 
  sourceNode.connect(analyser);
 
@@ -536,25 +1488,25 @@ async function audioSetup(){
 
  wet.connect(movieMaster);
 
- audienceInput=ac.createGain();
+ audienceInput = ac.createGain();
 
- const af=ac.createBiquadFilter();
+ const af = ac.createBiquadFilter();
 
- const ar=ac.createConvolver();
+ const ar = ac.createConvolver();
 
- const ad=ac.createGain();
+ const ad = ac.createGain();
 
- const aw=ac.createGain();
+ const aw = ac.createGain();
 
- af.type="lowpass";
+ af.type = "lowpass";
 
- af.frequency.value=5600;
+ af.frequency.value = 5600;
 
- ar.buffer=impulse(1.5,2.5);
+ ar.buffer = impulse(1.5,2.5);
 
- ad.gain.value=1;
+ ad.gain.value = 1;
 
- aw.gain.value=.22;
+ aw.gain.value = .22;
 
  audienceInput.connect(af);
 
@@ -564,21 +1516,21 @@ async function audioSetup(){
 
  ar.connect(aw);
 
- const mix=ac.createGain();
+ const mix = ac.createGain();
 
- mixMaster=ac.createGain();
+ mixMaster = ac.createGain();
 
- const compress=ac.createDynamicsCompressor();
+ const compress = ac.createDynamicsCompressor();
 
- compress.threshold.value=-9;
+ compress.threshold.value = -9;
 
- compress.knee.value=8;
+ compress.knee.value = 8;
 
- compress.ratio.value=8;
+ compress.ratio.value = 8;
 
- compress.attack.value=.004;
+ compress.attack.value = .004;
 
- compress.release.value=.25;
+ compress.release.value = .25;
 
  movieMaster.connect(mix);
 
@@ -598,41 +1550,57 @@ async function audioSetup(){
 
 async function loadSounds(){
 
- const lib={cheer:[],applause:[],other:[]};
+ const lib = {
 
- const failed=[];
+  cheer:[],
+
+  applause:[],
+
+  other:[]
+
+ };
+
+ const failed = [];
 
  for(const f of audioFiles){
 
   try{
 
-   let b=await ac.decodeAudioData(await f.arrayBuffer());
+   let b = await ac.decodeAudioData(
 
-   // 左右の偏りを減らす
+    await f.arrayBuffer()
+
+   );
+
+   // 左右の偏りを防ぐためモノラル化
 
    if(b.numberOfChannels>1){
 
-    const m=ac.createBuffer(1,b.length,b.sampleRate);
+    const m = ac.createBuffer(
 
-    const dest=m.getChannelData(0);
+     1,b.length,b.sampleRate
+
+    );
+
+    const dest = m.getChannelData(0);
 
     for(let c=0;c<b.numberOfChannels;c++){
 
-     const src=b.getChannelData(c);
+     const src = b.getChannelData(c);
 
      for(let i=0;i<dest.length;i++){
 
-      dest[i]+=src[i]/b.numberOfChannels;
+      dest[i] += src[i]/b.numberOfChannels;
 
      }
 
     }
 
-    b=m;
+    b = m;
 
    }
 
-   const kind=/applause|clap/i.test(f.name)
+   const kind = /applause|clap/i.test(f.name)
 
     ?"applause"
 
@@ -670,7 +1638,7 @@ function stopSounds(){
 
  }
 
- playingSources=[];
+ playingSources = [];
 
 }
 
@@ -690,31 +1658,53 @@ function clip(
 
  if(!buffer||len<.1)return;
 
- const actual=Math.min(len,buffer.duration-offset);
+ const actual = Math.min(
 
- if(actual<.1)return;
-
- const src=ac.createBufferSource();
-
- const g=ac.createGain();
-
- src.buffer=buffer;
-
- const i=Math.min(fadeIn,actual*.35);
-
- const o=Math.min(fadeOut,actual*.47);
-
- g.gain.setValueAtTime(.0001,start);
-
- g.gain.linearRampToValueAtTime(volume,start+i);
-
- g.gain.setValueAtTime(
-
-  volume,start+Math.max(i,actual-o)
+  len,buffer.duration-offset
 
  );
 
- g.gain.linearRampToValueAtTime(.0001,start+actual);
+ if(actual<.1)return;
+
+ const src = ac.createBufferSource();
+
+ const g = ac.createGain();
+
+ src.buffer = buffer;
+
+ const i = Math.min(
+
+  fadeIn,actual*.35
+
+ );
+
+ const o = Math.min(
+
+  fadeOut,actual*.47
+
+ );
+
+ g.gain.setValueAtTime(.0001,start);
+
+ g.gain.linearRampToValueAtTime(
+
+  volume,start+i
+
+ );
+
+ g.gain.setValueAtTime(
+
+  volume,
+
+  start+Math.max(i,actual-o)
+
+ );
+
+ g.gain.linearRampToValueAtTime(
+
+  .0001,start+actual
+
+ );
 
  src.connect(g);
 
@@ -738,15 +1728,29 @@ function randomClip(
 
  if(!buffers.length)return;
 
- clip(pick(buffers),start,len,volume,fadeIn,fadeOut);
+ clip(
+
+  pick(buffers),
+
+  start,
+
+  len,
+
+  volume,
+
+  fadeIn,
+
+  fadeOut
+
+ );
 
 }
 
-// 常時のざわめき
+// 常時の観客のざわめき
 
 function ambience(lib,start,total,level){
 
- const bank=[
+ const bank = [
 
   ...lib.cheer,
 
@@ -758,19 +1762,23 @@ function ambience(lib,start,total,level){
 
  if(!bank.length)return;
 
- const step=1.1;
+ const step = 1.1;
 
- const clipLength=5.7;
+ const clipLength = 5.7;
 
- const base=[0,.08,.13,.20,.27,.34][level];
+ const base = [0,.08,.13,.20,.27,.34][level];
 
  for(let t=0;t<total;t+=step){
 
-  const b=pick(bank);
+  const b = pick(bank);
 
-  const length=Math.min(
+  const length = Math.min(
 
-   clipLength,total-t,b.duration
+   clipLength,
+
+   total-t,
+
+   b.duration
 
   );
 
@@ -778,7 +1786,11 @@ function ambience(lib,start,total,level){
 
   clip(
 
-   b,start+t,length,
+   b,
+
+   start+t,
+
+   length,
 
    base*(.55+Math.random()*.4),
 
@@ -792,23 +1804,39 @@ function ambience(lib,start,total,level){
 
 }
 
-// 初めの大歓声・拍手
+// 冒頭の拍手と歓声
 
 function opening(lib,start,duration,level){
 
- const cheers=lib.cheer.length?lib.cheer:lib.other;
+ const cheers = lib.cheer.length
 
- const applause=lib.applause.length?lib.applause:lib.other;
+  ?lib.cheer
 
- const scale=[0,.45,.7,1,1.5,1.95][level];
+  :lib.other;
 
- const openingLength=Math.min(12,Math.max(4,duration*.16));
+ const applause = lib.applause.length
+
+  ?lib.applause
+
+  :lib.other;
+
+ const scale = [0,.45,.7,1,1.5,1.95][level];
+
+ const openingLength = Math.min(
+
+  12,
+
+  Math.max(4,duration*.16)
+
+ );
 
  randomClip(
 
-  cheers,start,openingLength,
+  cheers,start,
 
-  .95*scale,.12,4.0
+  openingLength,
+
+  .95*scale,.12,4
 
  );
 
@@ -818,7 +1846,7 @@ function opening(lib,start,duration,level){
 
   Math.max(2,openingLength-1),
 
-  1.20*scale,.15,4.5
+  1.2*scale,.15,4.5
 
  );
 
@@ -830,17 +1858,15 @@ function opening(lib,start,duration,level){
 
    Math.min(7,openingLength),
 
-   .65*scale,.5,4.0
+   .65*scale,.5,4
 
   );
 
  }
 
- // 序盤は映画音をやや抑えた状態から戻す
+ const g = movieMaster.gain;
 
- const g=movieMaster.gain;
-
- const down=level>=4?.30:.55;
+ const down = level>=4?.30:.55;
 
  g.setValueAtTime(down,start);
 
@@ -852,23 +1878,37 @@ function opening(lib,start,duration,level){
 
 }
 
-// 通常の歓声
+// 通常の追加歓声
 
 function reaction(time,lib,level,big=false){
 
- const c=lib.cheer.length?lib.cheer:lib.other;
+ const cheers = lib.cheer.length
 
- const a=lib.applause.length?lib.applause:lib.other;
+  ?lib.cheer
 
- const scale=[0,.45,.7,1,1.5,1.95][level];
+  :lib.other;
+
+ const applause = lib.applause.length
+
+  ?lib.applause
+
+  :lib.other;
+
+ const scale = [0,.45,.7,1,1.5,1.95][level];
 
  randomClip(
 
-  c,time,big?7:5,
+  cheers,
+
+  time,
+
+  big?7:5,
 
   (big?1.30:.90)*scale,
 
-  .2,big?4:3
+  .2,
+
+  big?4:3
 
  );
 
@@ -876,11 +1916,17 @@ function reaction(time,lib,level,big=false){
 
   randomClip(
 
-   a,time+.7,big?7:4,
+   applause,
+
+   time+.7,
+
+   big?7:4,
 
    (big?.92:.4)*scale,
 
-   .25,big?4:2.7
+   .25,
+
+   big?4:2.7
 
   );
 
@@ -888,39 +1934,151 @@ function reaction(time,lib,level,big=false){
 
 }
 
-// 終盤全体の大歓声
+// 手動指定の盛り上がりポイント
 
-function longFinale(lib,start,duration,level,tail){
+function manualReaction(
 
- const cheers=lib.cheer.length?lib.cheer:lib.other;
+ time,lib,pointLevel,overallLevel
 
- const applause=lib.applause.length?lib.applause:lib.other;
+){
 
- const scale=[0,.45,.7,1,1.5,1.95][level];
+ const cheers = lib.cheer.length
 
- // 長い動画は最後の30秒
+  ?lib.cheer
 
- // 短い動画は最後の約35%を終盤とする
+  :lib.other;
 
- const finaleLength=Math.min(30,duration*.35);
+ const applause = lib.applause.length
 
- const finaleStart=Math.max(0,duration-finaleLength);
+  ?lib.applause
 
- // 最後まで歓声を連続して重ねる
+  :lib.other;
 
- const cheerStep=2.1;
+ const scale = [0,.45,.7,1,1.5,1.95][overallLevel];
 
- const cheerLength=8;
+ if(pointLevel===1){
 
- for(let t=finaleStart;t<duration+tail-1;t+=cheerStep){
+  randomClip(
 
-  const progress=Math.min(
+   cheers,time,4.5,
 
-   1,(t-finaleStart)/Math.max(1,finaleLength)
+   .72*scale,.15,2.8
 
   );
 
-  const volume=(.60+progress*1.20)*scale;
+ }
+
+ if(pointLevel===2){
+
+  randomClip(
+
+   cheers,time,7,
+
+   1.15*scale,.12,3.8
+
+  );
+
+  randomClip(
+
+   applause,time+.75,6,
+
+   .75*scale,.3,3.5
+
+  );
+
+ }
+
+ if(pointLevel===3){
+
+  randomClip(
+
+   cheers,time,9,
+
+   1.7*scale,.12,4.5
+
+  );
+
+  randomClip(
+
+   cheers,time+.7,8,
+
+   1.35*scale,.35,4
+
+  );
+
+  randomClip(
+
+   applause,time+.6,9,
+
+   1.45*scale,.3,4.5
+
+  );
+
+  randomClip(
+
+   applause,time+2,8,
+
+   1.1*scale,.5,4.5
+
+  );
+
+ }
+
+}
+
+// 終盤は長い大歓声
+
+function longFinale(
+
+ lib,start,duration,level,tail
+
+){
+
+ const cheers = lib.cheer.length
+
+  ?lib.cheer
+
+  :lib.other;
+
+ const applause = lib.applause.length
+
+  ?lib.applause
+
+  :lib.other;
+
+ const scale = [0,.45,.7,1,1.5,1.95][level];
+
+ const finaleLength = Math.min(
+
+  30,duration*.35
+
+ );
+
+ const finaleStart = Math.max(
+
+  0,duration-finaleLength
+
+ );
+
+ for(
+
+  let t=finaleStart;
+
+  t<duration+tail-1;
+
+  t+=2.1
+
+ ){
+
+  const progress = Math.min(
+
+   1,
+
+   (t-finaleStart)/
+
+   Math.max(1,finaleLength)
+
+  );
 
   randomClip(
 
@@ -928,9 +2086,9 @@ function longFinale(lib,start,duration,level,tail){
 
    start+t,
 
-   Math.min(cheerLength,duration+tail-t),
+   Math.min(8,duration+tail-t),
 
-   volume,
+   (.60+progress*1.20)*scale,
 
    .4,
 
@@ -940,19 +2098,31 @@ function longFinale(lib,start,duration,level,tail){
 
  }
 
- // 後半の拍手も徐々に増やす
+ const clapStart = Math.max(
 
- const clapStart=Math.max(
+  finaleStart,
 
-  finaleStart,duration-Math.min(12,duration*.18)
+  duration-Math.min(12,duration*.18)
 
  );
 
- for(let t=clapStart;t<duration+tail-1;t+=2.5){
+ for(
 
-  const progress=Math.min(
+  let t=clapStart;
 
-   1,(t-clapStart)/Math.max(1,duration-clapStart)
+  t<duration+tail-1;
+
+  t+=2.5
+
+ ){
+
+  const progress = Math.min(
+
+   1,
+
+   (t-clapStart)/
+
+   Math.max(1,duration-clapStart)
 
   );
 
@@ -968,13 +2138,11 @@ function longFinale(lib,start,duration,level,tail){
 
    .35,
 
-   4.0
+   4
 
   );
 
  }
-
- // ラストでは拍手をさらに前面へ
 
  randomClip(
 
@@ -988,17 +2156,15 @@ function longFinale(lib,start,duration,level,tail){
 
   .25,
 
-  5.0
+  5
 
  );
 
- // 終盤の映画音を連続的に下げる
+ const g = movieMaster.gain;
 
- const g=movieMaster.gain;
+ const begin = start+finaleStart;
 
- const begin=start+finaleStart;
-
- const end=start+duration;
+ const end = start+duration;
 
  g.setValueAtTime(1,begin);
 
@@ -1010,8 +2176,6 @@ function longFinale(lib,start,duration,level,tail){
 
  );
 
- // 映画の終了時にはほぼ観客音だけ
-
  g.setValueAtTime(
 
   level>=5?.05:level>=4?.09:.25,
@@ -1022,15 +2186,15 @@ function longFinale(lib,start,duration,level,tail){
 
 }
 
-// 動画の終了後、全体をゆっくり静かにする
+// 最後の余韻
 
 function endingFade(start,duration,tail){
 
- const end=start+duration+tail;
+ const end = start+duration+tail;
 
- const fadeStart=end-5;
+ const fadeStart = end-5;
 
- const g=mixMaster.gain;
+ const g = mixMaster.gain;
 
  g.cancelScheduledValues(start);
 
@@ -1042,13 +2206,19 @@ function endingFade(start,duration,tail){
 
 }
 
+// 映像処理
+
 function cover(target,video,w,h,extra=1){
 
- const vr=video.videoWidth/video.videoHeight;
+ const vr = video.videoWidth/video.videoHeight;
 
- const tr=w/h;
+ const tr = w/h;
 
- let sx=0,sy=0,sw=video.videoWidth,sh=video.videoHeight;
+ let sx=0,sy=0;
+
+ let sw=video.videoWidth;
+
+ let sh=video.videoHeight;
 
  if(vr>tr){
 
@@ -1064,7 +2234,9 @@ function cover(target,video,w,h,extra=1){
 
  }
 
- const dw=w*extra,dh=h*extra;
+ const dw=w*extra;
+
+ const dh=h*extra;
 
  target.drawImage(
 
@@ -1082,7 +2254,13 @@ function renderScreen(t){
 
  const h=screen.canvas.height;
 
- const s=screen.ctx,b=blurred.ctx,g=bloom.ctx,c=color.ctx;
+ const s=screen.ctx;
+
+ const b=blurred.ctx;
+
+ const g=bloom.ctx;
+
+ const c=color.ctx;
 
  s.clearRect(0,0,w,h);
 
@@ -1098,11 +2276,17 @@ function renderScreen(t){
 
  const blur=15+fa*9+fb*5;
 
- const brightness=108+Math.sin(t*.62)*8+Math.sin(t*3.7)*3;
+ const brightness=
+
+  108+Math.sin(t*.62)*8+
+
+  Math.sin(t*3.7)*3;
 
  b.save();
 
- b.filter=`brightness(${brightness}%) contrast(79%) saturate(64%) blur(${blur}px)`;
+ b.filter=
+
+  `brightness(${brightness}%) contrast(79%) saturate(64%) blur(${blur}px)`;
 
  cover(b,sourceVideo,w,h,1.06);
 
@@ -1110,11 +2294,23 @@ function renderScreen(t){
 
  const haze=b.createLinearGradient(0,0,w,h);
 
- haze.addColorStop(0,"rgba(210,220,230,.10)");
+ haze.addColorStop(
 
- haze.addColorStop(.45,"rgba(235,235,225,.16)");
+  0,"rgba(210,220,230,.10)"
 
- haze.addColorStop(1,"rgba(180,200,215,.08)");
+ );
+
+ haze.addColorStop(
+
+  .45,"rgba(235,235,225,.16)"
+
+ );
+
+ haze.addColorStop(
+
+  1,"rgba(180,200,215,.08)"
+
+ );
 
  b.fillStyle=haze;
 
@@ -1154,7 +2350,9 @@ function renderScreen(t){
 
  c.globalAlpha=.11;
 
- c.filter="sepia(100%) saturate(500%) hue-rotate(-35deg)";
+ c.filter=
+
+  "sepia(100%) saturate(500%) hue-rotate(-35deg)";
 
  c.drawImage(blurred.canvas,4,1);
 
@@ -1166,7 +2364,9 @@ function renderScreen(t){
 
  c.globalAlpha=.08;
 
- c.filter="sepia(100%) saturate(500%) hue-rotate(170deg)";
+ c.filter=
+
+  "sepia(100%) saturate(500%) hue-rotate(170deg)";
 
  c.drawImage(blurred.canvas,-4,-1);
 
@@ -1222,13 +2422,29 @@ function buildScene(t){
 
  );
 
- glow.addColorStop(0,"rgba(135,150,165,.16)");
+ glow.addColorStop(
 
- glow.addColorStop(.38,"rgba(85,95,105,.075)");
+  0,"rgba(135,150,165,.16)"
 
- glow.addColorStop(.72,"rgba(35,40,45,.035)");
+ );
 
- glow.addColorStop(1,"rgba(0,0,0,0)");
+ glow.addColorStop(
+
+  .38,"rgba(85,95,105,.075)"
+
+ );
+
+ glow.addColorStop(
+
+  .72,"rgba(35,40,45,.035)"
+
+ );
+
+ glow.addColorStop(
+
+  1,"rgba(0,0,0,0)"
+
+ );
 
  s.fillStyle=glow;
 
@@ -1242,7 +2458,9 @@ function buildScene(t){
 
  s.transform(1,-.022,.115,1,0,0);
 
- const sw=w*1.46,sh=h*1.18;
+ const sw=w*1.46;
+
+ const sh=h*1.18;
 
  s.save();
 
@@ -1266,11 +2484,23 @@ function buildScene(t){
 
  const lens=s.createLinearGradient(0,0,w,h);
 
- lens.addColorStop(0,"rgba(160,175,190,.055)");
+ lens.addColorStop(
 
- lens.addColorStop(.5,"rgba(220,220,205,.075)");
+  0,"rgba(160,175,190,.055)"
 
- lens.addColorStop(1,"rgba(120,140,160,.035)");
+ );
+
+ lens.addColorStop(
+
+  .5,"rgba(220,220,205,.075)"
+
+ );
+
+ lens.addColorStop(
+
+  1,"rgba(120,140,160,.035)"
+
+ );
 
  s.fillStyle=lens;
 
@@ -1284,11 +2514,23 @@ function buildScene(t){
 
  );
 
- vignette.addColorStop(0,"rgba(0,0,0,0)");
+ vignette.addColorStop(
 
- vignette.addColorStop(.68,"rgba(0,0,0,.10)");
+  0,"rgba(0,0,0,0)"
 
- vignette.addColorStop(1,"rgba(0,0,0,.76)");
+ );
+
+ vignette.addColorStop(
+
+  .68,"rgba(0,0,0,.10)"
+
+ );
+
+ vignette.addColorStop(
+
+  1,"rgba(0,0,0,.76)"
+
+ );
 
  s.fillStyle=vignette;
 
@@ -1298,21 +2540,35 @@ function buildScene(t){
 
 function drawCamera(t){
 
- const w=canvas.width,h=canvas.height;
+ const w=canvas.width;
 
- const mx=Math.sin(t*8.3)*2.5+Math.sin(t*16.9);
+ const h=canvas.height;
 
- const my=Math.cos(t*7.1)*2+Math.sin(t*13.5)*.9;
+ const mx=
+
+  Math.sin(t*8.3)*2.5+
+
+  Math.sin(t*16.9);
+
+ const my=
+
+  Math.cos(t*7.1)*2+
+
+  Math.sin(t*13.5)*.9;
 
  const dx=Math.sin(t*.39)*6.5;
 
  const dy=Math.cos(t*.28)*4.2;
 
- const angle=Math.sin(t*.63)*.0062+
+ const angle=
 
-             Math.sin(t*2.8)*.0018;
+  Math.sin(t*.63)*.0062+
 
- const zoom=1.055+Math.sin(t*.24)*.008;
+  Math.sin(t*2.8)*.0018;
+
+ const zoom=
+
+  1.055+Math.sin(t*.24)*.008;
 
  ctx.fillStyle="#000";
 
@@ -1320,13 +2576,25 @@ function drawCamera(t){
 
  ctx.save();
 
- ctx.translate(w/2+mx+dx,h/2+my+dy);
+ ctx.translate(
+
+  w/2+mx+dx,
+
+  h/2+my+dy
+
+ );
 
  ctx.rotate(angle);
 
  ctx.scale(zoom,zoom);
 
- ctx.drawImage(scene.canvas,-w/2,-h/2,w,h);
+ ctx.drawImage(
+
+  scene.canvas,
+
+  -w/2,-h/2,w,h
+
+ );
 
  ctx.restore();
 
@@ -1348,7 +2616,11 @@ function mime(){
 
  ];
 
- return list.find(x=>MediaRecorder.isTypeSupported(x))||"";
+ return list.find(
+
+  x=>MediaRecorder.isTypeSupported(x)
+
+ )||"";
 
 }
 
@@ -1363,6 +2635,8 @@ function reset(){
  audioInput.disabled=false;
 
  sourceVideo.controls=true;
+
+ renderMarkers();
 
 }
 
@@ -1383,6 +2657,8 @@ processButton.onclick=async()=>{
  processing=true;
 
  processButton.disabled=true;
+
+ addMarkerButton.disabled=true;
 
  videoInput.disabled=true;
 
@@ -1414,7 +2690,13 @@ processButton.onclick=async()=>{
 
   stopped=true;
 
-  if(localRecorder&&localRecorder.state!=="inactive"){
+  if(
+
+   localRecorder&&
+
+   localRecorder.state!=="inactive"
+
+  ){
 
    localRecorder.stop();
 
@@ -1424,9 +2706,19 @@ processButton.onclick=async()=>{
 
  try{
 
-  if(!window.MediaRecorder||!canvas.captureStream){
+  if(
 
-   throw Error("動画録画に対応していないブラウザです。");
+   !window.MediaRecorder||
+
+   !canvas.captureStream
+
+  ){
+
+   throw Error(
+
+    "動画録画に対応していないブラウザです。"
+
+   );
 
   }
 
@@ -1458,21 +2750,41 @@ processButton.onclick=async()=>{
 
   const duration=sourceVideo.duration;
 
-  if(!Number.isFinite(duration)||duration<=0){
+  if(
 
-   throw Error("動画の長さを取得できません。");
+   !Number.isFinite(duration)||
+
+   duration<=0
+
+  ){
+
+   throw Error(
+
+    "動画の長さを取得できません。"
+
+   );
 
   }
 
   const portrait=
 
-   sourceVideo.videoHeight>sourceVideo.videoWidth;
+   sourceVideo.videoHeight>
+
+   sourceVideo.videoWidth;
 
   canvas.width=portrait?540:960;
 
   canvas.height=portrait?960:540;
 
-  for(const l of [scene,screen,blurred,bloom,color]){
+  for(
+
+   const l of [
+
+    scene,screen,blurred,bloom,color
+
+   ]
+
+  ){
 
    l.canvas.width=canvas.width;
 
@@ -1504,9 +2816,19 @@ processButton.onclick=async()=>{
 
    type
 
-    ?{mimeType:type,videoBitsPerSecond:4500000}
+    ?{
 
-    :{videoBitsPerSecond:4500000}
+      mimeType:type,
+
+      videoBitsPerSecond:4500000
+
+     }
+
+    :{
+
+      videoBitsPerSecond:4500000
+
+     }
 
   );
 
@@ -1526,7 +2848,9 @@ processButton.onclick=async()=>{
 
    statusBox.textContent=
 
-    "録画エラー："+(e.error?.message||"不明");
+    "録画エラー："+
+
+    (e.error?.message||"不明");
 
   };
 
@@ -1534,11 +2858,19 @@ processButton.onclick=async()=>{
 
    cancelAnimationFrame(frameId);
 
-   if(holdTimer)clearTimeout(holdTimer);
+   if(holdTimer){
+
+    clearTimeout(holdTimer);
+
+   }
 
    stopSounds();
 
-   stream.getTracks().forEach(t=>t.stop());
+   stream.getTracks().forEach(
+
+    t=>t.stop()
+
+   );
 
    reset();
 
@@ -1546,7 +2878,9 @@ processButton.onclick=async()=>{
 
     if(!failed){
 
-     statusBox.textContent="録画データがありません。";
+     statusBox.textContent=
+
+      "録画データがありません。";
 
     }
 
@@ -1554,11 +2888,25 @@ processButton.onclick=async()=>{
 
    }
 
-   const actual=localRecorder.mimeType||type||"video/mp4";
+   const actual=
 
-   const blob=new Blob(chunks,{type:actual});
+    localRecorder.mimeType||
 
-   if(resultURL)URL.revokeObjectURL(resultURL);
+    type||
+
+    "video/mp4";
+
+   const blob=new Blob(
+
+    chunks,{type:actual}
+
+   );
+
+   if(resultURL){
+
+    URL.revokeObjectURL(resultURL);
+
+   }
 
    resultURL=URL.createObjectURL(blob);
 
@@ -1566,11 +2914,13 @@ processButton.onclick=async()=>{
 
    saveButton.href=resultURL;
 
-   saveButton.download=actual.includes("mp4")
+   saveButton.download=
 
-    ?"movie-leak-v14.mp4"
+    actual.includes("mp4")
 
-    :"movie-leak-v14.webm";
+     ?"movie-leak-v15.mp4"
+
+     :"movie-leak-v15.webm";
 
    resultArea.style.display="block";
 
@@ -1580,7 +2930,7 @@ processButton.onclick=async()=>{
 
    statusBox.textContent=
 
-    "冒頭の拍手と終盤の大歓声を加えた動画が完成しました。";
+    "指定した盛り上がりポイントを加えた動画が完成しました。";
 
   };
 
@@ -1590,17 +2940,29 @@ processButton.onclick=async()=>{
 
   stopSounds();
 
-  // 先頭の観客音も録画に確実に入るよう
+  movieMaster.gain.cancelScheduledValues(
 
-  // 再生開始直後を基準に音を配置する
+   ac.currentTime
 
-  movieMaster.gain.cancelScheduledValues(ac.currentTime);
+  );
 
-  movieMaster.gain.setValueAtTime(1,ac.currentTime);
+  movieMaster.gain.setValueAtTime(
 
-  mixMaster.gain.cancelScheduledValues(ac.currentTime);
+   1,ac.currentTime
 
-  mixMaster.gain.setValueAtTime(1,ac.currentTime);
+  );
+
+  mixMaster.gain.cancelScheduledValues(
+
+   ac.currentTime
+
+  );
+
+  mixMaster.gain.setValueAtTime(
+
+   1,ac.currentTime
+
+  );
 
   const data=new Uint8Array(analyser.fftSize);
 
@@ -1612,11 +2974,25 @@ processButton.onclick=async()=>{
 
   let prevTime=0;
 
-  let finaleTime=Math.max(0,duration-Math.min(30,duration*.35));
+  const finaleTime=Math.max(
+
+   0,
+
+   duration-Math.min(30,duration*.35)
+
+  );
 
   function frame(){
 
-   if(!processing||sourceVideo.ended||sourceVideo.paused){
+   if(
+
+    !processing||
+
+    sourceVideo.ended||
+
+    sourceVideo.paused
+
+   ){
 
     return;
 
@@ -1630,19 +3006,27 @@ processButton.onclick=async()=>{
 
    const pct=Math.min(
 
-    100,Math.round(t/duration*100)
+    100,
+
+    Math.round(t/duration*100)
 
    );
 
    progressBar.style.width=pct+"%";
 
-   progressText.textContent="加工中 "+pct+"%";
+   progressText.textContent=
 
-   // 中盤は音の変化で歓声を追加
+    "加工中 "+pct+"%";
 
-   // 終盤は別の大歓声演出を優先
+   // 自動の小さな反応は残す
 
-   if(t-prevTime>.09&&t<finaleTime-1){
+   if(
+
+    t-prevTime>.09&&
+
+    t<finaleTime-1
+
+   ){
 
     analyser.getByteTimeDomainData(data);
 
@@ -1656,15 +3040,23 @@ processButton.onclick=async()=>{
 
     }
 
-    const rms=Math.sqrt(sum/data.length);
+    const rms=Math.sqrt(
 
-    smoothed=smoothed*.83+rms*.17;
+     sum/data.length
+
+    );
+
+    smoothed=
+
+     smoothed*.83+rms*.17;
 
     if(smoothed<.036){
 
      wasQuiet=Math.min(
 
-      3,wasQuiet+(t-prevTime)
+      3,
+
+      wasQuiet+(t-prevTime)
 
      );
 
@@ -1680,7 +3072,17 @@ processButton.onclick=async()=>{
 
     ){
 
-     reaction(ac.currentTime+.06,lib,level,rms>.16);
+     reaction(
+
+      ac.currentTime+.06,
+
+      lib,
+
+      Math.max(1,level-2),
+
+      false
+
+     );
 
      lastEvent=t;
 
@@ -1708,9 +3110,17 @@ processButton.onclick=async()=>{
 
     "最後の大拍手の余韻を録音しています…";
 
-   progressText.textContent="余韻を録音中";
+   progressText.textContent=
 
-   holdTimer=setTimeout(endRecording,tail*1000);
+    "余韻を録音中";
+
+   holdTimer=setTimeout(
+
+    endRecording,
+
+    tail*1000
+
+   );
 
   };
 
@@ -1720,19 +3130,57 @@ processButton.onclick=async()=>{
 
   const startNow=ac.currentTime+.05;
 
-  ambience(lib,startNow,duration+tail,level);
+  // 基本の自動演出
 
-  opening(lib,startNow,duration,level);
+  ambience(
 
-  longFinale(lib,startNow,duration,level,tail);
+   lib,startNow,duration+tail,level
 
-  endingFade(startNow,duration,tail);
+  );
+
+  opening(
+
+   lib,startNow,duration,level
+
+  );
+
+  longFinale(
+
+   lib,startNow,duration,level,tail
+
+  );
+
+  // 手動で指定した最大10か所
+
+  for(const marker of markers){
+
+   const when=startNow+marker.time;
+
+   manualReaction(
+
+    when,
+
+    lib,
+
+    marker.level,
+
+    level
+
+   );
+
+  }
+
+  endingFade(
+
+   startNow,duration,tail
+
+  );
 
   statusBox.textContent=bad.length
 
    ?"一部読めなかった音声："+bad.join("、")
 
-   :"冒頭の拍手・客席音・終盤の大歓声を合成しています。";
+   :"自動演出と指定した歓声を合成しています。";
 
   frameId=requestAnimationFrame(frame);
 
@@ -1742,29 +3190,57 @@ processButton.onclick=async()=>{
 
   statusBox.textContent=
 
-   "エラー："+(e.message||String(e));
+   "エラー："+(
+
+    e.message||String(e)
+
+   );
 
   cancelAnimationFrame(frameId);
 
-  if(holdTimer)clearTimeout(holdTimer);
+  if(holdTimer){
+
+   clearTimeout(holdTimer);
+
+  }
 
   sourceVideo.pause();
 
   stopSounds();
 
-  if(localRecorder&&localRecorder.state!=="inactive"){
+  if(
 
-   try{localRecorder.stop()}catch(_){}
+   localRecorder&&
+
+   localRecorder.state!=="inactive"
+
+  ){
+
+   try{
+
+    localRecorder.stop();
+
+   }catch(_){}
 
   }
 
-  if(stream)stream.getTracks().forEach(t=>t.stop());
+  if(stream){
+
+   stream.getTracks().forEach(
+
+    t=>t.stop()
+
+   );
+
+  }
 
   reset();
 
  }
 
 };
+
+renderMarkers();
 
 </script>
 
