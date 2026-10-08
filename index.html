@@ -393,6 +393,10 @@ let audioSource = null;
 
 let audioDestination = null;
 
+let audienceBus = null;
+
+let activeAudienceNodes = [];
+
 
 
 videoInput.addEventListener(
@@ -493,7 +497,9 @@ function makeImpulse(
 
 
   const length =
-    rate * seconds;
+    Math.floor(
+      rate * seconds
+    );
 
 
   const impulse =
@@ -505,8 +511,8 @@ function makeImpulse(
 
 
   for(
-    let channel=0;
-    channel<2;
+    let channel = 0;
+    channel < 2;
     channel++
   ){
 
@@ -517,18 +523,18 @@ function makeImpulse(
 
 
     for(
-      let i=0;
-      i<length;
+      let i = 0;
+      i < length;
       i++
     ){
 
       data[i] =
         (
-          Math.random()*2-1
+          Math.random() * 2 - 1
         )
         *
         Math.pow(
-          1-i/length,
+          1 - i / length,
           decay
         );
     }
@@ -536,6 +542,46 @@ function makeImpulse(
 
 
   return impulse;
+}
+
+
+
+function createNoiseBuffer(
+  context,
+  seconds
+){
+
+  const length =
+    Math.floor(
+      context.sampleRate *
+      seconds
+    );
+
+
+  const buffer =
+    context.createBuffer(
+      1,
+      length,
+      context.sampleRate
+    );
+
+
+  const data =
+    buffer.getChannelData(0);
+
+
+  for(
+    let i = 0;
+    i < length;
+    i++
+  ){
+
+    data[i] =
+      Math.random() * 2 - 1;
+  }
+
+
+  return buffer;
 }
 
 
@@ -570,46 +616,75 @@ async function prepareAudio(){
     audioContext.createMediaStreamDestination();
 
 
+
+  /*
+  元動画の直接音
+  */
+
   const dry =
     audioContext.createGain();
 
-  dry.gain.value =
-    0.60;
 
+  dry.gain.value =
+    0.54;
+
+
+
+  /*
+  映画館の反響音
+  */
 
   const wet =
     audioContext.createGain();
 
-  wet.gain.value =
-    0.32;
 
+  wet.gain.value =
+    0.43;
+
+
+
+  /*
+  スマホ録音らしく
+  高い音を少し落とす
+  */
 
   const lowpass =
     audioContext.createBiquadFilter();
 
+
   lowpass.type =
     "lowpass";
 
-  lowpass.frequency.value =
-    4200;
 
+  lowpass.frequency.value =
+    3900;
+
+
+
+  /*
+  映画館らしい少し遅れた反射
+  */
 
   const delay =
     audioContext.createDelay();
 
+
   delay.delayTime.value =
-    0.055;
+    0.075;
+
 
 
   const convolver =
     audioContext.createConvolver();
 
+
   convolver.buffer =
     makeImpulse(
       audioContext,
-      1.55,
-      2.7
+      2.0,
+      2.2
     );
+
 
 
   audioSource.connect(
@@ -647,6 +722,11 @@ async function prepareAudio(){
   );
 
 
+
+  /*
+  加工中にも聞こえる
+  */
+
   dry.connect(
     audioContext.destination
   );
@@ -655,6 +735,827 @@ async function prepareAudio(){
   wet.connect(
     audioContext.destination
   );
+
+
+
+  /*
+  観客音専用バス
+  */
+
+  audienceBus =
+    audioContext.createGain();
+
+
+  audienceBus.gain.value =
+    0.82;
+
+
+  /*
+  観客音も少し映画館に馴染ませる
+  */
+
+  const audienceLowpass =
+    audioContext.createBiquadFilter();
+
+
+  audienceLowpass.type =
+    "lowpass";
+
+
+  audienceLowpass.frequency.value =
+    5200;
+
+
+  const audienceReverb =
+    audioContext.createConvolver();
+
+
+  audienceReverb.buffer =
+    makeImpulse(
+      audioContext,
+      1.45,
+      2.5
+    );
+
+
+  const audienceDry =
+    audioContext.createGain();
+
+
+  audienceDry.gain.value =
+    0.78;
+
+
+  const audienceWet =
+    audioContext.createGain();
+
+
+  audienceWet.gain.value =
+    0.28;
+
+
+  audienceBus.connect(
+    audienceLowpass
+  );
+
+
+  audienceLowpass.connect(
+    audienceDry
+  );
+
+
+  audienceLowpass.connect(
+    audienceReverb
+  );
+
+
+  audienceReverb.connect(
+    audienceWet
+  );
+
+
+  audienceDry.connect(
+    audioDestination
+  );
+
+
+  audienceWet.connect(
+    audioDestination
+  );
+
+
+  /*
+  加工中にも観客音を聞く
+  */
+
+  audienceDry.connect(
+    audioContext.destination
+  );
+
+
+  audienceWet.connect(
+    audioContext.destination
+  );
+}
+
+
+
+function stopAudienceSounds(){
+
+  activeAudienceNodes.forEach(
+    node => {
+
+      try{
+
+        if(node.stop){
+          node.stop();
+        }
+
+      }catch(error){
+      }
+
+    }
+  );
+
+
+  activeAudienceNodes =
+    [];
+}
+
+
+
+/*
+常に小さく存在する
+観客のざわめき
+*/
+function createAudienceMurmur(
+  startTime
+){
+
+  const source =
+    audioContext.createBufferSource();
+
+
+  source.buffer =
+    createNoiseBuffer(
+      audioContext,
+      12
+    );
+
+
+  source.loop =
+    true;
+
+
+  const highpass =
+    audioContext.createBiquadFilter();
+
+
+  highpass.type =
+    "highpass";
+
+
+  highpass.frequency.value =
+    150;
+
+
+  const lowpass =
+    audioContext.createBiquadFilter();
+
+
+  lowpass.type =
+    "lowpass";
+
+
+  lowpass.frequency.value =
+    850;
+
+
+  const gain =
+    audioContext.createGain();
+
+
+  gain.gain.setValueAtTime(
+    0.018,
+    startTime
+  );
+
+
+  source.connect(
+    highpass
+  );
+
+
+  highpass.connect(
+    lowpass
+  );
+
+
+  lowpass.connect(
+    gain
+  );
+
+
+  gain.connect(
+    audienceBus
+  );
+
+
+  source.start(
+    startTime
+  );
+
+
+  activeAudienceNodes.push(
+    source
+  );
+
+
+  return {
+    source,
+    gain
+  };
+}
+
+
+
+/*
+観客が一斉に
+「おおっ」と反応する感じ。
+
+まだ本物の人声ではなく
+仮の合成音。
+*/
+function createCrowdCheer(
+  startTime,
+  duration = 1.7,
+  strength = 1
+){
+
+  const voices =
+    Math.floor(
+      18 * strength
+    );
+
+
+  for(
+    let i = 0;
+    i < voices;
+    i++
+  ){
+
+    const oscillator =
+      audioContext.createOscillator();
+
+
+    const filter =
+      audioContext.createBiquadFilter();
+
+
+    const gain =
+      audioContext.createGain();
+
+
+    const pan =
+      audioContext.createStereoPanner
+      ? audioContext.createStereoPanner()
+      : null;
+
+
+    const delay =
+      Math.random() * 0.22;
+
+
+    const voiceStart =
+      startTime + delay;
+
+
+    const voiceDuration =
+      duration *
+      (
+        0.55 +
+        Math.random() * 0.55
+      );
+
+
+    const voiceEnd =
+      voiceStart +
+      voiceDuration;
+
+
+    oscillator.type =
+      Math.random() > 0.5
+      ? "sawtooth"
+      : "triangle";
+
+
+    const baseFrequency =
+      145 +
+      Math.random() * 420;
+
+
+    oscillator.frequency.setValueAtTime(
+      baseFrequency,
+      voiceStart
+    );
+
+
+    oscillator.frequency.exponentialRampToValueAtTime(
+      baseFrequency *
+      (
+        1.05 +
+        Math.random() * 0.55
+      ),
+      voiceEnd
+    );
+
+
+    filter.type =
+      "bandpass";
+
+
+    filter.frequency.value =
+      450 +
+      Math.random() * 1400;
+
+
+    filter.Q.value =
+      0.45;
+
+
+    const volume =
+      (
+        0.006 +
+        Math.random() * 0.010
+      )
+      *
+      strength;
+
+
+    gain.gain.setValueAtTime(
+      0.001,
+      voiceStart
+    );
+
+
+    gain.gain.linearRampToValueAtTime(
+      volume,
+      voiceStart + 0.12
+    );
+
+
+    gain.gain.exponentialRampToValueAtTime(
+      0.001,
+      voiceEnd
+    );
+
+
+    oscillator.connect(
+      filter
+    );
+
+
+    filter.connect(
+      gain
+    );
+
+
+    if(pan){
+
+      pan.pan.value =
+        -0.9 +
+        Math.random() * 1.8;
+
+
+      gain.connect(
+        pan
+      );
+
+
+      pan.connect(
+        audienceBus
+      );
+
+    }else{
+
+      gain.connect(
+        audienceBus
+      );
+    }
+
+
+    oscillator.start(
+      voiceStart
+    );
+
+
+    oscillator.stop(
+      voiceEnd
+    );
+
+
+    activeAudienceNodes.push(
+      oscillator
+    );
+  }
+
+
+
+  /*
+  大勢の声の土台になる
+  ノイズ
+  */
+
+  const noise =
+    audioContext.createBufferSource();
+
+
+  noise.buffer =
+    createNoiseBuffer(
+      audioContext,
+      duration + 0.6
+    );
+
+
+  const filter =
+    audioContext.createBiquadFilter();
+
+
+  filter.type =
+    "bandpass";
+
+
+  filter.frequency.value =
+    1050;
+
+
+  filter.Q.value =
+    0.45;
+
+
+  const gain =
+    audioContext.createGain();
+
+
+  gain.gain.setValueAtTime(
+    0.001,
+    startTime
+  );
+
+
+  gain.gain.linearRampToValueAtTime(
+    0.040 * strength,
+    startTime + 0.15
+  );
+
+
+  gain.gain.exponentialRampToValueAtTime(
+    0.001,
+    startTime + duration
+  );
+
+
+  noise.connect(
+    filter
+  );
+
+
+  filter.connect(
+    gain
+  );
+
+
+  gain.connect(
+    audienceBus
+  );
+
+
+  noise.start(
+    startTime
+  );
+
+
+  noise.stop(
+    startTime +
+    duration +
+    0.25
+  );
+
+
+  activeAudienceNodes.push(
+    noise
+  );
+}
+
+
+
+/*
+拍手
+*/
+function createApplause(
+  startTime,
+  duration = 2.8,
+  strength = 1
+){
+
+  const clapCount =
+    Math.floor(
+      58 *
+      strength
+    );
+
+
+  for(
+    let i = 0;
+    i < clapCount;
+    i++
+  ){
+
+    const source =
+      audioContext.createBufferSource();
+
+
+    source.buffer =
+      createNoiseBuffer(
+        audioContext,
+        0.09
+      );
+
+
+    const bandpass =
+      audioContext.createBiquadFilter();
+
+
+    bandpass.type =
+      "bandpass";
+
+
+    bandpass.frequency.value =
+      900 +
+      Math.random() * 2400;
+
+
+    bandpass.Q.value =
+      0.7;
+
+
+    const gain =
+      audioContext.createGain();
+
+
+    const pan =
+      audioContext.createStereoPanner
+      ? audioContext.createStereoPanner()
+      : null;
+
+
+    const clapTime =
+      startTime +
+      Math.random() *
+      duration;
+
+
+    const level =
+      (
+        0.016 +
+        Math.random() * 0.035
+      )
+      *
+      strength;
+
+
+    gain.gain.setValueAtTime(
+      0.001,
+      clapTime
+    );
+
+
+    gain.gain.linearRampToValueAtTime(
+      level,
+      clapTime + 0.008
+    );
+
+
+    gain.gain.exponentialRampToValueAtTime(
+      0.001,
+      clapTime + 0.095
+    );
+
+
+    source.connect(
+      bandpass
+    );
+
+
+    bandpass.connect(
+      gain
+    );
+
+
+    if(pan){
+
+      pan.pan.value =
+        -0.9 +
+        Math.random() * 1.8;
+
+
+      gain.connect(
+        pan
+      );
+
+
+      pan.connect(
+        audienceBus
+      );
+
+    }else{
+
+      gain.connect(
+        audienceBus
+      );
+    }
+
+
+    source.start(
+      clapTime
+    );
+
+
+    source.stop(
+      clapTime + 0.11
+    );
+
+
+    activeAudienceNodes.push(
+      source
+    );
+  }
+}
+
+
+
+/*
+動画の長さに合わせて
+観客リアクションを自動配置
+*/
+function scheduleAudience(
+  duration
+){
+
+  stopAudienceSounds();
+
+
+  const start =
+    audioContext.currentTime +
+    0.05;
+
+
+  /*
+  常時の小さなざわめき
+  */
+
+  const murmur =
+    createAudienceMurmur(
+      start
+    );
+
+
+  murmur.gain.gain.setValueAtTime(
+    0.017,
+    start
+  );
+
+
+  murmur.gain.gain.linearRampToValueAtTime(
+    0.027,
+    start +
+    duration * 0.18
+  );
+
+
+  murmur.gain.gain.linearRampToValueAtTime(
+    0.023,
+    start +
+    duration * 0.47
+  );
+
+
+  murmur.gain.gain.linearRampToValueAtTime(
+    0.034,
+    start +
+    duration * 0.74
+  );
+
+
+  murmur.gain.gain.linearRampToValueAtTime(
+    0.020,
+    start +
+    duration
+  );
+
+
+
+  /*
+  1回目
+  小さな反応
+  */
+
+  createCrowdCheer(
+
+    start +
+    duration * 0.25,
+
+    Math.min(
+      1.25,
+      duration * 0.10
+    ),
+
+    0.48
+
+  );
+
+
+
+  /*
+  2回目
+  中くらい
+  */
+
+  createCrowdCheer(
+
+    start +
+    duration * 0.52,
+
+    Math.min(
+      1.8,
+      duration * 0.12
+    ),
+
+    0.75
+
+  );
+
+
+
+  /*
+  後半
+  大きな歓声
+  */
+
+  createCrowdCheer(
+
+    start +
+    duration * 0.76,
+
+    Math.min(
+      2.5,
+      duration * 0.16
+    ),
+
+    1.18
+
+  );
+
+
+
+  /*
+  大歓声に続く拍手
+  */
+
+  createApplause(
+
+    start +
+    duration * 0.79,
+
+    Math.min(
+      3.2,
+      duration * 0.19
+    ),
+
+    1.08
+
+  );
+
+
+
+  /*
+  最後の小さな拍手
+  */
+
+  if(duration > 8){
+
+    createApplause(
+
+      start +
+      duration * 0.92,
+
+      Math.min(
+        1.8,
+        duration * 0.08
+      ),
+
+      0.55
+
+    );
+  }
+
+
+
+  /*
+  動画終了後に
+  ざわめきを停止
+  */
+
+  try{
+
+    murmur.source.stop(
+      start +
+      duration +
+      0.25
+    );
+
+  }catch(error){
+  }
 }
 
 
@@ -803,9 +1704,7 @@ function renderScreen(
 
 
   /*
-  ピントがかなり外れている。
-
-  今回は15〜29px。
+  強いピンぼけ
   */
 
   const focusA =
@@ -832,7 +1731,7 @@ function renderScreen(
 
 
   /*
-  明るさもゆっくり暴れる
+  スマホの自動露出
   */
 
   const brightness =
@@ -876,7 +1775,7 @@ function renderScreen(
 
 
   /*
-  Haze（ヘイズ）
+  Haze
   白い霞
   */
 
@@ -1018,9 +1917,6 @@ function renderScreen(
 
   /*
   色収差
-
-  赤と青を数pxずらす。
-  かなり弱く。
   */
 
   colorCtx.save();
@@ -1092,7 +1988,7 @@ function renderScreen(
 
 
   /*
-  画面全体に白っぽい膜
+  白っぽい膜
   */
 
   screenCtx.save();
@@ -1115,8 +2011,7 @@ function renderScreen(
 
 
   /*
-  スクリーンの端を
-  極端にぼかして消す
+  スクリーン端をぼかす
   */
 
   screenCtx.save();
@@ -1170,11 +2065,6 @@ function buildScene(
   );
 
 
-  /*
-  完全な黒ではなく
-  暗いグレー
-  */
-
   sceneCtx.fillStyle =
     "rgb(5,6,7)";
 
@@ -1194,8 +2084,7 @@ function buildScene(
 
 
   /*
-  スクリーン外へ漏れる
-  光
+  スクリーン外へ漏れる光
   */
 
   const roomGlow =
@@ -1250,8 +2139,6 @@ function buildScene(
 
   /*
   斜めスクリーン
-
-  端は完全に画面外へ。
   */
 
   sceneCtx.save();
@@ -1288,7 +2175,7 @@ function buildScene(
 
 
   /*
-  超大型Glow
+  大きな光の滲み
   */
 
   sceneCtx.save();
@@ -1450,7 +2337,7 @@ function buildScene(
 
 
 /*
-カメラ本体の手ブレ
+カメラ全体の手ブレ
 */
 function drawCamera(
   time
@@ -1506,12 +2393,6 @@ function drawCamera(
       time*2.8
     ) * 0.0018;
 
-
-
-  /*
-  ゆっくりズームが
-  微妙に前後
-  */
 
   const breathingZoom =
     1.055 +
@@ -1608,6 +2489,9 @@ processButton.addEventListener(
       }
 
 
+      stopAudienceSounds();
+
+
       processButton.disabled =
         true;
 
@@ -1633,7 +2517,7 @@ processButton.addEventListener(
 
 
       status.textContent =
-        "動画加工の準備をしています。";
+        "動画加工と観客音の準備をしています。";
 
 
       await prepareAudio();
@@ -1861,7 +2745,7 @@ processButton.addEventListener(
 
 
           status.textContent =
-            "加工が完了しました。";
+            "観客音入りの加工が完了しました。";
 
 
           processButton.disabled =
@@ -1942,7 +2826,7 @@ processButton.addEventListener(
 
 
       status.textContent =
-        "映画館スクリーンのピンぼけ・光漏れ・色ズレを強く加工しています。";
+        "映画館映像と観客のざわめき・歓声・拍手を合成しています。";
 
 
       recorder.start(
@@ -1951,6 +2835,16 @@ processButton.addEventListener(
 
 
       await sourceVideo.play();
+
+
+      /*
+      動画再生開始後に
+      観客音をスケジュール
+      */
+
+      scheduleAudience(
+        sourceVideo.duration
+      );
 
 
       requestAnimationFrame(
@@ -1964,6 +2858,9 @@ processButton.addEventListener(
       console.error(
         error
       );
+
+
+      stopAudienceSounds();
 
 
       processButton.disabled =
