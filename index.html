@@ -1,3697 +1,771 @@
 <!DOCTYPE html>
 <html lang="ja">
-
 <head>
-
 <meta charset="UTF-8">
-
-<meta
-  name="viewport"
-  content="width=device-width, initial-scale=1.0"
->
-
-<title>Movie Leak Maker</title>
-
-
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Movie Leak Maker - Version 11</title>
 <style>
-
-*{
-  box-sizing:border-box;
-}
-
-body{
-  margin:0;
-  background:#080808;
-  color:white;
-  font-family:
-    -apple-system,
-    BlinkMacSystemFont,
-    "Helvetica Neue",
-    Arial,
-    sans-serif;
-}
-
-.container{
-  width:min(92%,800px);
-  margin:auto;
-  padding:35px 0 80px;
-}
-
-h1{
-  margin:0 0 8px;
-  text-align:center;
-  font-size:30px;
-}
-
-.subtitle{
-  margin-bottom:30px;
-  text-align:center;
-  color:#aaa;
-  line-height:1.6;
-}
-
-.panel{
-  padding:20px;
-  border:1px solid #333;
-  border-radius:18px;
-  background:#161616;
-}
-
-.file-label,
-.process-button,
-.save-button{
-  display:block;
-  width:100%;
-  padding:16px;
-  border:0;
-  border-radius:12px;
-  font-size:17px;
-  font-weight:bold;
-  text-align:center;
-}
-
-.file-label{
-  background:white;
-  color:#111;
-}
-
-#videoInput{
-  display:none;
-}
-
-#fileName{
-  margin-top:14px;
-  text-align:center;
-  color:#aaa;
-  word-break:break-all;
-}
-
-.preview-area,
-.result-area{
-  display:none;
-  margin-top:24px;
-}
-
-.screen{
-  padding:8px;
-  overflow:hidden;
-  border-radius:10px;
-  background:black;
-}
-
-video{
-  display:block;
-  width:100%;
-  max-height:65vh;
-  background:black;
-}
-
-#workCanvas{
-  display:none;
-}
-
-.process-button{
-  margin-top:20px;
-  background:#f2f2f2;
-  color:#111;
-}
-
-.process-button:disabled{
-  background:#444;
-  color:#999;
-}
-
-.save-button{
-  margin-top:16px;
-  background:white;
-  color:#111;
-  text-decoration:none;
-}
-
-.status{
-  margin-top:18px;
-  padding:14px;
-  border-radius:10px;
-  background:#101010;
-  color:#ccc;
-  font-size:14px;
-  line-height:1.6;
-}
-
-.progress-wrap{
-  display:none;
-  margin-top:18px;
-}
-
-.progress-bg{
-  height:12px;
-  overflow:hidden;
-  border-radius:10px;
-  background:#333;
-}
-
-.progress-bar{
-  width:0%;
-  height:100%;
-  background:white;
-}
-
-.progress-text{
-  margin-top:8px;
-  text-align:center;
-  color:#aaa;
-  font-size:13px;
-}
-
-.notice{
-  margin-top:25px;
-  text-align:center;
-  color:#777;
-  font-size:12px;
-  line-height:1.6;
-}
-
+*{box-sizing:border-box}
+body{margin:0;background:#080808;color:#fff;font-family:-apple-system,BlinkMacSystemFont,"Helvetica Neue",Arial,sans-serif}
+.container{width:min(92%,800px);margin:auto;padding:35px 0 80px}
+h1{text-align:center;font-size:30px;margin:0 0 8px}
+.subtitle{text-align:center;color:#aaa;line-height:1.7;margin-bottom:25px}
+.version{text-align:center;color:#aaa;font-size:13px;margin:0 0 24px}
+.panel{padding:20px;border:1px solid #333;border-radius:18px;background:#161616}
+.file-label,.process-button,.save-button{display:block;width:100%;padding:16px;border:0;border-radius:12px;font-size:17px;font-weight:bold;text-align:center}
+.file-label{background:#fff;color:#111;cursor:pointer}
+.file-label.secondary{margin-top:20px;background:#343434;color:#fff}
+.file-input{display:none}
+.filename{margin-top:12px;text-align:center;color:#aaa;word-break:break-word;font-size:14px;line-height:1.6}
+.preview-area,.result-area{display:none;margin-top:24px}
+.screen{padding:8px;overflow:hidden;border-radius:10px;background:#000}
+video{display:block;width:100%;max-height:65vh;background:#000}
+#workCanvas{display:none}
+.process-button{margin-top:20px;background:#f2f2f2;color:#111}
+.process-button:disabled{background:#444;color:#999}
+.save-button{margin-top:16px;background:#fff;color:#111;text-decoration:none}
+.status{margin-top:18px;padding:14px;border-radius:10px;background:#101010;color:#ccc;font-size:14px;line-height:1.7}
+.progress-wrap{display:none;margin-top:18px}
+.progress-bg{height:12px;overflow:hidden;border-radius:10px;background:#333}
+.progress-bar{width:0%;height:100%;background:#fff}
+.progress-text{margin-top:8px;text-align:center;color:#aaa;font-size:13px}
+.notice{margin-top:25px;text-align:center;color:#777;font-size:12px;line-height:1.7}
+.help{color:#aaa;font-size:13px;line-height:1.7;margin-top:10px}
 </style>
-
 </head>
-
-
 <body>
-
-
 <div class="container">
-
-
-<h1>
-Movie Leak Maker
-</h1>
-
-
-<div class="subtitle">
-普通の動画を<br>
-「海外試写会の流出映像風」に加工します
-</div>
-
+<h1>Movie Leak Maker</h1>
+<div class="subtitle">普通の動画を<br>「海外試写会の流出映像風」に加工します</div>
+<div class="version">Version 11 — 実録音・観客音テスト版</div>
 
 <div class="panel">
+  <label class="file-label" for="videoInput">① 動画を選ぶ</label>
+  <input class="file-input" id="videoInput" type="file" accept="video/*">
+  <div id="fileName" class="filename">まだ動画は選択されていません</div>
 
+  <label class="file-label secondary" for="audioInput">② 観客音をまとめて選ぶ（7本）</label>
+  <input class="file-input" id="audioInput" type="file" accept="audio/*,.mp3,.m4a,.wav" multiple>
+  <div id="audioNames" class="filename">まだ観客音は選択されていません</div>
+  <div class="help">ZIPを展開したフォルダ内のMP3を7本すべて選んでください。ZIPファイル自体は選ばないでください。</div>
 
-<label
-  class="file-label"
-  for="videoInput"
->
-動画を選ぶ
-</label>
+  <div id="previewArea" class="preview-area">
+    <div class="screen">
+      <video id="sourceVideo" controls playsinline preload="metadata"></video>
+    </div>
 
+    <button id="processButton" class="process-button">③ 観客音入りの動画を作る</button>
 
-<input
-  id="videoInput"
-  type="file"
-  accept="video/*"
->
+    <div id="progressWrap" class="progress-wrap">
+      <div class="progress-bg">
+        <div id="progressBar" class="progress-bar"></div>
+      </div>
+      <div id="progressText" class="progress-text">準備中</div>
+    </div>
 
+    <div id="status" class="status">動画と観客音を選んでください。</div>
+  </div>
 
-<div id="fileName">
-まだ動画は選択されていません
+  <div id="resultArea" class="result-area">
+    <h2>完成動画</h2>
+    <div class="screen">
+      <video id="resultVideo" controls playsinline></video>
+    </div>
+    <a id="saveButton" class="save-button">完成動画を保存</a>
+  </div>
 </div>
-
-
-
-<div
-  id="previewArea"
-  class="preview-area"
->
-
-
-<div class="screen">
-
-<video
-  id="sourceVideo"
-  controls
-  playsinline
-></video>
-
-</div>
-
-
-<button
-  id="processButton"
-  class="process-button"
->
-流出映像風に加工する
-</button>
-
-
-
-<div
-  id="progressWrap"
-  class="progress-wrap"
->
-
-
-<div class="progress-bg">
-
-<div
-  id="progressBar"
-  class="progress-bar"
-></div>
-
-</div>
-
-
-<div
-  id="progressText"
-  class="progress-text"
->
-準備中
-</div>
-
-
-</div>
-
-
-
-<div
-  id="status"
-  class="status"
->
-動画を選んでください。
-</div>
-
-
-</div>
-
-
-
-<div
-  id="resultArea"
-  class="result-area"
->
-
-
-<h2>
-完成動画
-</h2>
-
-
-<div class="screen">
-
-<video
-  id="resultVideo"
-  controls
-  playsinline
-></video>
-
-</div>
-
-
-<a
-  id="saveButton"
-  class="save-button"
->
-完成動画を保存
-</a>
-
-
-</div>
-
-
-</div>
-
 
 <canvas id="workCanvas"></canvas>
 
-
 <div class="notice">
-動画はサーバーへ送信せず、この端末内で加工します。
+  動画と観客音はサーバーにアップロードされず、端末内で加工されます。<br>
+  素材の権利確認が済むまでは個人用テストとしてお使いください。
 </div>
-
-
 </div>
-
-
 
 <script>
-
-
-const videoInput =
-  document.getElementById(
-    "videoInput"
-  );
-
-
-const sourceVideo =
-  document.getElementById(
-    "sourceVideo"
-  );
-
-
-const resultVideo =
-  document.getElementById(
-    "resultVideo"
-  );
-
-
-const previewArea =
-  document.getElementById(
-    "previewArea"
-  );
-
-
-const resultArea =
-  document.getElementById(
-    "resultArea"
-  );
-
-
-const processButton =
-  document.getElementById(
-    "processButton"
-  );
-
-
-const saveButton =
-  document.getElementById(
-    "saveButton"
-  );
-
-
-const fileName =
-  document.getElementById(
-    "fileName"
-  );
-
-
-const status =
-  document.getElementById(
-    "status"
-  );
-
-
-const progressWrap =
-  document.getElementById(
-    "progressWrap"
-  );
-
-
-const progressBar =
-  document.getElementById(
-    "progressBar"
-  );
-
-
-const progressText =
-  document.getElementById(
-    "progressText"
-  );
-
-
-const canvas =
-  document.getElementById(
-    "workCanvas"
-  );
-
-
-const ctx =
-  canvas.getContext(
-    "2d",
-    {
-      alpha:false
-    }
-  );
-
-
-
-/*
-映画館全体
-*/
-
-const sceneCanvas =
-  document.createElement(
-    "canvas"
-  );
-
-
-const sceneCtx =
-  sceneCanvas.getContext(
-    "2d"
-  );
-
-
-
-/*
-スクリーン本体
-*/
-
-const screenCanvas =
-  document.createElement(
-    "canvas"
-  );
-
-
-const screenCtx =
-  screenCanvas.getContext(
-    "2d"
-  );
-
-
-
-/*
-ぼかし
-*/
-
-const blurCanvas =
-  document.createElement(
-    "canvas"
-  );
-
-
-const blurCtx =
-  blurCanvas.getContext(
-    "2d"
-  );
-
-
-
-/*
-光の滲み
-*/
-
-const bloomCanvas =
-  document.createElement(
-    "canvas"
-  );
-
-
-const bloomCtx =
-  bloomCanvas.getContext(
-    "2d"
-  );
-
-
-
-/*
-色収差
-*/
-
-const colorCanvas =
-  document.createElement(
-    "canvas"
-  );
-
-
-const colorCtx =
-  colorCanvas.getContext(
-    "2d"
-  );
-
-
-
-let selectedFile =
-  null;
-
-
-let inputURL =
-  null;
-
-
-let outputURL =
-  null;
-
-
-let audioContext =
-  null;
-
-
-let audioSource =
-  null;
-
-
-let audioDestination =
-  null;
-
-
-let audienceBus =
-  null;
-
-
-let activeAudienceNodes =
-  [];
-
-
-
-
-
-videoInput.addEventListener(
-  "change",
-  event => {
-
-
-    selectedFile =
-      event.target.files[0];
-
-
-    if(
-      !selectedFile
-    ){
-      return;
-    }
-
-
-    if(
-      inputURL
-    ){
-
-      URL.revokeObjectURL(
-        inputURL
-      );
-    }
-
-
-    inputURL =
-      URL.createObjectURL(
-        selectedFile
-      );
-
-
-    sourceVideo.src =
-      inputURL;
-
-
-    sourceVideo.load();
-
-
-    fileName.textContent =
-      selectedFile.name;
-
-
-    previewArea.style.display =
-      "block";
-
-
-    resultArea.style.display =
-      "none";
-
-
-    status.textContent =
-      "動画を読み込みました。";
-
+"use strict";
+
+const $ = id => document.getElementById(id);
+
+const videoInput = $("videoInput");
+const audioInput = $("audioInput");
+const sourceVideo = $("sourceVideo");
+const resultVideo = $("resultVideo");
+const previewArea = $("previewArea");
+const resultArea = $("resultArea");
+const processButton = $("processButton");
+const saveButton = $("saveButton");
+const fileName = $("fileName");
+const audioNames = $("audioNames");
+const statusBox = $("status");
+const progressWrap = $("progressWrap");
+const progressBar = $("progressBar");
+const progressText = $("progressText");
+
+const canvas = $("workCanvas");
+const ctx = canvas.getContext("2d", { alpha:false });
+
+const sceneCanvas = document.createElement("canvas");
+const sceneCtx = sceneCanvas.getContext("2d");
+
+const screenCanvas = document.createElement("canvas");
+const screenCtx = screenCanvas.getContext("2d");
+
+const blurCanvas = document.createElement("canvas");
+const blurCtx = blurCanvas.getContext("2d");
+
+const bloomCanvas = document.createElement("canvas");
+const bloomCtx = bloomCanvas.getContext("2d");
+
+const colorCanvas = document.createElement("canvas");
+const colorCtx = colorCanvas.getContext("2d");
+
+let selectedFile = null;
+let selectedAudioFiles = [];
+let inputURL = null;
+let outputURL = null;
+
+let audioContext = null;
+let audioSource = null;
+let audioDestination = null;
+let audienceBus = null;
+
+let activeSounds = [];
+let activeRecorder = null;
+let processing = false;
+let activeFrame = 0;
+
+function showError(err){
+  console.error(err);
+  statusBox.textContent = "エラー：" + (err && err.message ? err.message : String(err));
+}
+
+window.addEventListener("error", e => {
+  if(!processing && previewArea.style.display !== "block"){
+    fileName.textContent = "画面エラー：" + e.message;
   }
-);
+});
 
+videoInput.addEventListener("change", event => {
+  if(processing) return;
 
+  selectedFile = event.target.files?.[0] || null;
+  if(!selectedFile) return;
 
+  if(inputURL) URL.revokeObjectURL(inputURL);
 
+  inputURL = URL.createObjectURL(selectedFile);
+  sourceVideo.src = inputURL;
+  sourceVideo.load();
+
+  fileName.textContent = selectedFile.name;
+  previewArea.style.display = "block";
+  resultArea.style.display = "none";
+
+  statusBox.textContent = "動画を読み込みました。観客音も選んでください。";
+});
+
+audioInput.addEventListener("change", event => {
+  if(processing) return;
+
+  selectedAudioFiles = Array.from(event.target.files || []).filter(f =>
+    /\.(mp3|wav|m4a|aac|ogg)$/i.test(f.name) || f.type.startsWith("audio/")
+  );
+
+  audioNames.textContent = selectedAudioFiles.length
+    ? selectedAudioFiles.length + "本選択：" + selectedAudioFiles.map(f => f.name).join("、")
+    : "音声ファイルが選ばれていません";
+});
 
 function chooseMimeType(){
-
-
   const types = [
-
     'video/mp4;codecs="avc1.42E01E,mp4a.40.2"',
-
-    'video/mp4',
-
-    'video/webm;codecs=vp9,opus',
-
-    'video/webm;codecs=vp8,opus',
-
-    'video/webm'
-
+    "video/mp4",
+    "video/webm;codecs=vp9,opus",
+    "video/webm;codecs=vp8,opus",
+    "video/webm"
   ];
-
-
-  for(
-    const type
-    of types
-  ){
-
-    if(
-      MediaRecorder
-        .isTypeSupported(
-          type
-        )
-    ){
-
-      return type;
-    }
-
-  }
-
-
-  return "";
-
+  return types.find(t => MediaRecorder.isTypeSupported(t)) || "";
 }
 
+function makeImpulse(context, seconds, decay){
+  const rate = context.sampleRate;
+  const len = Math.floor(rate * seconds);
+  const buffer = context.createBuffer(2, len, rate);
 
-
-
-
-function makeImpulse(
-  context,
-  seconds,
-  decay
-){
-
-
-  const rate =
-    context.sampleRate;
-
-
-  const length =
-    Math.floor(
-      rate *
-      seconds
-    );
-
-
-  const impulse =
-    context.createBuffer(
-      2,
-      length,
-      rate
-    );
-
-
-  for(
-    let channel = 0;
-    channel < 2;
-    channel++
-  ){
-
-
-    const data =
-      impulse.getChannelData(
-        channel
-      );
-
-
-    for(
-      let i = 0;
-      i < length;
-      i++
-    ){
-
-
-      data[i] =
-        (
-          Math.random() *
-          2 -
-          1
-        )
-        *
-        Math.pow(
-          1 -
-          i /
-          length,
-          decay
-        );
-
+  for(let c=0; c<2; c++){
+    const data = buffer.getChannelData(c);
+    for(let i=0; i<len; i++){
+      data[i] = (Math.random()*2-1) * Math.pow(1 - i/len, decay);
     }
-
   }
-
-
-  return impulse;
-
-}
-
-
-
-
-
-function createNoiseBuffer(
-  context,
-  seconds
-){
-
-
-  const length =
-    Math.floor(
-      context.sampleRate *
-      seconds
-    );
-
-
-  const buffer =
-    context.createBuffer(
-      1,
-      length,
-      context.sampleRate
-    );
-
-
-  const data =
-    buffer.getChannelData(
-      0
-    );
-
-
-  for(
-    let i = 0;
-    i < length;
-    i++
-  ){
-
-
-    data[i] =
-      Math.random() *
-      2 -
-      1;
-
-  }
-
-
   return buffer;
-
 }
-
-
-
-
 
 async function prepareAudio(){
-
-
-  if(
-    !audioContext
-  ){
-
-
-    audioContext =
-      new(
-        window.AudioContext ||
-        window.webkitAudioContext
-      )();
-
+  if(!audioContext){
+    audioContext = new (window.AudioContext || window.webkitAudioContext)();
   }
-
 
   await audioContext.resume();
+  if(audioSource) return;
 
+  audioSource = audioContext.createMediaElementSource(sourceVideo);
+  audioDestination = audioContext.createMediaStreamDestination();
 
+  const dry = audioContext.createGain();
+  const wet = audioContext.createGain();
+  const lowpass = audioContext.createBiquadFilter();
+  const delay = audioContext.createDelay();
+  const convolver = audioContext.createConvolver();
 
-  if(
-    audioSource
-  ){
+  dry.gain.value = 0.54;
+  wet.gain.value = 0.43;
 
-    return;
+  lowpass.type = "lowpass";
+  lowpass.frequency.value = 3900;
 
-  }
+  delay.delayTime.value = 0.075;
+  convolver.buffer = makeImpulse(audioContext, 2, 2.2);
 
+  audioSource.connect(lowpass);
+  lowpass.connect(dry);
+  dry.connect(audioDestination);
 
+  lowpass.connect(delay);
+  delay.connect(convolver);
+  convolver.connect(wet);
+  wet.connect(audioDestination);
 
-  audioSource =
-    audioContext
-      .createMediaElementSource(
-        sourceVideo
-      );
+  dry.connect(audioContext.destination);
+  wet.connect(audioContext.destination);
 
+  audienceBus = audioContext.createGain();
+  audienceBus.gain.value = 1.0;
 
+  const audienceLowpass = audioContext.createBiquadFilter();
+  const audienceReverb = audioContext.createConvolver();
+  const audDry = audioContext.createGain();
+  const audWet = audioContext.createGain();
 
-  audioDestination =
-    audioContext
-      .createMediaStreamDestination();
+  audienceLowpass.type = "lowpass";
+  audienceLowpass.frequency.value = 5200;
 
+  audienceReverb.buffer = makeImpulse(audioContext, 1.45, 2.5);
 
+  audDry.gain.value = 0.95;
+  audWet.gain.value = 0.22;
 
-  /*
-  元動画
-  */
+  audienceBus.connect(audienceLowpass);
 
-  const dry =
-    audioContext
-      .createGain();
+  audienceLowpass.connect(audDry);
+  audienceLowpass.connect(audienceReverb);
+  audienceReverb.connect(audWet);
 
+  audDry.connect(audioDestination);
+  audWet.connect(audioDestination);
 
-  dry.gain.value =
-    0.54;
-
-
-
-  /*
-  劇場反響
-  */
-
-  const wet =
-    audioContext
-      .createGain();
-
-
-  wet.gain.value =
-    0.43;
-
-
-
-  const lowpass =
-    audioContext
-      .createBiquadFilter();
-
-
-  lowpass.type =
-    "lowpass";
-
-
-  lowpass.frequency.value =
-    3900;
-
-
-
-  const delay =
-    audioContext
-      .createDelay();
-
-
-  delay.delayTime.value =
-    0.075;
-
-
-
-  const convolver =
-    audioContext
-      .createConvolver();
-
-
-  convolver.buffer =
-    makeImpulse(
-      audioContext,
-      2.0,
-      2.2
-    );
-
-
-
-  audioSource.connect(
-    lowpass
-  );
-
-
-  lowpass.connect(
-    dry
-  );
-
-
-  dry.connect(
-    audioDestination
-  );
-
-
-  lowpass.connect(
-    delay
-  );
-
-
-  delay.connect(
-    convolver
-  );
-
-
-  convolver.connect(
-    wet
-  );
-
-
-  wet.connect(
-    audioDestination
-  );
-
-
-
-  dry.connect(
-    audioContext.destination
-  );
-
-
-  wet.connect(
-    audioContext.destination
-  );
-
-
-
-  /*
-  観客音専用
-  */
-
-  audienceBus =
-    audioContext
-      .createGain();
-
-
-  audienceBus.gain.value =
-    0.95;
-
-
-
-  const audienceLowpass =
-    audioContext
-      .createBiquadFilter();
-
-
-  audienceLowpass.type =
-    "lowpass";
-
-
-  audienceLowpass.frequency.value =
-    5000;
-
-
-
-  const audienceReverb =
-    audioContext
-      .createConvolver();
-
-
-  audienceReverb.buffer =
-    makeImpulse(
-      audioContext,
-      1.7,
-      2.4
-    );
-
-
-
-  const audienceDry =
-    audioContext
-      .createGain();
-
-
-  audienceDry.gain.value =
-    0.80;
-
-
-
-  const audienceWet =
-    audioContext
-      .createGain();
-
-
-  audienceWet.gain.value =
-    0.32;
-
-
-
-  audienceBus.connect(
-    audienceLowpass
-  );
-
-
-  audienceLowpass.connect(
-    audienceDry
-  );
-
-
-  audienceLowpass.connect(
-    audienceReverb
-  );
-
-
-  audienceReverb.connect(
-    audienceWet
-  );
-
-
-  audienceDry.connect(
-    audioDestination
-  );
-
-
-  audienceWet.connect(
-    audioDestination
-  );
-
-
-
-  audienceDry.connect(
-    audioContext.destination
-  );
-
-
-  audienceWet.connect(
-    audioContext.destination
-  );
-
+  audDry.connect(audioContext.destination);
+  audWet.connect(audioContext.destination);
 }
 
-
-
-
-
-function stopAudienceSounds(){
-
-
-  activeAudienceNodes
-    .forEach(
-      node => {
-
-
-        try{
-
-
-          if(
-            node.stop
-          ){
-
-            node.stop();
-
-          }
-
-
-        }catch(error){}
-
-
-      }
-    );
-
-
-  activeAudienceNodes =
-    [];
-
-}
-
-
-
-
-
-/*
-客席ざわめき
-*/
-
-function createAudienceMurmur(
-  startTime
-){
-
-
-  /*
-  低い客席音
-  */
-
-  const source1 =
-    audioContext
-      .createBufferSource();
-
-
-  source1.buffer =
-    createNoiseBuffer(
-      audioContext,
-      14
-    );
-
-
-  source1.loop =
-    true;
-
-
-
-  const hp1 =
-    audioContext
-      .createBiquadFilter();
-
-
-  hp1.type =
-    "highpass";
-
-
-  hp1.frequency.value =
-    120;
-
-
-
-  const lp1 =
-    audioContext
-      .createBiquadFilter();
-
-
-  lp1.type =
-    "lowpass";
-
-
-  lp1.frequency.value =
-    700;
-
-
-
-  const gain1 =
-    audioContext
-      .createGain();
-
-
-  gain1.gain.value =
-    0.018;
-
-
-
-  source1.connect(
-    hp1
-  );
-
-
-  hp1.connect(
-    lp1
-  );
-
-
-  lp1.connect(
-    gain1
-  );
-
-
-  gain1.connect(
-    audienceBus
-  );
-
-
-
-  source1.start(
-    startTime
-  );
-
-
-  activeAudienceNodes.push(
-    source1
-  );
-
-
-
-  /*
-  少し高いざわめき
-  */
-
-  const source2 =
-    audioContext
-      .createBufferSource();
-
-
-  source2.buffer =
-    createNoiseBuffer(
-      audioContext,
-      11
-    );
-
-
-  source2.loop =
-    true;
-
-
-
-  const hp2 =
-    audioContext
-      .createBiquadFilter();
-
-
-  hp2.type =
-    "highpass";
-
-
-  hp2.frequency.value =
-    380;
-
-
-
-  const lp2 =
-    audioContext
-      .createBiquadFilter();
-
-
-  lp2.type =
-    "lowpass";
-
-
-  lp2.frequency.value =
-    1700;
-
-
-
-  const gain2 =
-    audioContext
-      .createGain();
-
-
-  gain2.gain.value =
-    0.008;
-
-
-
-  source2.connect(
-    hp2
-  );
-
-
-  hp2.connect(
-    lp2
-  );
-
-
-  lp2.connect(
-    gain2
-  );
-
-
-  gain2.connect(
-    audienceBus
-  );
-
-
-
-  source2.start(
-    startTime
-  );
-
-
-  activeAudienceNodes.push(
-    source2
-  );
-
-
-
-  return {
-
-    low:gain1,
-
-    high:gain2,
-
-    source1,
-
-    source2
-
+async function loadAudienceFiles(){
+  const library = {
+    cheer: [],
+    applause: [],
+    other: []
   };
 
-}
-
-
-
-
-
-/*
-1人分の
-「オオオ」「ウォオ」
-のような母音歓声
-*/
-
-function createVowelVoice(
-
-  startTime,
-
-  duration,
-
-  strength,
-
-  voiceType,
-
-  rise = true
-
-){
-
-
-  const base =
-    voiceType === "high"
-    ?
-      170 +
-      Math.random() * 95
-    :
-      85 +
-      Math.random() * 90;
-
-
-
-  const oscillator =
-    audioContext
-      .createOscillator();
-
-
-  oscillator.type =
-    "sawtooth";
-
-
-
-  oscillator.frequency
-    .setValueAtTime(
-
-      base,
-
-      startTime
-
-    );
-
-
-
-  if(
-    rise
-  ){
-
-
-    oscillator.frequency
-      .exponentialRampToValueAtTime(
-
-        base *
-        (
-          1.15 +
-          Math.random() * 0.30
-        ),
-
-        startTime +
-        duration * 0.55
-
-      );
-
-  }
-
-
-
-  /*
-  口の共鳴を作る
-  */
-
-
-  const formant1 =
-    audioContext
-      .createBiquadFilter();
-
-
-  formant1.type =
-    "bandpass";
-
-
-  formant1.frequency.value =
-    voiceType === "high"
-    ?
-      720 +
-      Math.random() * 180
-    :
-      520 +
-      Math.random() * 180;
-
-
-  formant1.Q.value =
-    4;
-
-
-
-  const formant2 =
-    audioContext
-      .createBiquadFilter();
-
-
-  formant2.type =
-    "bandpass";
-
-
-  formant2.frequency.value =
-    voiceType === "high"
-    ?
-      1350 +
-      Math.random() * 350
-    :
-      950 +
-      Math.random() * 300;
-
-
-  formant2.Q.value =
-    3;
-
-
-
-  const gain1 =
-    audioContext
-      .createGain();
-
-
-  const gain2 =
-    audioContext
-      .createGain();
-
-
-
-  gain1.gain.value =
-    0.65;
-
-
-  gain2.gain.value =
-    0.35;
-
-
-
-  oscillator.connect(
-    formant1
-  );
-
-
-  oscillator.connect(
-    formant2
-  );
-
-
-  formant1.connect(
-    gain1
-  );
-
-
-  formant2.connect(
-    gain2
-  );
-
-
-
-  const voiceGain =
-    audioContext
-      .createGain();
-
-
-
-  const maxGain =
-    (
-      0.0045 +
-      Math.random() *
-      0.006
-    )
-    *
-    strength;
-
-
-
-  voiceGain.gain
-    .setValueAtTime(
-
-      0.0001,
-
-      startTime
-
-    );
-
-
-  voiceGain.gain
-    .linearRampToValueAtTime(
-
-      maxGain,
-
-      startTime +
-      0.08 +
-      Math.random() *
-      0.10
-
-    );
-
-
-  voiceGain.gain
-    .setValueAtTime(
-
-      maxGain,
-
-      startTime +
-      duration *
-      0.45
-
-    );
-
-
-  voiceGain.gain
-    .exponentialRampToValueAtTime(
-
-      0.0001,
-
-      startTime +
-      duration
-
-    );
-
-
-
-  gain1.connect(
-    voiceGain
-  );
-
-
-  gain2.connect(
-    voiceGain
-  );
-
-
-
-  if(
-    audioContext
-      .createStereoPanner
-  ){
-
-
-    const pan =
-      audioContext
-        .createStereoPanner();
-
-
-    pan.pan.value =
-      -0.9 +
-      Math.random() *
-      1.8;
-
-
-    voiceGain.connect(
-      pan
-    );
-
-
-    pan.connect(
-      audienceBus
-    );
-
-
-  }else{
-
-
-    voiceGain.connect(
-      audienceBus
-    );
-
-  }
-
-
-
-  oscillator.start(
-    startTime
-  );
-
-
-  oscillator.stop(
-    startTime +
-    duration +
-    0.05
-  );
-
-
-  activeAudienceNodes.push(
-    oscillator
-  );
-
-}
-
-
-
-
-
-/*
-複数人の
-OHHH / WHOA
-*/
-
-function createHumanCrowdCheer(
-
-  startTime,
-
-  duration = 1.8,
-
-  strength = 1
-
-){
-
-
-  const people =
-    Math.floor(
-      28 *
-      strength
-    );
-
-
-  for(
-    let i = 0;
-    i < people;
-    i++
-  ){
-
-
-    const delay =
-      Math.random() *
-      0.30;
-
-
-    const individualDuration =
-      duration *
-      (
-        0.55 +
-        Math.random() *
-        0.60
-      );
-
-
-    const highVoice =
-      Math.random() <
-      0.38;
-
-
-    createVowelVoice(
-
-      startTime +
-      delay,
-
-      individualDuration,
-
-      strength,
-
-      highVoice
-      ?
-        "high"
-      :
-        "low",
-
-      Math.random() >
-      0.18
-
-    );
-
-  }
-
-
-
-  /*
-  群衆全体の息・ノイズ
-  */
-
-  const noise =
-    audioContext
-      .createBufferSource();
-
-
-  noise.buffer =
-    createNoiseBuffer(
-      audioContext,
-      duration +
-      0.8
-    );
-
-
-
-  const filter =
-    audioContext
-      .createBiquadFilter();
-
-
-  filter.type =
-    "bandpass";
-
-
-  filter.frequency.value =
-    1250;
-
-
-  filter.Q.value =
-    0.42;
-
-
-
-  const gain =
-    audioContext
-      .createGain();
-
-
-
-  gain.gain
-    .setValueAtTime(
-
-      0.0001,
-
-      startTime
-
-    );
-
-
-  gain.gain
-    .linearRampToValueAtTime(
-
-      0.028 *
-      strength,
-
-      startTime +
-      0.18
-
-    );
-
-
-  gain.gain
-    .exponentialRampToValueAtTime(
-
-      0.0001,
-
-      startTime +
-      duration
-
-    );
-
-
-
-  noise.connect(
-    filter
-  );
-
-
-  filter.connect(
-    gain
-  );
-
-
-  gain.connect(
-    audienceBus
-  );
-
-
-
-  noise.start(
-    startTime
-  );
-
-
-  noise.stop(
-    startTime +
-    duration +
-    0.3
-  );
-
-
-  activeAudienceNodes.push(
-    noise
-  );
-
-}
-
-
-
-
-
-/*
-拍手
-*/
-
-function createApplause(
-
-  startTime,
-
-  duration = 3,
-
-  strength = 1
-
-){
-
-
-  const count =
-    Math.floor(
-      75 *
-      strength
-    );
-
-
-  for(
-    let i = 0;
-    i < count;
-    i++
-  ){
-
-
-    const source =
-      audioContext
-        .createBufferSource();
-
-
-    source.buffer =
-      createNoiseBuffer(
-        audioContext,
-        0.08
-      );
-
-
-
-    const filter =
-      audioContext
-        .createBiquadFilter();
-
-
-    filter.type =
-      "bandpass";
-
-
-    filter.frequency.value =
-      800 +
-      Math.random() *
-      3000;
-
-
-    filter.Q.value =
-      0.7;
-
-
-
-    const gain =
-      audioContext
-        .createGain();
-
-
-
-    const hit =
-      startTime +
-      Math.random() *
-      duration;
-
-
-
-    const level =
-      (
-        0.010 +
-        Math.random() *
-        0.030
-      )
-      *
-      strength;
-
-
-
-    gain.gain
-      .setValueAtTime(
-
-        0.0001,
-
-        hit
-
-      );
-
-
-    gain.gain
-      .linearRampToValueAtTime(
-
-        level,
-
-        hit +
-        0.008
-
-      );
-
-
-    gain.gain
-      .exponentialRampToValueAtTime(
-
-        0.0001,
-
-        hit +
-        0.10
-
-      );
-
-
-
-    source.connect(
-      filter
-    );
-
-
-    filter.connect(
-      gain
-    );
-
-
-
-    if(
-      audioContext
-        .createStereoPanner
-    ){
-
-
-      const pan =
-        audioContext
-          .createStereoPanner();
-
-
-      pan.pan.value =
-        -0.95 +
-        Math.random() *
-        1.9;
-
-
-      gain.connect(
-        pan
-      );
-
-
-      pan.connect(
-        audienceBus
-      );
-
-
-    }else{
-
-
-      gain.connect(
-        audienceBus
-      );
-
+  const failures = [];
+
+  for(const file of selectedAudioFiles){
+    try{
+      const raw = await file.arrayBuffer();
+      const buffer = await audioContext.decodeAudioData(raw);
+      const name = file.name.toLowerCase();
+
+      const kind = /applause|clap/.test(name)
+        ? "applause"
+        : /cheer|crowd|whoa|wow/.test(name)
+          ? "cheer"
+          : "other";
+
+      library[kind].push({
+        buffer,
+        name:file.name
+      });
+
+    }catch(err){
+      failures.push(file.name);
     }
-
-
-
-    source.start(
-      hit
-    );
-
-
-    source.stop(
-      hit +
-      0.12
-    );
-
-
-    activeAudienceNodes.push(
-      source
-    );
-
   }
 
-}
-
-
-
-
-
-/*
-観客リアクション配置
-*/
-
-function scheduleAudience(
-  duration
-){
-
-
-  stopAudienceSounds();
-
-
-
-  const start =
-    audioContext.currentTime +
-    0.05;
-
-
-
-  const murmur =
-    createAudienceMurmur(
-      start
-    );
-
-
-
-  /*
-  前半
-  */
-
-
-  createHumanCrowdCheer(
-
-    start +
-    duration *
-    0.25,
-
-    Math.min(
-      1.4,
-      duration *
-      0.11
-    ),
-
-    0.45
-
-  );
-
-
-
-  /*
-  中盤
-  */
-
-
-  createHumanCrowdCheer(
-
-    start +
-    duration *
-    0.51,
-
-    Math.min(
-      2.0,
-      duration *
-      0.14
-    ),
-
-    0.72
-
-  );
-
-
-
-  /*
-  後半
-  大きなOHHH
-  */
-
-
-  createHumanCrowdCheer(
-
-    start +
-    duration *
-    0.74,
-
-    Math.min(
-      2.8,
-      duration *
-      0.18
-    ),
-
-    1.18
-
-  );
-
-
-
-  /*
-  さらに数人遅れて声を出す
-  */
-
-
-  createHumanCrowdCheer(
-
-    start +
-    duration *
-    0.77,
-
-    Math.min(
-      2.0,
-      duration *
-      0.13
-    ),
-
-    0.68
-
-  );
-
-
-
-  /*
-  大歓声から拍手
-  */
-
-
-  createApplause(
-
-    start +
-    duration *
-    0.78,
-
-    Math.min(
-      3.8,
-      duration *
-      0.22
-    ),
-
-    1.10
-
-  );
-
-
-
-  /*
-  ラスト
-  */
-
-
-  if(
-    duration >
-    8
-  ){
-
-
-    createApplause(
-
-      start +
-      duration *
-      0.92,
-
-      Math.min(
-        1.8,
-        duration *
-        0.08
-      ),
-
-      0.55
-
-    );
-
+  if(!library.cheer.length && !library.applause.length && !library.other.length){
+    throw new Error("観客音を読み込めませんでした。MP3を選び直してください。");
   }
 
+  if(failures.length){
+    statusBox.textContent = "読めなかった音声：" + failures.join("、");
+  }
 
-
-  /*
-  終了
-  */
-
-
-  try{
-
-
-    murmur.source1.stop(
-
-      start +
-      duration +
-      0.3
-
-    );
-
-
-    murmur.source2.stop(
-
-      start +
-      duration +
-      0.3
-
-    );
-
-
-  }catch(error){}
-
+  return library;
 }
 
+function stopAudience(){
+  for(const sound of activeSounds){
+    try{
+      sound.stop();
+    }catch(e){}
+  }
+  activeSounds = [];
+}
 
+function randomChoice(items){
+  return items[Math.floor(Math.random() * items.length)];
+}
 
+function playAudienceClip(items, start, volume, maxDuration){
+  if(!items.length) return;
 
+  const entry = randomChoice(items);
+  const buffer = entry.buffer;
 
-/*
-動画全面描画
-*/
+  const src = audioContext.createBufferSource();
+  const gain = audioContext.createGain();
 
-function drawVideoCover(
+  src.buffer = buffer;
 
-  targetCtx,
+  const len = Math.min(buffer.duration, maxDuration || buffer.duration);
+  if(len < 0.05) return;
 
-  video,
+  gain.gain.setValueAtTime(0.0001, start);
+  gain.gain.linearRampToValueAtTime(volume, start + Math.min(0.15, len * 0.2));
+  gain.gain.setValueAtTime(volume, start + Math.max(0.03, len - 0.30));
+  gain.gain.linearRampToValueAtTime(0.0001, start + len);
 
-  width,
+  src.connect(gain);
+  gain.connect(audienceBus);
 
-  height,
+  src.start(start, 0, len);
+  src.stop(start + len + 0.02);
 
-  extraScale = 1
+  activeSounds.push(src);
+}
 
-){
+function scheduleAudience(duration, library){
+  stopAudience();
 
+  const start = audioContext.currentTime + 0.12;
 
-  const videoRatio =
-    video.videoWidth /
-    video.videoHeight;
+  const cheers = library.cheer.length ? library.cheer : library.other;
+  const applause = library.applause.length ? library.applause : library.other;
 
+  if(cheers.length){
+    playAudienceClip(cheers, start + duration * 0.22, 0.60, Math.min(3, duration * 0.13));
+    playAudienceClip(cheers, start + duration * 0.49, 0.90, Math.min(4, duration * 0.16));
+    playAudienceClip(cheers, start + duration * 0.74, 1.15, Math.min(5, duration * 0.19));
+  }
 
-  const targetRatio =
-    width /
-    height;
+  if(applause.length){
+    playAudienceClip(applause, start + duration * 0.79, 0.80, Math.min(5, duration * 0.19));
 
+    if(duration > 12){
+      playAudienceClip(applause, start + duration * 0.91, 0.38, Math.min(2, duration * 0.07));
+    }
+  }
+}
 
-  let sourceX = 0;
+function drawVideoCover(target, video, w, h, extraScale=1){
+  const vr = video.videoWidth / video.videoHeight;
+  const tr = w / h;
 
-  let sourceY = 0;
+  let sx = 0, sy = 0;
+  let sw = video.videoWidth;
+  let sh = video.videoHeight;
 
-
-  let sourceW =
-    video.videoWidth;
-
-
-  let sourceH =
-    video.videoHeight;
-
-
-
-  if(
-    videoRatio >
-    targetRatio
-  ){
-
-
-    sourceW =
-      video.videoHeight *
-      targetRatio;
-
-
-    sourceX =
-      (
-        video.videoWidth -
-        sourceW
-      ) /
-      2;
-
-
+  if(vr > tr){
+    sw = video.videoHeight * tr;
+    sx = (video.videoWidth - sw) / 2;
   }else{
-
-
-    sourceH =
-      video.videoWidth /
-      targetRatio;
-
-
-    sourceY =
-      (
-        video.videoHeight -
-        sourceH
-      ) /
-      2;
-
+    sh = video.videoWidth / tr;
+    sy = (video.videoHeight - sh) / 2;
   }
 
+  const dw = w * extraScale;
+  const dh = h * extraScale;
 
-
-  const dw =
-    width *
-    extraScale;
-
-
-  const dh =
-    height *
-    extraScale;
-
-
-  const dx =
-    (
-      width -
-      dw
-    ) /
-    2;
-
-
-  const dy =
-    (
-      height -
-      dh
-    ) /
-    2;
-
-
-
-  targetCtx.drawImage(
-
+  target.drawImage(
     video,
-
-    sourceX,
-    sourceY,
-    sourceW,
-    sourceH,
-
-    dx,
-    dy,
-    dw,
-    dh
-
+    sx, sy, sw, sh,
+    (w - dw) / 2, (h - dh) / 2, dw, dh
   );
-
 }
 
+function renderScreen(time){
+  const w = screenCanvas.width;
+  const h = screenCanvas.height;
 
+  screenCtx.clearRect(0,0,w,h);
+  blurCtx.clearRect(0,0,w,h);
+  bloomCtx.clearRect(0,0,w,h);
+  colorCtx.clearRect(0,0,w,h);
 
+  const focusA = (Math.sin(time * 0.38) + 1) / 2;
+  const focusB = (Math.sin(time * 0.14 + 2.1) + 1) / 2;
 
-
-function renderScreen(
-  time
-){
-
-
-  const w =
-    screenCanvas.width;
-
-
-  const h =
-    screenCanvas.height;
-
-
-
-  screenCtx.clearRect(
-    0,
-    0,
-    w,
-    h
-  );
-
-
-  blurCtx.clearRect(
-    0,
-    0,
-    w,
-    h
-  );
-
-
-  bloomCtx.clearRect(
-    0,
-    0,
-    w,
-    h
-  );
-
-
-  colorCtx.clearRect(
-    0,
-    0,
-    w,
-    h
-  );
-
-
-
-  const focusA =
-    (
-      Math.sin(
-        time *
-        0.38
-      ) +
-      1
-    ) /
-    2;
-
-
-  const focusB =
-    (
-      Math.sin(
-        time *
-        0.14 +
-        2.1
-      ) +
-      1
-    ) /
-    2;
-
-
-
-  const blur =
-    15 +
-    focusA *
-    9 +
-    focusB *
-    5;
-
-
-
-  const brightness =
-    108 +
-    Math.sin(
-      time *
-      0.62
-    ) *
-    8 +
-    Math.sin(
-      time *
-      3.7
-    ) *
-    3;
-
-
+  const blur = 15 + focusA * 9 + focusB * 5;
+  const brightness = 108 + Math.sin(time * 0.62) * 8 + Math.sin(time * 3.7) * 3;
 
   blurCtx.save();
-
-
-  blurCtx.filter =
-    `
-    brightness(${brightness}%)
-    contrast(79%)
-    saturate(64%)
-    blur(${blur}px)
-    `;
-
-
-  drawVideoCover(
-
-    blurCtx,
-
-    sourceVideo,
-
-    w,
-
-    h,
-
-    1.06
-
-  );
-
-
+  blurCtx.filter = `brightness(${brightness}%) contrast(79%) saturate(64%) blur(${blur}px)`;
+  drawVideoCover(blurCtx, sourceVideo, w, h, 1.06);
   blurCtx.restore();
 
-
-
-  const haze =
-    blurCtx
-      .createLinearGradient(
-        0,
-        0,
-        w,
-        h
-      );
-
-
-  haze.addColorStop(
-    0,
-    "rgba(210,220,230,0.10)"
-  );
-
-
-  haze.addColorStop(
-    0.45,
-    "rgba(235,235,225,0.16)"
-  );
-
-
-  haze.addColorStop(
-    1,
-    "rgba(180,200,215,0.08)"
-  );
-
-
-  blurCtx.fillStyle =
-    haze;
-
-
-  blurCtx.fillRect(
-    0,
-    0,
-    w,
-    h
-  );
-
-
+  const haze = blurCtx.createLinearGradient(0,0,w,h);
+  haze.addColorStop(0,"rgba(210,220,230,0.10)");
+  haze.addColorStop(0.45,"rgba(235,235,225,0.16)");
+  haze.addColorStop(1,"rgba(180,200,215,0.08)");
+  blurCtx.fillStyle = haze;
+  blurCtx.fillRect(0,0,w,h);
 
   bloomCtx.save();
-
-
-  bloomCtx.filter =
-    "brightness(190%) blur(32px)";
-
-
-  drawVideoCover(
-
-    bloomCtx,
-
-    sourceVideo,
-
-    w,
-
-    h,
-
-    1.08
-
-  );
-
-
+  bloomCtx.filter = "brightness(190%) blur(32px)";
+  drawVideoCover(bloomCtx, sourceVideo, w, h, 1.08);
   bloomCtx.restore();
-
-
 
   bloomCtx.save();
-
-
-  bloomCtx.globalAlpha =
-    0.55;
-
-
-  bloomCtx.filter =
-    "brightness(260%) blur(62px)";
-
-
-  drawVideoCover(
-
-    bloomCtx,
-
-    sourceVideo,
-
-    w,
-
-    h,
-
-    1.10
-
-  );
-
-
+  bloomCtx.globalAlpha = 0.55;
+  bloomCtx.filter = "brightness(260%) blur(62px)";
+  drawVideoCover(bloomCtx, sourceVideo, w, h, 1.10);
   bloomCtx.restore();
 
-
-
-  screenCtx.drawImage(
-    blurCanvas,
-    0,
-    0
-  );
-
-
+  screenCtx.drawImage(blurCanvas,0,0);
 
   screenCtx.save();
-
-
-  screenCtx
-    .globalCompositeOperation =
-      "screen";
-
-
-  screenCtx.globalAlpha =
-    0.44;
-
-
-  screenCtx.drawImage(
-    bloomCanvas,
-    0,
-    0
-  );
-
-
+  screenCtx.globalCompositeOperation = "screen";
+  screenCtx.globalAlpha = 0.44;
+  screenCtx.drawImage(bloomCanvas,0,0);
   screenCtx.restore();
-
-
 
   colorCtx.save();
-
-
-  colorCtx.globalAlpha =
-    0.11;
-
-
-  colorCtx.filter =
-    "sepia(100%) saturate(500%) hue-rotate(-35deg)";
-
-
-  colorCtx.drawImage(
-    blurCanvas,
-    4,
-    1
-  );
-
-
+  colorCtx.globalAlpha = 0.11;
+  colorCtx.filter = "sepia(100%) saturate(500%) hue-rotate(-35deg)";
+  colorCtx.drawImage(blurCanvas,4,1);
   colorCtx.restore();
-
-
 
   colorCtx.save();
-
-
-  colorCtx
-    .globalCompositeOperation =
-      "screen";
-
-
-  colorCtx.globalAlpha =
-    0.08;
-
-
-  colorCtx.filter =
-    "sepia(100%) saturate(500%) hue-rotate(170deg)";
-
-
-  colorCtx.drawImage(
-    blurCanvas,
-    -4,
-    -1
-  );
-
-
+  colorCtx.globalCompositeOperation = "screen";
+  colorCtx.globalAlpha = 0.08;
+  colorCtx.filter = "sepia(100%) saturate(500%) hue-rotate(170deg)";
+  colorCtx.drawImage(blurCanvas,-4,-1);
   colorCtx.restore();
 
-
-
   screenCtx.save();
-
-
-  screenCtx
-    .globalCompositeOperation =
-      "screen";
-
-
-  screenCtx.drawImage(
-    colorCanvas,
-    0,
-    0
-  );
-
-
+  screenCtx.globalCompositeOperation = "screen";
+  screenCtx.drawImage(colorCanvas,0,0);
   screenCtx.restore();
 
-
-
-  screenCtx.fillStyle =
-    "rgba(215,220,215,0.095)";
-
-
-  screenCtx.fillRect(
-    0,
-    0,
-    w,
-    h
-  );
-
-
+  screenCtx.fillStyle = "rgba(215,220,215,0.095)";
+  screenCtx.fillRect(0,0,w,h);
 
   screenCtx.save();
-
-
-  screenCtx
-    .globalCompositeOperation =
-      "destination-in";
-
-
-  screenCtx.filter =
-    "blur(38px)";
-
-
-  screenCtx.fillStyle =
-    "white";
-
-
-  screenCtx.fillRect(
-    46,
-    40,
-    w -
-    92,
-    h -
-    80
-  );
-
-
+  screenCtx.globalCompositeOperation = "destination-in";
+  screenCtx.filter = "blur(38px)";
+  screenCtx.fillStyle = "white";
+  screenCtx.fillRect(46,40,w-92,h-80);
   screenCtx.restore();
-
 }
 
+function buildScene(time){
+  const w = sceneCanvas.width;
+  const h = sceneCanvas.height;
 
+  sceneCtx.clearRect(0,0,w,h);
+  sceneCtx.fillStyle = "rgb(5,6,7)";
+  sceneCtx.fillRect(0,0,w,h);
 
+  renderScreen(time);
 
-
-function buildScene(
-  time
-){
-
-
-  const w =
-    sceneCanvas.width;
-
-
-  const h =
-    sceneCanvas.height;
-
-
-
-  sceneCtx.clearRect(
-    0,
-    0,
-    w,
-    h
+  const roomGlow = sceneCtx.createRadialGradient(
+    w * 0.52, h * 0.47, w * 0.10,
+    w * 0.52, h * 0.50, w * 0.95
   );
 
+  roomGlow.addColorStop(0,"rgba(135,150,165,0.16)");
+  roomGlow.addColorStop(0.38,"rgba(85,95,105,0.075)");
+  roomGlow.addColorStop(0.72,"rgba(35,40,45,0.035)");
+  roomGlow.addColorStop(1,"rgba(0,0,0,0)");
 
-  sceneCtx.fillStyle =
-    "rgb(5,6,7)";
-
-
-  sceneCtx.fillRect(
-    0,
-    0,
-    w,
-    h
-  );
-
-
-
-  renderScreen(
-    time
-  );
-
-
-
-  const roomGlow =
-    sceneCtx
-      .createRadialGradient(
-
-        w * 0.52,
-        h * 0.47,
-        w * 0.10,
-
-        w * 0.52,
-        h * 0.50,
-        w * 0.95
-
-      );
-
-
-  roomGlow.addColorStop(
-    0,
-    "rgba(135,150,165,0.16)"
-  );
-
-
-  roomGlow.addColorStop(
-    0.38,
-    "rgba(85,95,105,0.075)"
-  );
-
-
-  roomGlow.addColorStop(
-    0.72,
-    "rgba(35,40,45,0.035)"
-  );
-
-
-  roomGlow.addColorStop(
-    1,
-    "rgba(0,0,0,0)"
-  );
-
-
-  sceneCtx.fillStyle =
-    roomGlow;
-
-
-  sceneCtx.fillRect(
-    0,
-    0,
-    w,
-    h
-  );
-
-
+  sceneCtx.fillStyle = roomGlow;
+  sceneCtx.fillRect(0,0,w,h);
 
   sceneCtx.save();
 
+  sceneCtx.translate(w * 0.51, h * 0.48);
+  sceneCtx.rotate(-0.048);
+  sceneCtx.transform(1,-0.022,0.115,1,0,0);
 
-  sceneCtx.translate(
-    w * 0.51,
-    h * 0.48
-  );
-
-
-  sceneCtx.rotate(
-    -0.048
-  );
-
-
-  sceneCtx.transform(
-
-    1,
-
-    -0.022,
-
-    0.115,
-
-    1,
-
-    0,
-
-    0
-
-  );
-
-
-
-  const screenWidth =
-    w *
-    1.46;
-
-
-  const screenHeight =
-    h *
-    1.18;
-
-
+  const sw = w * 1.46;
+  const sh = h * 1.18;
 
   sceneCtx.save();
-
-
-  sceneCtx.globalAlpha =
-    0.26;
-
-
-  sceneCtx.filter =
-    "blur(65px) brightness(175%)";
-
-
-  sceneCtx.drawImage(
-
-    screenCanvas,
-
-    -screenWidth /
-    2,
-
-    -screenHeight /
-    2,
-
-    screenWidth,
-
-    screenHeight
-
-  );
-
-
+  sceneCtx.globalAlpha = 0.26;
+  sceneCtx.filter = "blur(65px) brightness(175%)";
+  sceneCtx.drawImage(screenCanvas, -sw/2, -sh/2, sw, sh);
   sceneCtx.restore();
-
-
 
   sceneCtx.save();
-
-
-  sceneCtx.filter =
-    "blur(7px)";
-
-
-  sceneCtx.drawImage(
-
-    screenCanvas,
-
-    -screenWidth /
-    2,
-
-    -screenHeight /
-    2,
-
-    screenWidth,
-
-    screenHeight
-
-  );
-
+  sceneCtx.filter = "blur(7px)";
+  sceneCtx.drawImage(screenCanvas, -sw/2, -sh/2, sw, sh);
+  sceneCtx.restore();
 
   sceneCtx.restore();
 
+  const lensHaze = sceneCtx.createLinearGradient(0,0,w,h);
+  lensHaze.addColorStop(0,"rgba(160,175,190,0.055)");
+  lensHaze.addColorStop(0.5,"rgba(220,220,205,0.075)");
+  lensHaze.addColorStop(1,"rgba(120,140,160,0.035)");
+  sceneCtx.fillStyle = lensHaze;
+  sceneCtx.fillRect(0,0,w,h);
 
-  sceneCtx.restore();
-
-
-
-  const lensHaze =
-    sceneCtx
-      .createLinearGradient(
-        0,
-        0,
-        w,
-        h
-      );
-
-
-  lensHaze.addColorStop(
-    0,
-    "rgba(160,175,190,0.055)"
+  const vignette = sceneCtx.createRadialGradient(
+    w * 0.52, h * 0.47, w * 0.27,
+    w * 0.52, h * 0.50, w * 0.87
   );
 
+  vignette.addColorStop(0,"rgba(0,0,0,0)");
+  vignette.addColorStop(0.68,"rgba(0,0,0,0.10)");
+  vignette.addColorStop(1,"rgba(0,0,0,0.76)");
 
-  lensHaze.addColorStop(
-    0.5,
-    "rgba(220,220,205,0.075)"
-  );
-
-
-  lensHaze.addColorStop(
-    1,
-    "rgba(120,140,160,0.035)"
-  );
-
-
-  sceneCtx.fillStyle =
-    lensHaze;
-
-
-  sceneCtx.fillRect(
-    0,
-    0,
-    w,
-    h
-  );
-
-
-
-  const vignette =
-    sceneCtx
-      .createRadialGradient(
-
-        w * 0.52,
-        h * 0.47,
-        w * 0.27,
-
-        w * 0.52,
-        h * 0.50,
-        w * 0.87
-
-      );
-
-
-  vignette.addColorStop(
-    0,
-    "rgba(0,0,0,0)"
-  );
-
-
-  vignette.addColorStop(
-    0.68,
-    "rgba(0,0,0,0.10)"
-  );
-
-
-  vignette.addColorStop(
-    1,
-    "rgba(0,0,0,0.76)"
-  );
-
-
-  sceneCtx.fillStyle =
-    vignette;
-
-
-  sceneCtx.fillRect(
-    0,
-    0,
-    w,
-    h
-  );
-
+  sceneCtx.fillStyle = vignette;
+  sceneCtx.fillRect(0,0,w,h);
 }
 
+function drawCamera(time){
+  const w = canvas.width;
+  const h = canvas.height;
 
+  const microX = Math.sin(time * 8.3) * 2.5 + Math.sin(time * 16.9);
+  const microY = Math.cos(time * 7.1) * 2 + Math.sin(time * 13.5) * 0.9;
+  const driftX = Math.sin(time * 0.39) * 6.5;
+  const driftY = Math.cos(time * 0.28) * 4.2;
+  const angle = Math.sin(time * 0.63) * 0.0062 + Math.sin(time * 2.8) * 0.0018;
+  const zoom = 1.055 + Math.sin(time * 0.24) * 0.008;
 
-
-
-function drawCamera(
-  time
-){
-
-
-  const w =
-    canvas.width;
-
-
-  const h =
-    canvas.height;
-
-
-
-  const microX =
-    Math.sin(
-      time *
-      8.3
-    ) *
-    2.5
-    +
-    Math.sin(
-      time *
-      16.9
-    ) *
-    1.0;
-
-
-  const microY =
-    Math.cos(
-      time *
-      7.1
-    ) *
-    2.0
-    +
-    Math.sin(
-      time *
-      13.5
-    ) *
-    0.9;
-
-
-
-  const driftX =
-    Math.sin(
-      time *
-      0.39
-    ) *
-    6.5;
-
-
-  const driftY =
-    Math.cos(
-      time *
-      0.28
-    ) *
-    4.2;
-
-
-
-  const angle =
-    Math.sin(
-      time *
-      0.63
-    ) *
-    0.0062
-    +
-    Math.sin(
-      time *
-      2.8
-    ) *
-    0.0018;
-
-
-
-  const breathingZoom =
-    1.055
-    +
-    Math.sin(
-      time *
-      0.24
-    ) *
-    0.008;
-
-
-
-  ctx.fillStyle =
-    "#000";
-
-
-  ctx.fillRect(
-    0,
-    0,
-    w,
-    h
-  );
-
+  ctx.fillStyle = "#000";
+  ctx.fillRect(0,0,w,h);
 
   ctx.save();
-
-
-  ctx.translate(
-
-    w /
-    2
-    +
-    microX
-    +
-    driftX,
-
-    h /
-    2
-    +
-    microY
-    +
-    driftY
-
-  );
-
-
-  ctx.rotate(
-    angle
-  );
-
-
-  ctx.scale(
-    breathingZoom,
-    breathingZoom
-  );
-
-
-  ctx.drawImage(
-
-    sceneCanvas,
-
-    -w /
-    2,
-
-    -h /
-    2,
-
-    w,
-
-    h
-
-  );
-
-
+  ctx.translate(w/2 + microX + driftX, h/2 + microY + driftY);
+  ctx.rotate(angle);
+  ctx.scale(zoom, zoom);
+  ctx.drawImage(sceneCanvas, -w/2, -h/2, w, h);
   ctx.restore();
-
 }
 
-
-
-
-
-processButton.addEventListener(
-
-  "click",
-
-  async function(){
-
-
-    if(
-      !selectedFile
-    ){
-
-      return;
-    }
-
-
-
-    try{
-
-
-      if(
-        !window.MediaRecorder
-      ){
-
-        throw new Error(
-          "MediaRecorderに対応していません"
-        );
-
-      }
-
-
-      if(
-        !canvas.captureStream
-      ){
-
-        throw new Error(
-          "Canvas captureStreamに対応していません"
-        );
-
-      }
-
-
-
-      stopAudienceSounds();
-
-
-
-      processButton.disabled =
-        true;
-
-
-      sourceVideo.controls =
-        false;
-
-
-      resultArea.style.display =
-        "none";
-
-
-      progressWrap.style.display =
-        "block";
-
-
-      progressBar.style.width =
-        "0%";
-
-
-      progressText.textContent =
-        "準備中";
-
-
-      status.textContent =
-        "映画館映像と観客音を準備しています。";
-
-
-
-      await prepareAudio();
-
-
-
-      sourceVideo.pause();
-
-
-      sourceVideo.currentTime =
-        0;
-
-
-
-      await new Promise(
-
-        resolve => {
-
-
-          if(
-            sourceVideo.readyState >=
-            1
-          ){
-
-
-            resolve();
-
-
-          }else{
-
-
-            sourceVideo.onloadedmetadata =
-              resolve;
-
-          }
-
-        }
-
-      );
-
-
-
-      const portrait =
-        sourceVideo.videoHeight >
-        sourceVideo.videoWidth;
-
-
-
-      if(
-        portrait
-      ){
-
-
-        canvas.width =
-          540;
-
-
-        canvas.height =
-          960;
-
-
-      }else{
-
-
-        canvas.width =
-          960;
-
-
-        canvas.height =
-          540;
-
-      }
-
-
-
-      sceneCanvas.width =
-        canvas.width;
-
-
-      sceneCanvas.height =
-        canvas.height;
-
-
-
-      screenCanvas.width =
-        canvas.width;
-
-
-      screenCanvas.height =
-        canvas.height;
-
-
-
-      blurCanvas.width =
-        canvas.width;
-
-
-      blurCanvas.height =
-        canvas.height;
-
-
-
-      bloomCanvas.width =
-        canvas.width;
-
-
-      bloomCanvas.height =
-        canvas.height;
-
-
-
-      colorCanvas.width =
-        canvas.width;
-
-
-      colorCanvas.height =
-        canvas.height;
-
-
-
-      const canvasStream =
-        canvas.captureStream(
-          30
-        );
-
-
-
-      const finalStream =
-        new MediaStream();
-
-
-
-      canvasStream
-        .getVideoTracks()
-        .forEach(
-          track => {
-
-
-            finalStream
-              .addTrack(
-                track
-              );
-
-
-          }
-        );
-
-
-
-      if(
-        audioDestination
-      ){
-
-
-        audioDestination.stream
-          .getAudioTracks()
-          .forEach(
-            track => {
-
-
-              finalStream
-                .addTrack(
-                  track
-                );
-
-
-            }
-          );
-
-      }
-
-
-
-      const mimeType =
-        chooseMimeType();
-
-
-
-      const recorder =
-        new MediaRecorder(
-
-          finalStream,
-
-          mimeType
-          ?
-            {
-
-              mimeType,
-
-              videoBitsPerSecond:
-                4500000
-
-            }
-          :
-            {
-
-              videoBitsPerSecond:
-                4500000
-
-            }
-
-        );
-
-
-
-      const chunks =
-        [];
-
-
-
-      recorder.ondataavailable =
-        event => {
-
-
-          if(
-            event.data &&
-            event.data.size >
-            0
-          ){
-
-
-            chunks.push(
-              event.data
-            );
-
-
-          }
-
-        };
-
-
-
-      recorder.onstop =
-        () => {
-
-
-          const actualType =
-            recorder.mimeType
-            ||
-            mimeType
-            ||
-            "video/mp4";
-
-
-
-          const blob =
-            new Blob(
-
-              chunks,
-
-              {
-                type:
-                  actualType
-              }
-
-            );
-
-
-
-          if(
-            outputURL
-          ){
-
-
-            URL.revokeObjectURL(
-              outputURL
-            );
-
-
-          }
-
-
-
-          outputURL =
-            URL.createObjectURL(
-              blob
-            );
-
-
-
-          resultVideo.src =
-            outputURL;
-
-
-
-          saveButton.href =
-            outputURL;
-
-
-
-          saveButton.download =
-            actualType
-              .includes(
-                "mp4"
-              )
-            ?
-              "movie-leak.mp4"
-            :
-              "movie-leak.webm";
-
-
-
-          resultArea.style.display =
-            "block";
-
-
-
-          progressBar.style.width =
-            "100%";
-
-
-
-          progressText.textContent =
-            "完成";
-
-
-
-          status.textContent =
-            "観客歓声入りの動画が完成しました。";
-
-
-
-          processButton.disabled =
-            false;
-
-
-
-          sourceVideo.controls =
-            true;
-
-        };
-
-
-
-      function drawFrame(){
-
-
-        if(
-          sourceVideo.paused
-          ||
-          sourceVideo.ended
-        ){
-
-
-          return;
-
-        }
-
-
-
-        const time =
-          sourceVideo.currentTime;
-
-
-
-        buildScene(
-          time
-        );
-
-
-
-        drawCamera(
-          time
-        );
-
-
-
-        if(
-          sourceVideo.duration
-        ){
-
-
-          const percent =
-            Math.min(
-
-              100,
-
-              Math.round(
-
-                sourceVideo.currentTime
-                /
-                sourceVideo.duration
-                *
-                100
-
-              )
-
-            );
-
-
-
-          progressBar.style.width =
-            percent +
-            "%";
-
-
-
-          progressText.textContent =
-            "加工中 "
-            +
-            percent
-            +
-            "%";
-
-        }
-
-
-
-        requestAnimationFrame(
-          drawFrame
-        );
-
-      }
-
-
-
-      sourceVideo.onended =
-        () => {
-
-
-          if(
-            recorder.state !==
-            "inactive"
-          ){
-
-
-            recorder.stop();
-
-
-          }
-
-        };
-
-
-
-      status.textContent =
-        "劇場音響・観客のざわめき・歓声・拍手を合成しています。";
-
-
-
-      recorder.start(
-        500
-      );
-
-
-
-      await sourceVideo.play();
-
-
-
-      scheduleAudience(
-        sourceVideo.duration
-      );
-
-
-
-      requestAnimationFrame(
-        drawFrame
-      );
-
-
-    }
-    catch(error){
-
-
-      console.error(
-        error
-      );
-
-
-      stopAudienceSounds();
-
-
-
-      processButton.disabled =
-        false;
-
-
-
-      sourceVideo.controls =
-        true;
-
-
-
-      progressText.textContent =
-        "エラー";
-
-
-
-      status.textContent =
-        "エラー："
-        +
-        error.message;
-
-    }
-
+processButton.addEventListener("click", async () => {
+  if(processing) return;
+
+  if(!selectedFile){
+    statusBox.textContent = "先に動画を選んでください。";
+    return;
   }
 
-);
+  if(!selectedAudioFiles.length){
+    statusBox.textContent = "先に観客音のMP3を選んでください。";
+    return;
+  }
 
+  processing = true;
+  processButton.disabled = true;
+  videoInput.disabled = true;
+  audioInput.disabled = true;
+  sourceVideo.controls = false;
+
+  resultArea.style.display = "none";
+  progressWrap.style.display = "block";
+  progressBar.style.width = "0%";
+  progressText.textContent = "準備中";
+
+  statusBox.textContent = "観客音を読み込んでいます…";
+
+  let recorder = null;
+  let canvasStream = null;
+
+  try{
+    if(!window.MediaRecorder || !canvas.captureStream){
+      throw new Error("このブラウザでは動画の録画に対応していません");
+    }
+
+    await prepareAudio();
+    const library = await loadAudienceFiles();
+
+    const loadedCount = library.cheer.length + library.applause.length + library.other.length;
+
+    statusBox.textContent = `観客音 ${loadedCount}本の読み込み完了。動画を加工しています。`;
+
+    sourceVideo.pause();
+    sourceVideo.currentTime = 0;
+
+    if(sourceVideo.seeking){
+      await new Promise(resolve => {
+        sourceVideo.addEventListener("seeked", resolve, { once:true });
+      });
+    }
+
+    if(!Number.isFinite(sourceVideo.duration) || sourceVideo.duration <= 0){
+      throw new Error("動画の長さを読み取れませんでした");
+    }
+
+    const portrait = sourceVideo.videoHeight > sourceVideo.videoWidth;
+
+    canvas.width = portrait ? 540 : 960;
+    canvas.height = portrait ? 960 : 540;
+
+    for(const c of [sceneCanvas,screenCanvas,blurCanvas,bloomCanvas,colorCanvas]){
+      c.width = canvas.width;
+      c.height = canvas.height;
+    }
+
+    buildScene(0);
+    drawCamera(0);
+
+    canvasStream = canvas.captureStream(30);
+
+    const finalStream = new MediaStream();
+
+    for(const track of canvasStream.getVideoTracks()){
+      finalStream.addTrack(track);
+    }
+
+    for(const track of audioDestination.stream.getAudioTracks()){
+      finalStream.addTrack(track);
+    }
+
+    const mime = chooseMimeType();
+
+    recorder = new MediaRecorder(
+      finalStream,
+      mime
+        ? { mimeType:mime, videoBitsPerSecond:4500000 }
+        : { videoBitsPerSecond:4500000 }
+    );
+
+    activeRecorder = recorder;
+    const chunks = [];
+
+    recorder.ondataavailable = e => {
+      if(e.data && e.data.size > 0){
+        chunks.push(e.data);
+      }
+    };
+
+    const finish = () => {
+      cancelAnimationFrame(activeFrame);
+      stopAudience();
+
+      if(canvasStream){
+        canvasStream.getTracks().forEach(track => track.stop());
+      }
+
+      sourceVideo.controls = true;
+      processButton.disabled = false;
+      videoInput.disabled = false;
+      audioInput.disabled = false;
+      processing = false;
+      activeRecorder = null;
+    };
+
+    recorder.onerror = e => {
+      showError(e.error || new Error("録画中のエラー"));
+      finish();
+    };
+
+    recorder.onstop = () => {
+      finish();
+
+      if(!chunks.length){
+        statusBox.textContent = "動画を保存できませんでした。短い動画で再試行してください。";
+        return;
+      }
+
+      const type = recorder.mimeType || mime || "video/mp4";
+      const blob = new Blob(chunks, { type });
+
+      if(outputURL){
+        URL.revokeObjectURL(outputURL);
+      }
+
+      outputURL = URL.createObjectURL(blob);
+      resultVideo.src = outputURL;
+      saveButton.href = outputURL;
+
+      saveButton.download = type.includes("mp4")
+        ? "movie-leak-audience.mp4"
+        : "movie-leak-audience.webm";
+
+      resultArea.style.display = "block";
+      progressBar.style.width = "100%";
+      progressText.textContent = "完成";
+      statusBox.textContent = "観客の実録音を組み込んだ動画が完成しました。";
+    };
+
+    function frame(){
+      if(sourceVideo.paused || sourceVideo.ended || !processing){
+        return;
+      }
+
+      const t = sourceVideo.currentTime;
+      buildScene(t);
+      drawCamera(t);
+
+      const percent = Math.min(100, Math.round(t / sourceVideo.duration * 100));
+      progressBar.style.width = percent + "%";
+      progressText.textContent = "加工中 " + percent + "%";
+
+      activeFrame = requestAnimationFrame(frame);
+    }
+
+    sourceVideo.onended = () => {
+      cancelAnimationFrame(activeFrame);
+
+      if(recorder && recorder.state !== "inactive"){
+        recorder.stop();
+      }
+    };
+
+    recorder.start(500);
+    await sourceVideo.play();
+
+    scheduleAudience(sourceVideo.duration, library);
+
+    activeFrame = requestAnimationFrame(frame);
+
+  }catch(err){
+    showError(err);
+
+    cancelAnimationFrame(activeFrame);
+    sourceVideo.pause();
+    stopAudience();
+
+    if(recorder && recorder.state !== "inactive"){
+      try{
+        recorder.stop();
+      }catch(e){}
+    }
+
+    if(canvasStream){
+      canvasStream.getTracks().forEach(track => track.stop());
+    }
+
+    sourceVideo.controls = true;
+    processButton.disabled = false;
+    videoInput.disabled = false;
+    audioInput.disabled = false;
+    processing = false;
+  }
+});
 </script>
-
-
 </body>
-
 </html>
