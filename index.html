@@ -16,7 +16,7 @@ h1{font-size:clamp(31px,12vw,72px);font-weight:950;letter-spacing:-.09em;margin:
 .videoShell{background:#141519;border-radius:12px;overflow:hidden;aspect-ratio:16/9;display:flex;align-items:center;justify-content:center;color:#a7acb6;font-weight:700;font-size:13px}
 .videoShell video{width:100%;height:100%;object-fit:contain;background:#090a0c}#sourceVideo{display:none}#sourceVideo.loaded{display:block}#videoPlaceholder{text-align:center;padding:20px}
 .file-label,.make,.save{display:flex;align-items:center;justify-content:center;gap:12px;border:0;border-radius:14px;background:var(--pink);color:white;text-decoration:none;text-align:center;font-size:18px;font-weight:850;min-height:63px;width:100%;cursor:pointer}
-.file-label{margin-top:0;position:relative}.file-label input{position:absolute;width:1px;height:1px;opacity:0;overflow:hidden;clip-path:inset(50%);pointer-events:none}.file-label svg,.make svg{width:23px;height:23px}
+.file-label{margin-top:0;position:relative;overflow:hidden}.file-label input{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer;font-size:100px}.file-label svg,.make svg{width:23px;height:23px}
 .file-note,.hint,.name{font-size:12px;color:var(--muted);line-height:1.65}.file-note{text-align:center;margin:9px 0 0}.name{text-align:center;margin-top:9px;overflow-wrap:anywhere}
 
 h2{font-size:18px;margin:0 0 8px;font-weight:850}.hint{margin:0 0 10px}.setting{margin:13px 0 11px;padding-top:12px;border-top:1px solid var(--line)}
@@ -32,16 +32,15 @@ input[type=range]{width:100%;accent-color:var(--pink);touch-action:pan-y}.slider
 .markerRow{display:flex;align-items:center;gap:12px;margin-top:7px;border:1px solid var(--line);border-radius:11px;padding:10px 9px;background:#fcfcff}.markerRow:before{content:'⋮';font-size:18px;color:#b7bcc7}
 .jump{background:transparent;border:0;color:var(--ink);font-size:15px;font-weight:850;padding:6px 0}.type{flex:1;font-size:14px;font-weight:700}.delete{border:0;background:#f5f5f8;color:#707887;border-radius:8px;padding:9px;font-size:12px}.empty{color:var(--muted);font-size:13px;padding:14px 0}
 .make{margin:16px 0;border-radius:999px;box-shadow:0 5px 13px #f500822e;font-size:clamp(16px,4.7vw,20px)}#progress,#result{display:none}.barbg{height:11px;background:#f0f0f3;border-radius:9px;overflow:hidden;margin-top:10px}.bar{height:100%;background:var(--pink);width:0%}.progressText{font-size:12px;color:var(--muted);text-align:center;margin:8px}.status{background:#f6f7fa;border-radius:10px;padding:12px;font-size:12px;line-height:1.6;color:#5f6978;white-space:pre-wrap}
-.outputTitle{text-align:center;display:flex;flex-direction:column;align-items:center;gap:2px;line-height:1.25}.outputTitle span{display:block}.save{flex-direction:column;gap:1px;padding:9px 10px;line-height:1.2}.save span{display:block}#outVideo{width:100%;border-radius:11px;background:black;margin:10px 0;max-height:55vh}.save{background:white;color:var(--pink);border:2px solid var(--pink);margin:9px 0}.notice{text-align:center;font-size:11px;color:#969cab;line-height:1.8;margin-top:14px}#work{display:none}
+.outputTitle{text-align:center;display:block;white-space:nowrap;font-size:clamp(15px,4.4vw,23px);line-height:1.35}.save{display:flex;flex-direction:row;gap:0;padding:9px 4px;line-height:1.2;white-space:nowrap;font-size:clamp(11px,3.55vw,18px)}#outVideo{width:100%;border-radius:11px;background:black;margin:10px 0;max-height:55vh}.save{background:white;color:var(--pink);border:2px solid var(--pink);margin:9px 0}.next-picker{margin-top:13px;background:#586173;font-size:16px;min-height:54px}.notice{text-align:center;font-size:11px;color:#969cab;line-height:1.8;margin-top:14px}#work{display:none}
 @media(max-width:370px){.choice span{font-size:10px;gap:3px}.card{padding:12px}.smallbtn{font-size:11px}}
 </style>
 </head>
 <body>
 <main>
-<header><h1>やめよう<em>映画盗撮</em></h1><div class="sub">どんな動画でも映画盗撮風に変換するので、これで承認欲求を満たしてください</div><div class="ver">Version 35</div></header>
+<header><h1>やめよう<em>映画盗撮</em></h1><div class="sub">どんな動画でも映画盗撮風に変換するので、これで承認欲求を満たしてください</div><div class="ver">Version 38</div></header>
 <section class="card" id="editingArea">
-<label class="file-label" for="videoInput">⇧ 動画を選ぶ</label>
-<input id="videoInput" type="file" accept="video/*" aria-label="動画ファイルを選択">
+<label class="file-label">⇧ 動画を選ぶ<input id="videoInput" type="file" accept="video/*" aria-label="動画ファイルを選択"></label>
 <div class="file-note">MP4 / MOV / WebM などに対応</div>
 
 <div class="name" id="fileName">動画が選択されていません</div>
@@ -65,7 +64,7 @@ input[type=range]{width:100%;accent-color:var(--pink);touch-action:pan-y}.slider
 </section>
 <button id="make" class="make">✦ 盗撮流出風動画を作る</button>
 <div class="card"><div id="progress"><div class="barbg"><div class="bar" id="bar"></div></div><div class="progressText" id="progressText">準備中</div></div><div id="status" class="status">動画を選んでください。</div></div>
-<section id="result" class="card"><h2 class="outputTitle"><span>↓↓↓↓</span><span>流出動画</span><span>↓↓↓↓</span></h2><video id="outVideo" playsinline controls></video><a id="save" class="save"><span>↓↓↓↓</span><span>流出動画を保存</span><span>↓↓↓↓</span></a></section>
+<section id="result" class="card"><h2 class="outputTitle">↓↓↓↓流出動画↓↓↓↓</h2><video id="outVideo" playsinline controls></video><a id="save" class="save">→→→→流出動画を保存←←←←</a><label class="file-label next-picker">⇧ 別の動画を選ぶ<input id="nextVideoInput" type="file" accept="video/*" aria-label="次の動画ファイルを選択"></label></section>
 <canvas id="work"></canvas><p class="notice">加工は端末内で行います。実際の映画盗撮は法律で禁止されています。<br>権利確認が済むまでは個人テスト用としてご利用ください。</p>
 </main>
 <script>
@@ -88,16 +87,24 @@ function selectVideo(f){
  video.pause();file=f;fileURL=URL.createObjectURL(f);
  $('fileName').textContent='選択した動画：'+f.name;
  $('status').textContent='動画を読み込み中：'+f.name;
- $('videoPlaceholder').style.display='none';video.classList.add('loaded');$('preview').style.display='block';$('result').style.display='none';$('progress').style.display='none';
+ $('videoPlaceholder').style.display='none';video.classList.add('loaded');$('preview').style.display='block';$('result').style.display='none';$('progress').style.display='none';$('make').textContent='✦ 盗撮流出風動画を作る';$('make').disabled=false;
  markers=[];seq=0;renderMarkers();$('addNotice').textContent='';
  video.onerror=()=>{if(id===selection&&!working)$('status').textContent='動画の読み込みに失敗しました。ほかの動画、または「ファイル」から選び直してください。'};
  video.src=fileURL;video.load();
  if(old)setTimeout(()=>URL.revokeObjectURL(old),1500);
 }
-for(const id of ['videoInput']){
- const picker=$(id);
- picker.addEventListener('change',()=>{const f=picker.files&&picker.files[0];if(f)selectVideo(f);picker.value=''});
+// iPhone Safariで同じ動画を再選択しても反応するよう、毎回新しい選択欄に交換する。
+function setupPicker(picker){
+ picker.addEventListener('change',()=>{
+  const f=picker.files&&picker.files[0];
+  if(f)selectVideo(f);
+  const fresh=picker.cloneNode(false);
+  picker.replaceWith(fresh);
+  setupPicker(fresh);
+ });
 }
+setupPicker($('videoInput'));
+setupPicker($('nextVideoInput'));
 video.addEventListener('loadedmetadata',()=>{updateClock();if(!working&&file)$('status').textContent='読み込み完了：'+formatTime(duration())+'。ポイントを設定できます。'});
 video.addEventListener('timeupdate',updateClock);
 $('seek').oninput=e=>{if(working||!duration())return;video.pause();video.currentTime=duration()*e.target.value/1000;updateClock()};
@@ -225,9 +232,32 @@ function recordAttempt(lib,attempt){return new Promise(async(resolve,reject)=>{
 $('make').onclick=async()=>{
  if(working)return;if(!file){$('status').textContent='先に動画を選んでください。';return}
  working=true;$('make').textContent='✦ 盗撮流出風動画を作る';$('make').disabled=true;video.controls=false;$('result').style.display='none';$('progress').style.display='block';$('bar').style.width='0%';$('progressText').textContent='準備中';
+ // Important: both calls happen directly in the tap/click, before the first await.
+ // iOS can block video.play() after asynchronous audio downloads on a first run.
+ const firstGestureAudio=audioSetup();
+ const firstGesturePlayback=(async()=>{
+  try{
+   if(video.readyState<2)await new Promise((resolve,reject)=>{
+    const timer=setTimeout(()=>{clear();reject(new Error('動画の読み込みが完了しませんでした'))},12000);
+    const clear=()=>{clearTimeout(timer);video.removeEventListener('loadeddata',ok);video.removeEventListener('error',fail)};
+    const ok=()=>{clear();resolve()};const fail=()=>{clear();reject(new Error('動画を読み込めませんでした'))};
+    video.addEventListener('loadeddata',ok,{once:true});video.addEventListener('error',fail,{once:true});
+   });
+   await video.play();
+   video.pause();
+  }catch(e){throw new Error('初回再生の準備に失敗しました：'+(e.message||e))}
+ })();
+ // Handle rejections immediately, even if the other initialization is still pending.
+ firstGestureAudio.catch(()=>{});firstGesturePlayback.catch(()=>{});
  try{
   if(!window.MediaRecorder||!work.captureStream)throw Error('このブラウザでは動画録画に対応していません');
-  await audioSetup();const lib=await loadSounds();let result=null,errors=[];
+  // iOS Safari: user gesture must start playback and AudioContext before any asynchronous fetch/decode.
+  // Priming playback on the first tap avoids the common 'first tap fails, second tap works' loop.
+  // (The two activation calls themselves are started synchronously in the click handler below.)
+  await firstGesturePlayback;
+  await firstGestureAudio;
+  if(ac.state!=='running')await ac.resume();
+  const lib=await loadSounds();let result=null,errors=[];
   for(let attempt=1;attempt<=3;attempt++){
    try{
     result=await recordAttempt(lib,attempt);
@@ -245,7 +275,7 @@ $('make').onclick=async()=>{
    }
   }
   if(!result)throw Error('録画を完了できませんでした');if(resultURL)URL.revokeObjectURL(resultURL);
-  resultURL=URL.createObjectURL(result.blob);$('outVideo').src=resultURL;$('save').href=resultURL;$('save').download=result.actual.includes('mp4')?'movie-leak-v33.mp4':'movie-leak-v33.webm';$('result').style.display='block';$('bar').style.width='100%';$('progressText').textContent='完成';$('status').textContent='動画が完成しました（観客音声18本内蔵）。';
+  resultURL=URL.createObjectURL(result.blob);$('outVideo').src=resultURL;$('save').href=resultURL;$('save').download=result.actual.includes('mp4')?'movie-leak-v38.mp4':'movie-leak-v38.webm';$('result').style.display='block';$('bar').style.width='100%';$('progressText').textContent='完成';$('status').textContent='動画が完成しました。保存後は「別の動画を選ぶ」から続けて作成できます。';
  }catch(e){console.error(e);$('status').textContent='自動再試行でも完成できませんでした。\nもう一度「盗撮流出風動画を作る」を押してください。\n詳細：'+(e.message||String(e));$('progressText').textContent='もう一度お試しください';$('make').textContent='↻ もう一度、盗撮流出風動画を作る'}finally{video.pause();stopSounds();working=false;$('make').disabled=false;video.controls=true;renderMarkers()}
 };
 renderMarkers();
