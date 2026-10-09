@@ -38,7 +38,7 @@ input[type=range]{width:100%;accent-color:var(--pink);touch-action:pan-y}.slider
 </head>
 <body>
 <main>
-<header><h1>やめよう<em>映画盗撮</em></h1><div class="sub">どんな動画でも映画盗撮風に変換するので、これで承認欲求を満たしてください</div><div class="ver">Version 43</div></header>
+<header><h1>やめよう<em>映画盗撮</em></h1><div class="sub">どんな動画でも映画盗撮風に変換するので、これで承認欲求を満たしてください</div><div class="ver">Version 44</div></header>
 <section class="card" id="editingArea">
 <label class="file-label">⇧ 動画を選ぶ<input id="videoInput" type="file" accept="video/*" aria-label="動画ファイルを選択"></label>
 <div class="file-note">MP4 / MOV / WebM などに対応</div>
@@ -209,11 +209,11 @@ function renderFrame(t){
  const w=work.width,h=work.height,vr=video.videoWidth/video.videoHeight;
  const portrait=h>w,isFourThree=!portrait&&vr>=1.20&&vr<=1.50;
  ctx.setTransform(1,0,0,1,0,0);
- ctx.fillStyle='#030407';ctx.fillRect(0,0,w,h);
- // 周囲は元の映像の光が暗く大きくぼけて漏れるだけにする。
- ctx.save();ctx.globalAlpha=.2;ctx.filter='blur(66px) brightness(72%) saturate(58%)';
- ctx.drawImage(video,0,0,video.videoWidth,video.videoHeight,-w*.12,-h*.15,w*1.24,h*1.3);ctx.restore();
- ctx.fillStyle='rgba(0,0,3,.77)';ctx.fillRect(0,0,w,h);
+ ctx.fillStyle='#020307';ctx.fillRect(0,0,w,h);
+ // 客席側の黒場に、映像の光が大きくぼけて漏れている感じを強める。
+ ctx.save();ctx.globalAlpha=.24;ctx.filter='blur(78px) brightness(82%) saturate(62%)';
+ ctx.drawImage(video,0,0,video.videoWidth,video.videoHeight,-w*.16,-h*.18,w*1.32,h*1.36);ctx.restore();
+ ctx.fillStyle='rgba(0,0,2,.84)';ctx.fillRect(0,0,w,h);
  // 横動画では少し右側の客席、かつ少し下側から見上げた台形スクリーンを作る。
  const jx=Math.sin(t*7.8)*4.4+Math.sin(t*16.1)*2.8+Math.sin(t*.6)*8.5;
  const jy=Math.cos(t*6.7)*3.6+Math.sin(t*14.5)*2.4+Math.cos(t*.48)*6.6;
@@ -236,57 +236,67 @@ function renderFrame(t){
  corners=corners.map(([x,y])=>[x+jx+(y-h/2)*shakeAngle,y+jy-(x-w/2)*shakeAngle]);
  const bw=portrait?540:960,bh=portrait?960:(isFourThree?720:540);
  if(screenBuffer.width!==bw||screenBuffer.height!==bh){screenBuffer.width=bw;screenBuffer.height=bh}
- screenCtx.setTransform(1,0,0,1,0,0);screenCtx.imageSmoothingEnabled=true;screenCtx.imageSmoothingQuality='high';screenCtx.fillStyle='#0f1013';screenCtx.fillRect(0,0,bw,bh);
+ screenCtx.setTransform(1,0,0,1,0,0);screenCtx.imageSmoothingEnabled=true;screenCtx.imageSmoothingQuality='high';screenCtx.clearRect(0,0,bw,bh);screenCtx.fillStyle='#0a0b0e';screenCtx.fillRect(0,0,bw,bh);
  let sx=0,sy=0,sw=video.videoWidth,sh=video.videoHeight;
  const r=bw/bh;
  if(vr>r){sw=video.videoHeight*r;sx=(video.videoWidth-sw)/2}
  else if(!isFourThree){sh=video.videoWidth/r;sy=(video.videoHeight-sh)/2}
  if(isFourThree){sx=sy=0;sw=video.videoWidth;sh=video.videoHeight}
- // スクリーン側の素材自体をぼかし気味・白飛び気味にして、スクリーン投影らしさを戻す。
+ // スクリーン映像自体をもっと発光させ、白飛び気味・見にくい感じに戻す。
  screenCtx.save();
- screenCtx.filter=`brightness(${116+Math.sin(t*.62)*10}%) contrast(74%) saturate(63%) blur(${13+(Math.sin(t*.38)+1)*7}px)`;
+ screenCtx.filter=`brightness(${126+Math.sin(t*.62)*12}%) contrast(66%) saturate(56%) blur(${18+(Math.sin(t*.38)+1)*8}px)`;
  screenCtx.drawImage(video,sx,sy,sw,sh,0,0,bw,bh);
  screenCtx.restore();
+ // スクリーン表面の白飛び・レンズで飛んだようなムラ。
  screenCtx.save();
  screenCtx.globalCompositeOperation='screen';
  const shine=screenCtx.createLinearGradient(0,0,bw,bh);
- shine.addColorStop(0,'rgba(255,255,250,.22)');
- shine.addColorStop(.2,'rgba(255,255,250,.08)');
- shine.addColorStop(.55,'rgba(255,255,255,0)');
- shine.addColorStop(1,'rgba(255,255,255,.04)');
+ shine.addColorStop(0,'rgba(255,255,250,.34)');
+ shine.addColorStop(.18,'rgba(255,255,250,.14)');
+ shine.addColorStop(.52,'rgba(255,255,255,.02)');
+ shine.addColorStop(1,'rgba(255,255,255,.06)');
  screenCtx.fillStyle=shine;screenCtx.fillRect(0,0,bw,bh);
- const hotspot=screenCtx.createRadialGradient(bw*.45,bh*.34,bw*.04,bw*.45,bh*.34,bw*.54);
- hotspot.addColorStop(0,'rgba(255,255,245,.18)');
- hotspot.addColorStop(.28,'rgba(255,255,245,.08)');
+ const hotspot=screenCtx.createRadialGradient(bw*.42,bh*.31,bw*.03,bw*.42,bh*.31,bw*.62);
+ hotspot.addColorStop(0,'rgba(255,255,245,.28)');
+ hotspot.addColorStop(.18,'rgba(255,255,245,.14)');
+ hotspot.addColorStop(.42,'rgba(255,255,245,.05)');
  hotspot.addColorStop(1,'rgba(255,255,255,0)');
  screenCtx.fillStyle=hotspot;screenCtx.fillRect(0,0,bw,bh);
  screenCtx.restore();
- // スクリーン境界と外周黒場の境目を、もっと光でにじませる。
+ // 先に外周の発光だけを大きく置いて、黒場との境目を消す。
  ctx.save();
  ctx.beginPath();ctx.moveTo(...corners[0]);for(let i=1;i<4;i++)ctx.lineTo(...corners[i]);ctx.closePath();
- ctx.strokeStyle='rgba(230,236,245,.18)';ctx.lineWidth=42;ctx.filter='blur(34px)';ctx.stroke();
- ctx.strokeStyle='rgba(190,200,214,.12)';ctx.lineWidth=22;ctx.filter='blur(16px)';ctx.stroke();
+ ctx.globalCompositeOperation='screen';
+ ctx.strokeStyle='rgba(255,252,242,.11)';ctx.lineWidth=58;ctx.filter='blur(44px)';ctx.stroke();
+ ctx.strokeStyle='rgba(255,252,242,.08)';ctx.lineWidth=92;ctx.filter='blur(74px)';ctx.stroke();
  ctx.restore();
  drawPerspective(screenBuffer,corners);
- // スクリーン内の白飛び・光飛びを戻す。
+ // スクリーン内外の境目をさらに光で飛ばして、継ぎ目がはっきり見えないようにする。
+ ctx.save();
+ ctx.beginPath();ctx.moveTo(...corners[0]);for(let i=1;i<4;i++)ctx.lineTo(...corners[i]);ctx.closePath();
+ ctx.globalCompositeOperation='screen';
+ ctx.strokeStyle='rgba(255,250,236,.13)';ctx.lineWidth=34;ctx.filter='blur(26px)';ctx.stroke();
+ ctx.restore();
+ // スクリーン内部の白飛びとにじみを追加する。
  ctx.save();
  ctx.beginPath();ctx.moveTo(...corners[0]);for(let i=1;i<4;i++)ctx.lineTo(...corners[i]);ctx.closePath();ctx.clip();
  ctx.globalCompositeOperation='screen';
  const innerGlow=ctx.createLinearGradient(0,0,w,h);
- innerGlow.addColorStop(0,'rgba(255,255,250,.12)');
- innerGlow.addColorStop(.18,'rgba(255,255,250,.05)');
- innerGlow.addColorStop(.6,'rgba(255,255,255,0)');
- innerGlow.addColorStop(1,'rgba(255,255,255,.03)');
+ innerGlow.addColorStop(0,'rgba(255,255,250,.18)');
+ innerGlow.addColorStop(.15,'rgba(255,255,250,.08)');
+ innerGlow.addColorStop(.5,'rgba(255,255,255,.01)');
+ innerGlow.addColorStop(1,'rgba(255,255,255,.05)');
  ctx.fillStyle=innerGlow;ctx.fillRect(0,0,w,h);
- const bloom=ctx.createRadialGradient(w*.42,h*.33,w*.02,w*.42,h*.33,w*.34);
- bloom.addColorStop(0,'rgba(255,255,248,.13)');
- bloom.addColorStop(.3,'rgba(255,255,248,.06)');
+ const bloom=ctx.createRadialGradient(w*.42,h*.32,w*.02,w*.42,h*.32,w*.42);
+ bloom.addColorStop(0,'rgba(255,255,246,.18)');
+ bloom.addColorStop(.24,'rgba(255,255,246,.09)');
+ bloom.addColorStop(.54,'rgba(255,255,246,.03)');
  bloom.addColorStop(1,'rgba(255,255,255,0)');
  ctx.fillStyle=bloom;ctx.fillRect(0,0,w,h);
- ctx.strokeStyle='rgba(255,255,245,.1)';ctx.lineWidth=24;ctx.filter='blur(16px)';ctx.stroke();
+ ctx.strokeStyle='rgba(255,250,240,.09)';ctx.lineWidth=28;ctx.filter='blur(22px)';ctx.stroke();
  ctx.restore();
- const lens=ctx.createLinearGradient(0,0,w,h);lens.addColorStop(0,'#b1c0d00c');lens.addColorStop(.5,'#dddaca0a');lens.addColorStop(1,'#8293a00b');ctx.fillStyle=lens;ctx.fillRect(0,0,w,h);
- const vignette=ctx.createRadialGradient(w*.52,h*.48,w*.25,w*.52,h*.5,w*.81);vignette.addColorStop(0,'#00000000');vignette.addColorStop(.75,'#00000020');vignette.addColorStop(1,'#0000008f');ctx.fillStyle=vignette;ctx.fillRect(0,0,w,h);
+ const lens=ctx.createLinearGradient(0,0,w,h);lens.addColorStop(0,'#b1c0d00b');lens.addColorStop(.5,'#dddaca08');lens.addColorStop(1,'#8293a00a');ctx.fillStyle=lens;ctx.fillRect(0,0,w,h);
+ const vignette=ctx.createRadialGradient(w*.52,h*.48,w*.24,w*.52,h*.5,w*.81);vignette.addColorStop(0,'#00000000');vignette.addColorStop(.78,'#00000018');vignette.addColorStop(1,'#00000092');ctx.fillStyle=vignette;ctx.fillRect(0,0,w,h);
 }
 
 function recorderMime(){return ['video/mp4;codecs="avc1.42E01E,mp4a.40.2"','video/mp4','video/webm;codecs=vp9,opus','video/webm;codecs=vp8,opus','video/webm'].find(x=>MediaRecorder.isTypeSupported(x))||''}
@@ -371,7 +381,7 @@ $('make').onclick=async()=>{
    }
   }
   if(!result)throw Error('録画を完了できませんでした');if(resultURL)URL.revokeObjectURL(resultURL);
-  resultURL=URL.createObjectURL(result.blob);$('outVideo').src=resultURL;$('save').href=resultURL;$('save').download=result.actual.includes('mp4')?'movie-leak-v43.mp4':'movie-leak-v43.webm';$('result').style.display='block';$('bar').style.width='100%';$('progressText').textContent='完成';$('status').textContent='動画が完成しました。保存後は「別の動画を選ぶ」から続けて作成できます。';
+  resultURL=URL.createObjectURL(result.blob);$('outVideo').src=resultURL;$('save').href=resultURL;$('save').download=result.actual.includes('mp4')?'movie-leak-v44.mp4':'movie-leak-v44.webm';$('result').style.display='block';$('bar').style.width='100%';$('progressText').textContent='完成';$('status').textContent='動画が完成しました。保存後は「別の動画を選ぶ」から続けて作成できます。';
  }catch(e){console.error(e);$('status').textContent='自動再試行でも完成できませんでした。\nもう一度「盗撮流出風動画を作る」を押してください。\n詳細：'+(e.message||String(e));$('progressText').textContent='もう一度お試しください';$('make').textContent='↻ もう一度、盗撮流出風動画を作る'}finally{video.pause();stopSounds();working=false;$('make').disabled=false;video.controls=true;renderMarkers()}
 };
 renderMarkers();
