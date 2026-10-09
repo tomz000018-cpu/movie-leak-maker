@@ -16,19 +16,19 @@ h1{font-size:clamp(27px,7.4vw,43px);font-weight:950;letter-spacing:-.07em;margin
 .videoShell{background:#141519;border-radius:12px;overflow:hidden;aspect-ratio:16/9;display:flex;align-items:center;justify-content:center;color:#a7acb6;font-weight:700;font-size:13px}
 .videoShell video{width:100%;height:100%;object-fit:contain;background:#090a0c}#sourceVideo{display:none}#sourceVideo.loaded{display:block}#videoPlaceholder{text-align:center;padding:20px}
 .file-label,.make,.save{display:flex;align-items:center;justify-content:center;gap:12px;border:0;border-radius:14px;background:var(--pink);color:white;text-decoration:none;text-align:center;font-size:18px;font-weight:850;min-height:63px;width:100%;cursor:pointer}
-.file-label{margin-top:13px}.file-label input{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none}.file-label svg,.make svg{width:23px;height:23px}
+.file-label{margin-top:0}.file-label input{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none}.file-label svg,.make svg{width:23px;height:23px}
 .file-note,.hint,.name{font-size:12px;color:var(--muted);line-height:1.65}.file-note{text-align:center;margin:9px 0 0}.name{text-align:center;margin-top:9px;overflow-wrap:anywhere}
 #videoInputFallback{display:block;width:100%;margin:10px auto;color:#555;font-size:13px}
-h2{font-size:18px;margin:0 0 8px;font-weight:850}.hint{margin:0 0 10px}.setting{margin-top:14px;padding-top:14px;border-top:1px solid var(--line)}
+h2{font-size:18px;margin:0 0 8px;font-weight:850}.hint{margin:0 0 10px}.setting{margin:13px 0 11px;padding-top:12px;border-top:1px solid var(--line)}
 .settingHeader{display:flex;justify-content:space-between;gap:10px;font-size:14px;font-weight:800}#crowdText{color:var(--pink);font-size:13px;white-space:nowrap}
 input[type=range]{width:100%;accent-color:var(--pink);touch-action:pan-y}.sliderLabels{display:flex;justify-content:space-between;font-size:12px;color:var(--muted)}#preview{display:none}
-.clock{text-align:center;font-weight:900;font-size:21px;font-variant-numeric:tabular-nums;margin:12px 0 8px}.seek{display:flex;align-items:center;gap:10px}.seek input{min-width:0;flex:1}
+.clock{text-align:center;font-weight:900;font-size:21px;font-variant-numeric:tabular-nums;margin:8px 0 5px}.seek{display:flex;align-items:center;gap:10px}.seek input{min-width:0;flex:1}
 .smallbtn{border:1px solid var(--line);background:white;border-radius:11px;color:var(--ink);font-size:13px;font-weight:700;padding:12px 8px;white-space:nowrap}
-.choices{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:9px;margin:13px 0}.choice{grid-column:span 2;position:relative;min-width:0}.choice.wide{grid-column:span 3}
-.choice input{position:absolute;opacity:0;width:1px;height:1px}.choice span{display:flex;align-items:center;justify-content:center;gap:5px;border:1px solid var(--line);border-radius:999px;min-height:52px;padding:8px 3px;font-weight:800;font-size:clamp(11px,3.4vw,14px);white-space:nowrap;cursor:pointer}.choice input:checked+span{color:white;background:var(--pink);border-color:var(--pink)}
+.choices{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:7px;margin:8px 0 12px}.choice{grid-column:span 2;position:relative;min-width:0}.choice.wide{grid-column:span 3}
+.choice input{position:absolute;opacity:0;width:1px;height:1px}.choice span{display:flex;align-items:center;justify-content:center;gap:5px;border:1px solid var(--line);border-radius:999px;min-height:44px;padding:7px 3px;font-weight:800;font-size:clamp(11px,3.4vw,14px);white-space:nowrap;cursor:pointer}.choice input:checked+span{color:white;background:var(--pink);border-color:var(--pink)}
 .listHeader{display:flex;align-items:center;justify-content:space-between;gap:8px}.listHeader h2{font-size:17px;margin:0}
-.add{border:1.5px solid var(--pink);background:white;color:var(--pink);border-radius:11px;padding:11px 12px;font-size:13px;font-weight:850;white-space:nowrap}.add:disabled,.make:disabled{opacity:.45}
-#addNotice{color:#e10077;min-height:16px;font-size:12px;margin-top:6px}#count{font-size:12px;color:var(--muted);margin:4px 0 10px}
+.add{display:block;width:100%;min-height:57px;border:3px double #fff;outline:2px solid #bd0068;outline-offset:0;background:#b60067;color:white;border-radius:13px;padding:11px 7px;font-size:16px;font-weight:900;box-shadow:0 3px 9px #94005222;cursor:pointer;white-space:normal}.add:disabled,.make:disabled{opacity:.45}
+.pointSection{border-top:1px solid var(--line);margin-top:12px;padding-top:12px}.pointSection h2{font-size:17px;margin:0}.listHeader{margin-top:12px;border-top:1px solid var(--line);padding-top:12px}.listHeader #count{white-space:nowrap;font-size:11px}.videoShell{margin-top:3px}#preview{margin-top:4px}#addNotice{color:#e10077;min-height:16px;font-size:12px;margin-top:6px}#count{font-size:12px;color:var(--muted);margin:4px 0 10px}
 .markerRow{display:flex;align-items:center;gap:12px;margin-top:7px;border:1px solid var(--line);border-radius:11px;padding:10px 9px;background:#fcfcff}.markerRow:before{content:'⋮';font-size:18px;color:#b7bcc7}
 .jump{background:transparent;border:0;color:var(--ink);font-size:15px;font-weight:850;padding:6px 0}.type{flex:1;font-size:14px;font-weight:700}.delete{border:0;background:#f5f5f8;color:#707887;border-radius:8px;padding:9px;font-size:12px}.empty{color:var(--muted);font-size:13px;padding:14px 0}
 .make{margin:16px 0;border-radius:999px;box-shadow:0 5px 13px #f500822e;font-size:clamp(16px,4.7vw,20px)}#progress,#result{display:none}.barbg{height:11px;background:#f0f0f3;border-radius:9px;overflow:hidden;margin-top:10px}.bar{height:100%;background:var(--pink);width:0%}.progressText{font-size:12px;color:var(--muted);text-align:center;margin:8px}.status{background:#f6f7fa;border-radius:10px;padding:12px;font-size:12px;line-height:1.6;color:#5f6978;white-space:pre-wrap}
@@ -38,18 +38,18 @@ input[type=range]{width:100%;accent-color:var(--pink);touch-action:pan-y}.slider
 </head>
 <body>
 <main>
-<header><h1>やめよう<em>映画盗撮</em></h1><div class="sub">どんな動画も映画盗撮流出風に変換します</div><div class="ver">Version 31 | 表示・動画選択修正版</div></header>
-<section class="card">
-<div class="videoShell"><div id="videoPlaceholder">ここに選択した動画が表示されます</div><video id="sourceVideo" controls playsinline preload="metadata"></video></div>
+<header><h1>やめよう<em>映画盗撮</em></h1><div class="sub">どんな動画も映画盗撮流出風に変換します</div><div class="ver">Version 32 | 操作配置・再チャレンジ案内版</div></header>
+<section class="card" id="editingArea">
 <label class="file-label" for="videoInput">⇧ 動画を選ぶ</label>
 <input id="videoInput" type="file" accept="video/*" style="display:block;width:100%;font-size:14px;margin-top:10px;color:#555" aria-label="動画ファイルを選択">
 <div class="file-note">MP4 / MOV / WebM などに対応</div>
 <div class="file-note">うまく選べない場合はこちら：<input id="videoInputFallback" type="file" accept="video/*"></div>
 <div class="name" id="fileName">動画が選択されていません</div>
 <div class="setting"><div class="settingHeader"><span>全体の盛り上がり</span><span id="crowdText">レベル4：大歓声</span></div><input id="crowdLevel" type="range" min="1" max="5" value="4"><div class="sliderLabels"><span>控えめ</span><span>激しめ</span></div></div>
-</section>
-<section class="card">
-<h2>盛り上がりポイント</h2><p class="hint">観客の反応を選んで、好きな時刻に追加できます。</p>
+<div class="videoShell"><div id="videoPlaceholder">ここに選択した動画が表示されます</div><video id="sourceVideo" controls playsinline preload="metadata"></video></div>
+<div id="preview"><div class="clock" id="clock">0:00 / 0:00</div><div class="seek"><button class="smallbtn" id="minus" type="button">−1秒</button><input type="range" id="seek" min="0" max="1000" value="0"><button class="smallbtn" id="plus" type="button">＋1秒</button></div></div>
+<div class="pointSection">
+<h2>盛り上がりポイント</h2>
 <div class="choices">
 <label class="choice"><input type="radio" name="strength" value="1"><span>👏 拍手</span></label>
 <label class="choice"><input type="radio" name="strength" value="2"><span>☺ 笑い声</span></label>
@@ -57,9 +57,12 @@ input[type=range]{width:100%;accent-color:var(--pink);touch-action:pan-y}.slider
 <label class="choice wide"><input type="radio" name="strength" value="4" checked><span>📣 声援</span></label>
 <label class="choice wide"><input type="radio" name="strength" value="5"><span>🔥 大声援</span></label>
 </div>
-<div id="preview"><p class="hint">動画を止めて再生位置を合わせてください。時刻を1秒ずつ調整できます。</p><div class="clock" id="clock">0:00 / 0:00</div><div class="seek"><button class="smallbtn" id="minus">−1秒</button><input type="range" id="seek" min="0" max="1000" value="0"><button class="smallbtn" id="plus">＋1秒</button></div></div>
+<button class="add" id="add" type="button">＋ 盛り上がりポイントを追加する</button>
+<div id="addNotice"></div>
+<div class="listHeader"><h2>追加したポイント一覧</h2><div id="count">登録ポイント：0 / 15</div></div>
+<div id="markerList"></div>
+</div>
 </section>
-<section class="card"><div class="listHeader"><h2>追加したポイント一覧</h2><button class="add" id="add">＋ 追加する</button></div><div id="addNotice"></div><div id="count">登録ポイント：0 / 15</div><div id="markerList"></div></section>
 <button id="make" class="make">✦ 盗撮流出風動画を作る</button>
 <div class="card"><div id="progress"><div class="barbg"><div class="bar" id="bar"></div></div><div class="progressText" id="progressText">準備中</div></div><div id="status" class="status">動画を選んでください。</div></div>
 <section id="result" class="card"><h2>完成動画</h2><video id="outVideo" playsinline controls></video><a id="save" class="save">↓ 完成動画を保存</a></section>
@@ -206,7 +209,7 @@ function recordAttempt(lib,attempt){return new Promise(async(resolve,reject)=>{
   let type=recorderMime();recorder=new MediaRecorder(combined,type?{mimeType:type,videoBitsPerSecond:4000000}:{videoBitsPerSecond:4000000});
   recorder.ondataavailable=e=>{if(e.data&&e.data.size)chunks.push(e.data)};
   recorder.onerror=e=>requestStop(new Error(e.error?.message||'録画処理エラー'));
-  recorder.onstop=()=>{if(stopError){settle(stopError);return}if(!chunks.length){settle(new Error('録画データを取得できませんでした'));return}let actual=recorder.mimeType||type||'video/mp4',blob=new Blob(chunks,{type:actual});if(blob.size<1024){settle(new Error('録画データが不完全です'));return}settle(null,{blob,actual})};
+  recorder.onstop=()=>{setTimeout(()=>{if(done)return;if(stopError){settle(stopError);return}if(!chunks.length){settle(new Error('録画データを取得できませんでした'));return}let actual=recorder.mimeType||type||'video/mp4',blob=new Blob(chunks,{type:actual});if(blob.size<1024){settle(new Error('録画データが不完全です'));return}settle(null,{blob,actual})},500)};
   video.addEventListener('ended',onEnded);video.addEventListener('error',onError);
   await delay(250);if(done)return;
   recorder.start(250);
@@ -221,7 +224,7 @@ function recordAttempt(lib,attempt){return new Promise(async(resolve,reject)=>{
 })}
 $('make').onclick=async()=>{
  if(working)return;if(!file){$('status').textContent='先に動画を選んでください。';return}
- working=true;$('make').disabled=true;video.controls=false;$('result').style.display='none';$('progress').style.display='block';$('bar').style.width='0%';$('progressText').textContent='準備中';
+ working=true;$('make').textContent='✦ 盗撮流出風動画を作る';$('make').disabled=true;video.controls=false;$('result').style.display='none';$('progress').style.display='block';$('bar').style.width='0%';$('progressText').textContent='準備中';
  try{
   if(!window.MediaRecorder||!work.captureStream)throw Error('このブラウザでは動画録画に対応していません');
   await audioSetup();const lib=await loadSounds();let result=null,first=null;
@@ -229,8 +232,8 @@ $('make').onclick=async()=>{
    try{result=await recordAttempt(lib,attempt);break}catch(e){console.error('録画試行 '+attempt,e);if(attempt===2)throw Error('2回の録画処理が失敗しました。\n1回目：'+first.message+'\n2回目：'+e.message);first=e;$('status').textContent='最初の録画処理が完了しませんでした。録画機能を再準備し、自動的にもう一度試します。\n原因：'+e.message;$('progressText').textContent='自動再試行中（2回目）';stopSounds();await delay(700)}
   }
   if(!result)throw Error('録画を完了できませんでした');if(resultURL)URL.revokeObjectURL(resultURL);
-  resultURL=URL.createObjectURL(result.blob);$('outVideo').src=resultURL;$('save').href=resultURL;$('save').download=result.actual.includes('mp4')?'movie-leak-v31.mp4':'movie-leak-v31.webm';$('result').style.display='block';$('bar').style.width='100%';$('progressText').textContent='完成';$('status').textContent='動画が完成しました（観客音声18本内蔵）。';
- }catch(e){console.error(e);$('status').textContent='録画を完了できませんでした。\n'+(e.message||String(e))+'\nもう一度ボタンを押して試してください。';$('progressText').textContent='録画できませんでした'}finally{video.pause();stopSounds();working=false;$('make').disabled=false;video.controls=true;renderMarkers()}
+  resultURL=URL.createObjectURL(result.blob);$('outVideo').src=resultURL;$('save').href=resultURL;$('save').download=result.actual.includes('mp4')?'movie-leak-v32.mp4':'movie-leak-v32.webm';$('result').style.display='block';$('bar').style.width='100%';$('progressText').textContent='完成';$('status').textContent='動画が完成しました（観客音声18本内蔵）。';
+ }catch(e){console.error(e);$('status').textContent='録画処理を最後まで確定できませんでした。\nただし、もう一度作成ボタンを押すと完成する場合があります。下のボタンから再チャレンジしてください。\n詳細：'+(e.message||String(e));$('progressText').textContent='もう一度お試しください';$('make').textContent='↻ もう一度、盗撮流出風動画を作る'}finally{video.pause();stopSounds();working=false;$('make').disabled=false;video.controls=true;renderMarkers()}
 };
 renderMarkers();
 </script>
