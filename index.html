@@ -1,142 +1,2721 @@
 <!DOCTYPE html>
+
 <html lang="ja">
+
 <head>
+
 <meta charset="UTF-8">
+
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Movie Leak Maker V24</title>
+
+<title>Movie Leak Maker V25</title>
+
 <style>
+
 *{box-sizing:border-box}
-body{margin:0;background:#080808;color:white;font-family:-apple-system,BlinkMacSystemFont,"Helvetica Neue",sans-serif}
-main{width:min(92%,800px);margin:auto;padding:30px 0 70px}
-h1,.sub,.ver{text-align:center}
-.sub,.ver{color:#aaa;line-height:1.65}
-.ver{font-size:13px;margin:10px 0 23px}
-.panel{background:#171717;border:1px solid #383838;border-radius:18px;padding:20px}
-.file-label,.btn,.save{display:block;width:100%;padding:16px;border:0;border-radius:12px;background:white;color:#111;font-size:16px;font-weight:bold;text-align:center;cursor:pointer}
-input[type=file],#work{display:none}
-.name,.hint{font-size:13px;color:#aaa;line-height:1.7;margin-top:10px;word-break:break-word;text-align:center}
-#preview,#result,#progress{display:none;margin-top:23px}
-video{width:100%;max-height:65vh;background:black;border-radius:9px;display:block}
-.setting,.markerBox,.status{background:#242424;padding:15px;border-radius:12px;margin-top:18px}
-.status{font-size:13px;white-space:pre-wrap;line-height:1.6}
-input[type=range]{width:100%;accent-color:white}
-.setting input{margin:17px 0 6px}
-.time{text-align:center;font-size:23px;margin:13px 0;font-variant-numeric:tabular-nums}
-.seek{display:flex;align-items:center;gap:9px}
-.seek input{flex:1;min-width:0}
-.smallbtn,.delete{background:#484848;border:0;border-radius:8px;color:white;padding:11px;font-size:13px}
-.choices{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:16px}
-.choice input{position:absolute;opacity:0}
-.choice span{display:block;background:#393939;border-radius:8px;padding:12px 2px;text-align:center;font-size:12px;cursor:pointer}
-.choice input:checked+span{background:white;color:#111;font-weight:bold}
-.btn{margin-top:17px}
-.btn:disabled{opacity:.5}
-.markerRow{display:flex;gap:8px;align-items:center;background:#333;margin-top:8px;padding:8px;border:1px solid #555;border-radius:9px}
-.markerRow .jump{border:0;background:none;color:white;font-weight:bold;font-size:15px;min-width:55px;text-align:left}
-.markerRow .type{flex:1;font-size:13px}
-.markerCount{font-size:14px;font-weight:bold;margin-top:15px}
-.addNotice{font-size:13px;color:#d6efd6;margin-top:9px;min-height:18px}
-.empty{padding:12px 0;color:#aaa;font-size:13px}
-.barbg{height:12px;background:#333;border-radius:9px;overflow:hidden}
-.bar{height:100%;background:white;width:0}
-.progressText{color:#aaa;text-align:center;margin-top:8px;font-size:13px}
-.save{text-decoration:none;margin-top:15px}
-.notice{font-size:12px;text-align:center;color:#777;line-height:1.7;margin-top:24px}
-@media(max-width:500px){
-.choices{grid-template-columns:repeat(2,1fr)}
-.panel{padding:14px}
+
+body{
+
+ margin:0;background:#080808;color:#fff;
+
+ font-family:-apple-system,BlinkMacSystemFont,
+
+ "Helvetica Neue",Arial,sans-serif
+
 }
+
+main{width:min(92%,800px);margin:auto;padding:30px 0 70px}
+
+h1,.sub,.ver{text-align:center}
+
+.sub,.ver{color:#aaa;line-height:1.65}
+
+.ver{font-size:13px;margin:10px 0 23px}
+
+.panel{
+
+ background:#171717;border:1px solid #383838;
+
+ border-radius:18px;padding:20px
+
+}
+
+.file-label,.btn,.save{
+
+ display:block;width:100%;padding:16px;border:0;
+
+ border-radius:12px;background:#fff;color:#111;
+
+ font-size:16px;font-weight:bold;text-align:center;
+
+ cursor:pointer
+
+}
+
+.file-label{position:relative;overflow:hidden}
+
+.file-label input{
+
+ position:absolute;inset:0;width:100%;height:100%;
+
+ opacity:0;cursor:pointer;font-size:100px
+
+}
+
+.native-picker{
+
+ display:block;width:100%;margin-top:10px;
+
+ color:#ddd;font-size:13px
+
+}
+
+.name,.hint{
+
+ font-size:13px;color:#aaa;line-height:1.7;
+
+ margin-top:10px;word-break:break-word
+
+}
+
+.name{text-align:center}
+
+#work{display:none}
+
+#preview,#result,#progress{display:none;margin-top:23px}
+
+video{
+
+ width:100%;max-height:65vh;
+
+ background:#000;border-radius:9px;display:block
+
+}
+
+.setting,.markerBox,.status{
+
+ background:#242424;padding:15px;
+
+ border-radius:12px;margin-top:18px
+
+}
+
+.status{
+
+ font-size:13px;white-space:pre-wrap;
+
+ line-height:1.6;word-break:break-word
+
+}
+
+input[type=range]{width:100%;accent-color:#fff}
+
+.setting input{margin:17px 0 6px}
+
+.time{
+
+ text-align:center;font-size:23px;margin:13px 0;
+
+ font-variant-numeric:tabular-nums
+
+}
+
+.seek{display:flex;align-items:center;gap:9px}
+
+.seek input{flex:1;min-width:0}
+
+.smallbtn,.delete{
+
+ background:#484848;border:0;border-radius:8px;
+
+ color:#fff;padding:11px;font-size:13px
+
+}
+
+.choices{
+
+ display:grid;grid-template-columns:repeat(4,1fr);
+
+ gap:6px;margin-top:16px
+
+}
+
+.choice input{position:absolute;opacity:0}
+
+.choice span{
+
+ display:block;background:#393939;border-radius:8px;
+
+ padding:12px 2px;text-align:center;
+
+ font-size:12px;cursor:pointer
+
+}
+
+.choice input:checked+span{
+
+ background:#fff;color:#111;font-weight:bold
+
+}
+
+.btn{margin-top:17px}
+
+.btn:disabled{opacity:.5}
+
+.markerRow{
+
+ display:flex;gap:8px;align-items:center;
+
+ background:#333;margin-top:8px;padding:8px;
+
+ border:1px solid #555;border-radius:9px
+
+}
+
+.markerRow .jump{
+
+ border:0;background:none;color:#fff;
+
+ font-weight:bold;font-size:15px;
+
+ min-width:55px;text-align:left
+
+}
+
+.markerRow .type{flex:1;font-size:13px}
+
+.markerCount{
+
+ font-size:14px;font-weight:bold;margin-top:15px
+
+}
+
+.addNotice{
+
+ font-size:13px;color:#d6efd6;
+
+ margin-top:9px;min-height:18px
+
+}
+
+.empty{padding:12px 0;color:#aaa;font-size:13px}
+
+.barbg{
+
+ height:12px;background:#333;
+
+ border-radius:9px;overflow:hidden
+
+}
+
+.bar{height:100%;background:#fff;width:0}
+
+.progressText{
+
+ color:#aaa;text-align:center;
+
+ margin-top:8px;font-size:13px
+
+}
+
+.save{text-decoration:none;margin-top:15px}
+
+.notice{
+
+ font-size:12px;text-align:center;
+
+ color:#777;line-height:1.7;margin-top:24px
+
+}
+
+@media(max-width:500px){
+
+ .choices{grid-template-columns:repeat(2,1fr)}
+
+ .panel{padding:14px}
+
+}
+
 </style>
+
 </head>
+
 <body>
+
 <main>
+
 <h1>Movie Leak Maker</h1>
-<div class="sub">普通の動画を「海外試写会の流出映像風」に加工します</div>
-<div class="ver">Version 24 — 英語リアクション音量・録画安定化</div>
+
+<div class="sub">
+
+普通の動画を「海外試写会の流出映像風」に加工します
+
+</div>
+
+<div class="ver">
+
+Version 25 — iPad動画選択修正
+
+</div>
 
 <div class="panel">
-<label class="file-label" for="videoInput">① 動画を選ぶ</label>
-<input id="videoInput" type="file" accept="video/*">
-<div id="fileName" class="name">まだ動画は選択されていません</div>
-<div class="hint">声援5本・拍手4本・笑い声5本・驚きの声4本を自動で読み込みます。音声の選択は不要です。</div>
+
+<div class="file-label">
+
+① 動画を選ぶ
+
+<input
+
+ id="videoInput"
+
+ type="file"
+
+ accept="video/*,.mp4,.mov,.m4v,.webm"
+
+ aria-label="動画を選ぶ"
+
+>
+
+</div>
+
+<div id="fileName" class="name">
+
+まだ動画は選択されていません
+
+</div>
+
+<div id="fileHelp" class="hint">
+
+写真アプリまたは「ファイル」から動画を選んでください。
+
+</div>
+
+<div class="hint">
+
+観客音18本は自動的に読み込みます。
+
+音声ファイルを選ぶ必要はありません。
+
+</div>
 
 <div class="setting">
+
 ② 全体の観客の盛り上がり
-<input id="crowdLevel" type="range" min="1" max="5" value="4">
+
+<input id="crowdLevel" type="range"
+
+ min="1" max="5" step="1" value="4">
+
 <div id="crowdText">レベル4：大歓声</div>
+
 </div>
 
 <div id="preview">
-<video id="sourceVideo" controls playsinline preload="metadata"></video>
+
+<video
+
+ id="sourceVideo"
+
+ controls
+
+ playsinline
+
+ preload="auto"
+
+></video>
 
 <div class="markerBox">
+
 <b>③ 盛り上がりポイントを追加（最大15か所）</b>
-<div class="hint">映像を一時停止して時刻を決めます。±1秒でも調整できます。</div>
+
+<div class="hint">
+
+動画を一時停止して時刻を決めます。
+
+±1秒でも調整できます。
+
+</div>
+
 <div id="clock" class="time">0:00 / 0:00</div>
 
 <div class="seek">
-<button id="minus" class="smallbtn">−1秒</button>
-<input id="seek" type="range" min="0" max="1000" value="0">
-<button id="plus" class="smallbtn">＋1秒</button>
+
+<button id="minus" class="smallbtn" type="button">
+
+−1秒
+
+</button>
+
+<input id="seek" type="range"
+
+ min="0" max="1000" value="0">
+
+<button id="plus" class="smallbtn" type="button">
+
+＋1秒
+
+</button>
+
 </div>
 
 <div class="choices">
-<label class="choice"><input type="radio" name="strength" value="1"><span>① 拍手</span></label>
-<label class="choice"><input type="radio" name="strength" value="2"><span>② 笑い声</span></label>
-<label class="choice"><input type="radio" name="strength" value="3"><span>③ Oh my God!</span></label>
-<label class="choice"><input type="radio" name="strength" value="4" checked><span>④ 声援</span></label>
-<label class="choice"><input type="radio" name="strength" value="5"><span>⑤ 大声援</span></label>
+
+<label class="choice">
+
+<input type="radio" name="strength" value="1">
+
+<span>① 拍手</span>
+
+</label>
+
+<label class="choice">
+
+<input type="radio" name="strength" value="2">
+
+<span>② 笑い声</span>
+
+</label>
+
+<label class="choice">
+
+<input type="radio" name="strength" value="3">
+
+<span>③ Oh my God!</span>
+
+</label>
+
+<label class="choice">
+
+<input type="radio" name="strength" value="4" checked>
+
+<span>④ 声援</span>
+
+</label>
+
+<label class="choice">
+
+<input type="radio" name="strength" value="5">
+
+<span>⑤ 大声援</span>
+
+</label>
+
 </div>
 
-<div class="hint">拍手・笑い声・驚きの声・声援・大声援から選択できます。</div>
+<button id="add" class="btn" type="button">
 
-<button id="add" class="btn">＋ この時刻にポイントを追加</button>
+＋ この時刻にポイントを追加
+
+</button>
+
 <div id="addNotice" class="addNotice"></div>
-<div id="count" class="markerCount">登録ポイント：0 / 15</div>
-<div id="markerList"></div>
+
+<div id="count" class="markerCount">
+
+登録ポイント：0 / 15
+
 </div>
 
-<button id="make" class="btn">④ 観客音入り動画を作る</button>
-<div id="progress">
-<div class="barbg"><div id="bar" class="bar"></div></div>
-<div id="progressText" class="progressText">準備中</div>
+<div id="markerList"></div>
+
 </div>
-<div id="status" class="status">動画を選んでください。</div>
+
+<button id="make" class="btn" type="button">
+
+④ 観客音入り動画を作る
+
+</button>
+
+<div id="progress">
+
+<div class="barbg">
+
+<div id="bar" class="bar"></div>
+
+</div>
+
+<div id="progressText" class="progressText">
+
+準備中
+
+</div>
+
+</div>
+
+<div id="status" class="status">
+
+動画を選んでください。
+
+</div>
+
 </div>
 
 <div id="result">
+
 <h2>完成動画</h2>
+
 <video id="outVideo" controls playsinline></video>
+
 <a id="save" class="save">完成動画を保存</a>
+
 </div>
+
 </div>
 
 <canvas id="work"></canvas>
-<div class="notice">音声・映像は端末内で合成します。素材の権利確認が済むまでは個人用テストに限定してください。</div>
+
+<div class="notice">
+
+音声と映像は端末内で合成します。<br>
+
+素材の権利確認が済むまでは個人用テストに限定してください。
+
+</div>
+
 </main>
 
 <script>
+
 "use strict";
 
-const $=x=>document.getElementById(x);
-const video=$('sourceVideo');
-const out=$('outVideo');
-const work=$('work');
-const ctx=work.getContext('2d',{alpha:false});
+const $=id=>document.getElementById(id);
 
-const mk=()=>{
- const c=document.createElement('canvas');
- return {c,g:c.getContext('2d')};
-};
+const input=$("videoInput");
+
+const video=$("sourceVideo");
+
+const out=$("outVideo");
+
+const work=$("work");
+
+const ctx=work.getContext("2d",{alpha:false});
+
+function mk(){
+
+ const c=document.createElement("canvas");
+
+ return {c,g:c.getContext("2d")};
+
+}
 
 const scene=mk();
+
 const screen=mk();
+
 const blur=mk();
+
 const bloom=mk();
+
 const color=mk();
 
-const names=['','控えめ','普通','大きめ','大歓声','超大歓声'];
-const types={1:'拍手',2:'笑い声',3:'Oh my God!',4:'声援',5:'大声援'};
+const names=[
+
+ "","控えめ","普通","大きめ","大歓声","超大歓声"
+
+];
+
+const types={
+
+ 1:"拍手",
+
+ 2:"笑い声",
+
+ 3:"Oh my God!",
+
+ 4:"声援",
+
+ 5:"大声援"
+
+};
 
 const sounds=[
- 'applause_01.mp3','applause_02.mp3
+
+ "applause_01.mp3",
+
+ "applause_02.mp3",
+
+ "applause_03.mp3",
+
+ "applause_04.mp3",
+
+ "cheer_large_01.mp3",
+
+ "cheer_medium_01.mp3",
+
+ "cheer_medium_02.mp3",
+
+ "cheer_short_01.mp3",
+
+ "cheer_short_02.mp3",
+
+ "laugh_01.mp3",
+
+ "laugh_02.mp3",
+
+ "laugh_03.mp3",
+
+ "laugh_04.mp3",
+
+ "laugh_05.mp3",
+
+ "voice_01.mp3",
+
+ "voice_02.mp3",
+
+ "voice_03.mp3",
+
+ "voice_04.mp3"
+
+];
+
+let file=null;
+
+let fileURL=null;
+
+let resultURL=null;
+
+let markers=[];
+
+let seq=0;
+
+let working=false;
+
+let frameId=0;
+
+let retryCount=0;
+
+let selectionId=0;
+
+let ac=null;
+
+let movieSource=null;
+
+let dest=null;
+
+let movieGain=null;
+
+let manualGain=null;
+
+let crowdBus=null;
+
+let finalGain=null;
+
+let analyser=null;
+
+let voiceBus=null;
+
+let active=[];
+
+const time=x=>{
+
+ const n=Math.max(0,Math.floor(x||0));
+
+ return Math.floor(n/60)+":"+
+
+  String(n%60).padStart(2,"0");
+
+};
+
+const duration=()=>
+
+ Number.isFinite(video.duration)?video.duration:0;
+
+function updateClock(){
+
+ const d=duration();
+
+ const t=video.currentTime||0;
+
+ $("clock").textContent=time(t)+" / "+time(d);
+
+ if(d){
+
+  $("seek").value=Math.round(t/d*1000);
+
+ }
+
+}
+
+$("crowdLevel").oninput=e=>{
+
+ $("crowdText").textContent=
+
+  "レベル"+e.target.value+
+
+  "："+names[Number(e.target.value)];
+
+};
+
+// 第25版：ファイル選択処理
+
+function setSelectedVideo(selected){
+
+ if(working||!selected)return;
+
+ const id=++selectionId;
+
+ video.pause();
+
+ file=selected;
+
+ $("fileName").textContent=
+
+  "選択しました："+selected.name;
+
+ $("fileHelp").textContent=
+
+  "動画を読み込んでいます…";
+
+ $("status").textContent=
+
+  "動画を読み込み中："+selected.name;
+
+ $("preview").style.display="block";
+
+ $("result").style.display="none";
+
+ $("progress").style.display="none";
+
+ markers=[];
+
+ seq=0;
+
+ retryCount=0;
+
+ $("addNotice").textContent="";
+
+ renderMarkers();
+
+ const newURL=URL.createObjectURL(selected);
+
+ const oldURL=fileURL;
+
+ fileURL=newURL;
+
+ video.onerror=()=>{
+
+  if(id!==selectionId||working)return;
+
+  $("fileHelp").textContent=
+
+   "動画を読み込めませんでした。"+
+
+   "写真アプリから「ファイル」に保存して"+
+
+   "選び直すと読み込める場合があります。";
+
+  $("status").textContent=
+
+   "動画の読み込みエラーです。";
+
+ };
+
+ video.src=newURL;
+
+ video.load();
+
+ if(oldURL){
+
+  setTimeout(()=>{
+
+   URL.revokeObjectURL(oldURL);
+
+  },1000);
+
+ }
+
+}
+
+input.addEventListener("change",()=>{
+
+ const selected=input.files&&input.files[0];
+
+ if(selected){
+
+  setSelectedVideo(selected);
+
+ }
+
+ // 同じ動画を続けて選んでも変更イベントが起きる
+
+ input.value="";
+
+});
+
+video.addEventListener("loadedmetadata",()=>{
+
+ updateClock();
+
+ if(working)return;
+
+ $("fileHelp").textContent=
+
+  "読み込み完了："+time(duration())+
+
+  " の動画です。";
+
+ $("status").textContent=
+
+  "動画を読み込みました。"+
+
+  "盛り上がりポイントを設定できます。";
+
+});
+
+video.addEventListener("timeupdate",updateClock);
+
+video.addEventListener("seeked",updateClock);
+
+$("seek").oninput=e=>{
+
+ if(working||!duration())return;
+
+ video.pause();
+
+ video.currentTime=
+
+  duration()*Number(e.target.value)/1000;
+
+ updateClock();
+
+};
+
+function move(sec){
+
+ if(working||!duration())return;
+
+ video.pause();
+
+ video.currentTime=Math.min(
+
+  duration(),
+
+  Math.max(0,video.currentTime+sec)
+
+ );
+
+ updateClock();
+
+}
+
+$("minus").onclick=()=>move(-1);
+
+$("plus").onclick=()=>move(1);
+
+$("add").onclick=()=>{
+
+ if(working||markers.length>=15||!duration())return;
+
+ video.pause();
+
+ const radio=document.querySelector(
+
+  'input[name="strength"]:checked'
+
+ );
+
+ const level=radio?Number(radio.value):4;
+
+ markers.push({
+
+  id:++seq,
+
+  t:video.currentTime,
+
+  level
+
+ });
+
+ renderMarkers();
+
+ $("addNotice").textContent=
+
+  "追加しました："+time(video.currentTime)+
+
+  " "+types[level];
+
+};
+
+function renderMarkers(){
+
+ markers.sort((a,b)=>a.t-b.t);
+
+ $("count").textContent=
+
+  "登録ポイント："+markers.length+" / 15";
+
+ $("add").disabled=working||markers.length>=15;
+
+ const root=$("markerList");
+
+ root.replaceChildren();
+
+ if(!markers.length){
+
+  const e=document.createElement("div");
+
+  e.className="empty";
+
+  e.textContent="まだポイントはありません。";
+
+  root.append(e);
+
+ }
+
+ for(const m of markers){
+
+  const row=document.createElement("div");
+
+  row.className="markerRow";
+
+  const jump=document.createElement("button");
+
+  jump.type="button";
+
+  jump.className="jump";
+
+  jump.textContent=time(m.t);
+
+  jump.onclick=()=>{
+
+   if(working)return;
+
+   video.pause();
+
+   video.currentTime=m.t;
+
+   updateClock();
+
+  };
+
+  const label=document.createElement("span");
+
+  label.className="type";
+
+  label.textContent=types[m.level];
+
+  const del=document.createElement("button");
+
+  del.type="button";
+
+  del.className="delete";
+
+  del.textContent="削除";
+
+  del.onclick=()=>{
+
+   if(working)return;
+
+   markers=markers.filter(x=>x.id!==m.id);
+
+   renderMarkers();
+
+  };
+
+  row.append(jump,label,del);
+
+  root.append(row);
+
+ }
+
+}
+
+function impulse(seconds,decay){
+
+ const n=Math.floor(ac.sampleRate*seconds);
+
+ const b=ac.createBuffer(2,n,ac.sampleRate);
+
+ for(let c=0;c<2;c++){
+
+  const data=b.getChannelData(c);
+
+  for(let i=0;i<n;i++){
+
+   data[i]=(Math.random()*2-1)*
+
+    Math.pow(1-i/n,decay);
+
+  }
+
+ }
+
+ return b;
+
+}
+
+async function audioSetup(){
+
+ if(!ac){
+
+  ac=new(
+
+   window.AudioContext||
+
+   window.webkitAudioContext
+
+  )();
+
+ }
+
+ await ac.resume();
+
+ if(movieSource)return;
+
+ movieSource=ac.createMediaElementSource(video);
+
+ dest=ac.createMediaStreamDestination();
+
+ analyser=ac.createAnalyser();
+
+ analyser.fftSize=1024;
+
+ const low=ac.createBiquadFilter();
+
+ const dry=ac.createGain();
+
+ const wet=ac.createGain();
+
+ const delay=ac.createDelay();
+
+ const rev=ac.createConvolver();
+
+ low.type="lowpass";
+
+ low.frequency.value=4600;
+
+ dry.gain.value=.86;
+
+ wet.gain.value=.4;
+
+ delay.delayTime.value=.075;
+
+ rev.buffer=impulse(1.9,2.4);
+
+ movieGain=ac.createGain();
+
+ manualGain=ac.createGain();
+
+ movieSource.connect(analyser);
+
+ analyser.connect(low);
+
+ low.connect(dry);
+
+ low.connect(delay);
+
+ delay.connect(rev);
+
+ rev.connect(wet);
+
+ dry.connect(movieGain);
+
+ wet.connect(movieGain);
+
+ movieGain.connect(manualGain);
+
+ crowdBus=ac.createGain();
+
+ const af=ac.createBiquadFilter();
+
+ const ar=ac.createConvolver();
+
+ const ad=ac.createGain();
+
+ const aw=ac.createGain();
+
+ af.type="lowpass";
+
+ af.frequency.value=5200;
+
+ ar.buffer=impulse(1.45,2.5);
+
+ ad.gain.value=.85;
+
+ aw.gain.value=.2;
+
+ crowdBus.connect(af);
+
+ af.connect(ad);
+
+ af.connect(ar);
+
+ ar.connect(aw);
+
+ const mix=ac.createGain();
+
+ const compressor=ac.createDynamicsCompressor();
+
+ compressor.threshold.value=-7;
+
+ compressor.knee.value=9;
+
+ compressor.ratio.value=6;
+
+ compressor.attack.value=.004;
+
+ compressor.release.value=.24;
+
+ manualGain.connect(mix);
+
+ ad.connect(mix);
+
+ aw.connect(mix);
+
+ voiceBus=ac.createGain();
+
+ const vh=ac.createBiquadFilter();
+
+ vh.type="highpass";
+
+ vh.frequency.value=260;
+
+ const vl=ac.createBiquadFilter();
+
+ vl.type="lowpass";
+
+ vl.frequency.value=2900;
+
+ const vd=ac.createGain();
+
+ vd.gain.value=.72;
+
+ const vr=ac.createConvolver();
+
+ vr.buffer=impulse(1.65,2);
+
+ const vw=ac.createGain();
+
+ vw.gain.value=.43;
+
+ voiceBus.connect(vh);
+
+ vh.connect(vl);
+
+ vl.connect(vd);
+
+ vl.connect(vr);
+
+ vr.connect(vw);
+
+ vd.connect(mix);
+
+ vw.connect(mix);
+
+ finalGain=ac.createGain();
+
+ mix.connect(compressor);
+
+ compressor.connect(finalGain);
+
+ finalGain.connect(dest);
+
+ finalGain.connect(ac.destination);
+
+}
+
+function mono(buffer){
+
+ if(buffer.numberOfChannels===1)return buffer;
+
+ const m=ac.createBuffer(
+
+  1,buffer.length,buffer.sampleRate
+
+ );
+
+ const target=m.getChannelData(0);
+
+ for(let c=0;c<buffer.numberOfChannels;c++){
+
+  const src=buffer.getChannelData(c);
+
+  for(let i=0;i<src.length;i++){
+
+   target[i]+=src[i]/buffer.numberOfChannels;
+
+  }
+
+ }
+
+ return m;
+
+}
+
+let cachedLib=null;
+
+async function loadSounds(){
+
+ if(cachedLib)return cachedLib;
+
+ const lib={
+
+  cheer:[],
+
+  applause:[],
+
+  voices:[],
+
+  laugh:[]
+
+ };
+
+ for(let i=0;i<sounds.length;i++){
+
+  $("status").textContent=
+
+   "内蔵音声の読み込み中："+(i+1)+
+
+   " / "+sounds.length;
+
+  const name=sounds[i];
+
+  const response=await fetch("./"+name+"?v=25");
+
+  if(!response.ok){
+
+   throw Error(
+
+    "音声ファイルが見つかりません："+name
+
+   );
+
+  }
+
+  let b;
+
+  try{
+
+   b=mono(
+
+    await ac.decodeAudioData(
+
+     await response.arrayBuffer()
+
+    )
+
+   );
+
+  }catch(err){
+
+   throw Error(
+
+    "音声ファイルを読み込めません："+name
+
+   );
+
+  }
+
+  if(name.startsWith("voice_")){
+
+   lib.voices.push(b);
+
+  }else if(name.startsWith("laugh_")){
+
+   lib.laugh.push(b);
+
+  }else if(name.startsWith("applause_")){
+
+   lib.applause.push(b);
+
+  }else{
+
+   lib.cheer.push(b);
+
+  }
+
+ }
+
+ cachedLib=lib;
+
+ return lib;
+
+}
+
+const pick=list=>
+
+ list[Math.floor(Math.random()*list.length)];
+
+function clip(
+
+ b,start,length,vol,
+
+ fadeIn=.4,fadeOut=2.4,target=null
+
+){
+
+ if(!b)return;
+
+ const len=Math.min(length,b.duration);
+
+ if(len<.1)return;
+
+ const src=ac.createBufferSource();
+
+ const gain=ac.createGain();
+
+ const attack=Math.min(fadeIn,len*.23);
+
+ const release=Math.min(fadeOut,len*.38);
+
+ src.buffer=b;
+
+ gain.gain.setValueAtTime(.0001,start);
+
+ gain.gain.linearRampToValueAtTime(
+
+  vol,start+attack
+
+ );
+
+ gain.gain.setValueAtTime(
+
+  vol,start+Math.max(attack,len-release)
+
+ );
+
+ gain.gain.linearRampToValueAtTime(
+
+  .0001,start+len
+
+ );
+
+ src.connect(gain);
+
+ gain.connect(target||crowdBus);
+
+ src.start(start,0,len);
+
+ src.stop(start+len+.03);
+
+ active.push(src);
+
+}
+
+function randomClip(
+
+ list,start,len,vol,
+
+ fi=.4,fo=2.4,target=null
+
+){
+
+ if(list.length){
+
+  clip(
+
+   pick(list),start,len,vol,
+
+   fi,fo,target
+
+  );
+
+ }
+
+}
+
+function stopSounds(){
+
+ for(const s of active){
+
+  try{s.stop()}catch(err){}
+
+ }
+
+ active=[];
+
+}
+
+function shuffled(list){
+
+ const a=[...list];
+
+ for(let i=a.length-1;i>0;i--){
+
+  const j=Math.floor(Math.random()*(i+1));
+
+  [a[i],a[j]]=[a[j],a[i]];
+
+ }
+
+ return a;
+
+}
+
+function voiceReaction(lib,t,s){
+
+ if(!lib.voices.length)return;
+
+ const voices=shuffled(lib.voices);
+
+ randomClip(
+
+  lib.cheer,t,5,.45*s,.3,2.6
+
+ );
+
+ clip(
+
+  voices[0],t+.22,4,
+
+  1.48*s,.09,.5,voiceBus
+
+ );
+
+ if(voices.length>1){
+
+  clip(
+
+   voices[1],t+1.85,3.5,
+
+   1.12*s,.12,.6,voiceBus
+
+  );
+
+ }
+
+ if(voices.length>2&&Math.random()<.6){
+
+  clip(
+
+   voices[2],t+3.25,3,
+
+   .88*s,.16,.7,voiceBus
+
+  );
+
+ }
+
+}
+
+function variedCheer(lib,t,s,big){
+
+ if(!lib.cheer.length)return;
+
+ const bank=shuffled(lib.cheer);
+
+ const count=big?4:2;
+
+ for(let i=0;i<Math.min(count,bank.length);i++){
+
+  const offset=big?i*.43:i*.75;
+
+  const gain=big
+
+   ?[1.35,1.1,.91,.78][i]
+
+   :[.95,.68][i];
+
+  clip(
+
+   bank[i],
+
+   t+offset,
+
+   big?8:5.5,
+
+   gain*s,.15+i*.07,3
+
+  );
+
+ }
+
+ if(big){
+
+  randomClip(
+
+   lib.applause,t+.5,8,
+
+   .56*s,.2,3.5
+
+  );
+
+ }
+
+}
+
+function laughterReaction(lib,t,s){
+
+ if(!lib.laugh.length)return;
+
+ const bank=shuffled(lib.laugh);
+
+ clip(bank[0],t+.12,7,.92*s,.1,1);
+
+ if(bank.length>1){
+
+  clip(
+
+   bank[1],t+1.15,7,.63*s,.2,1.2
+
+  );
+
+ }
+
+ if(bank.length>2&&Math.random()<.65){
+
+  clip(
+
+   bank[2],t+2.4,6,.4*s,.25,1.3
+
+  );
+
+ }
+
+}
+
+function applauseReaction(lib,t,s){
+
+ if(!lib.applause.length)return;
+
+ const bank=shuffled(lib.applause);
+
+ clip(
+
+  bank[0],t+.1,8,1.1*s,.2,1.8
+
+ );
+
+ if(bank.length>1){
+
+  clip(
+
+   bank[1],t+1.1,7,.72*s,.3,1.6
+
+  );
+
+ }
+
+}
+
+function ambience(lib,start,d,level){
+
+ const bank=[...lib.cheer,...lib.applause];
+
+ const base=[0,.07,.1,.14,.18,.24][level];
+
+ for(let t=0;t<d;t+=1.1){
+
+  const b=pick(bank);
+
+  const len=Math.min(5.7,d-t,b.duration);
+
+  if(len>.1){
+
+   clip(
+
+    b,start+t,len,
+
+    base*(.55+Math.random()*.4),
+
+    1,2
+
+   );
+
+  }
+
+ }
+
+}
+
+function opening(lib,start,d,level){
+
+ const scale=[0,.35,.55,.75,1,1.25][level];
+
+ const len=Math.min(12,Math.max(4,d*.16));
+
+ randomClip(
+
+  lib.cheer,start,len,
+
+  .9*scale,.12,4
+
+ );
+
+ randomClip(
+
+  lib.applause,start+.15,
+
+  Math.max(2,len-1),
+
+  1.1*scale,.15,4.5
+
+ );
+
+ if(d>12){
+
+  randomClip(
+
+   lib.applause,start+2.2,
+
+   Math.min(7,len),.6*scale,.5,4
+
+  );
+
+ }
+
+ movieGain.gain.setValueAtTime(
+
+  level>=4?.68:.8,start
+
+ );
+
+ movieGain.gain.linearRampToValueAtTime(
+
+  1,start+len
+
+ );
+
+}
+
+function finale(lib,start,d,level){
+
+ const scale=[0,.35,.55,.75,1,1.25][level];
+
+ const span=Math.min(30,d*.35);
+
+ const from=Math.max(0,d-span);
+
+ for(let t=from;t<d;t+=2.1){
+
+  const p=Math.min(
+
+   1,(t-from)/Math.max(1,span)
+
+  );
+
+  randomClip(
+
+   lib.cheer,start+t,8,
+
+   (.6+p*1.15)*scale,.4,3.5
+
+  );
+
+ }
+
+ const clapAt=Math.max(
+
+  from,d-Math.min(12,d*.18)
+
+ );
+
+ for(let t=clapAt;t<d;t+=2.5){
+
+  const p=Math.min(
+
+   1,(t-clapAt)/Math.max(1,d-clapAt)
+
+  );
+
+  randomClip(
+
+   lib.applause,start+t,9,
+
+   (.7+p*1.25)*scale,.35,4
+
+  );
+
+ }
+
+ randomClip(
+
+  lib.applause,
+
+  start+Math.max(0,d-4),
+
+  10,1.65*scale,.25,3.5
+
+ );
+
+ const gain=movieGain.gain;
+
+ gain.setValueAtTime(1,start+from);
+
+ gain.linearRampToValueAtTime(
+
+  .62,start+Math.max(from+.1,d-3)
+
+ );
+
+ gain.setValueAtTime(.58,start+d);
+
+}
+
+function reaction(lib,t,level){
+
+ const scale=[0,.35,.55,.75,1,1.25][level];
+
+ randomClip(
+
+  lib.cheer,t,5,.85*scale,.2,3
+
+ );
+
+ if(Math.random()<.4){
+
+  randomClip(
+
+   lib.applause,t+.7,4,
+
+   .4*scale,.2,2.7
+
+  );
+
+ }
+
+}
+
+function manualReaction(lib,t,point,level){
+
+ const s=[0,.35,.55,.75,1,1.25][level];
+
+ if(point===1){
+
+  applauseReaction(lib,t,s);
+
+ }else if(point===2){
+
+  laughterReaction(lib,t,s);
+
+ }else if(point===3){
+
+  voiceReaction(lib,t,s);
+
+ }else if(point===4){
+
+  variedCheer(lib,t,s,false);
+
+ }else if(point===5){
+
+  variedCheer(lib,t,s,true);
+
+ }
+
+}
+
+function duck(start,d,points){
+
+ const g=manualGain.gain;
+
+ g.cancelScheduledValues(ac.currentTime);
+
+ g.setValueAtTime(1,ac.currentTime);
+
+ const intervals=points.map(m=>({
+
+  b:m.t,
+
+  e:Math.min(
+
+   d,m.t+(m.level===5?8:5)
+
+  ),
+
+  v:m.level===5?.52:
+
+    m.level===4?.78:
+
+    m.level===3?.9:.86
+
+ })).sort((a,b)=>a.b-b.b);
+
+ const merged=[];
+
+ for(const p of intervals){
+
+  const prev=merged[merged.length-1];
+
+  if(prev&&p.b<=prev.e+.2){
+
+   prev.e=Math.max(prev.e,p.e);
+
+   prev.v=Math.min(prev.v,p.v);
+
+  }else{
+
+   merged.push({...p});
+
+  }
+
+ }
+
+ for(const p of merged){
+
+  if(p.e<=p.b)continue;
+
+  const b=start+p.b;
+
+  const e=start+p.e;
+
+  const fi=Math.min(.2,(e-b)*.2);
+
+  const fo=Math.min(1,(e-b)*.3);
+
+  g.setValueAtTime(1,b);
+
+  g.linearRampToValueAtTime(p.v,b+fi);
+
+  g.setValueAtTime(
+
+   p.v,Math.max(b+fi,e-fo)
+
+  );
+
+  g.linearRampToValueAtTime(1,e);
+
+ }
+
+}
+
+function cover(g,w,h,scale=1){
+
+ const vr=video.videoWidth/video.videoHeight;
+
+ const tr=w/h;
+
+ let sx=0,sy=0;
+
+ let sw=video.videoWidth;
+
+ let sh=video.videoHeight;
+
+ if(vr>tr){
+
+  sw=video.videoHeight*tr;
+
+  sx=(video.videoWidth-sw)/2;
+
+ }else{
+
+  sh=video.videoWidth/tr;
+
+  sy=(video.videoHeight-sh)/2;
+
+ }
+
+ g.drawImage(
+
+  video,sx,sy,sw,sh,
+
+  (w-w*scale)/2,
+
+  (h-h*scale)/2,
+
+  w*scale,h*scale
+
+ );
+
+}
+
+function renderScreen(t){
+
+ const w=screen.c.width;
+
+ const h=screen.c.height;
+
+ const s=screen.g;
+
+ const b=blur.g;
+
+ const l=bloom.g;
+
+ const c=color.g;
+
+ for(const g of [s,b,l,c]){
+
+  g.clearRect(0,0,w,h);
+
+ }
+
+ const fa=(Math.sin(t*.38)+1)/2;
+
+ const fb=(Math.sin(t*.14+2.1)+1)/2;
+
+ const focus=15+fa*9+fb*5;
+
+ const light=
+
+  108+Math.sin(t*.62)*8+
+
+  Math.sin(t*3.7)*3;
+
+ b.save();
+
+ b.filter=
+
+  `brightness(${light}%) contrast(79%) saturate(64%) blur(${focus}px)`;
+
+ cover(b,w,h,1.06);
+
+ b.restore();
+
+ const haze=b.createLinearGradient(0,0,w,h);
+
+ haze.addColorStop(0,"rgba(210,220,230,.1)");
+
+ haze.addColorStop(.45,"rgba(235,235,225,.16)");
+
+ haze.addColorStop(1,"rgba(180,200,215,.08)");
+
+ b.fillStyle=haze;
+
+ b.fillRect(0,0,w,h);
+
+ l.save();
+
+ l.filter="brightness(190%) blur(32px)";
+
+ cover(l,w,h,1.08);
+
+ l.restore();
+
+ l.save();
+
+ l.globalAlpha=.55;
+
+ l.filter="brightness(260%) blur(62px)";
+
+ cover(l,w,h,1.1);
+
+ l.restore();
+
+ s.drawImage(blur.c,0,0);
+
+ s.save();
+
+ s.globalCompositeOperation="screen";
+
+ s.globalAlpha=.44;
+
+ s.drawImage(bloom.c,0,0);
+
+ s.restore();
+
+ c.save();
+
+ c.globalAlpha=.11;
+
+ c.filter=
+
+  "sepia(100%) saturate(500%) hue-rotate(-35deg)";
+
+ c.drawImage(blur.c,4,1);
+
+ c.restore();
+
+ c.save();
+
+ c.globalCompositeOperation="screen";
+
+ c.globalAlpha=.08;
+
+ c.filter=
+
+  "sepia(100%) saturate(500%) hue-rotate(170deg)";
+
+ c.drawImage(blur.c,-4,-1);
+
+ c.restore();
+
+ s.save();
+
+ s.globalCompositeOperation="screen";
+
+ s.drawImage(color.c,0,0);
+
+ s.restore();
+
+ s.fillStyle="rgba(215,220,215,.095)";
+
+ s.fillRect(0,0,w,h);
+
+ s.save();
+
+ s.globalCompositeOperation="destination-in";
+
+ s.filter="blur(38px)";
+
+ s.fillStyle="#fff";
+
+ s.fillRect(46,40,w-92,h-80);
+
+ s.restore();
+
+}
+
+function build(t){
+
+ const w=scene.c.width;
+
+ const h=scene.c.height;
+
+ const g=scene.g;
+
+ g.fillStyle="rgb(5,6,7)";
+
+ g.fillRect(0,0,w,h);
+
+ renderScreen(t);
+
+ const glow=g.createRadialGradient(
+
+  w*.52,h*.47,w*.1,
+
+  w*.52,h*.5,w*.95
+
+ );
+
+ glow.addColorStop(0,"rgba(135,150,165,.16)");
+
+ glow.addColorStop(.38,"rgba(85,95,105,.075)");
+
+ glow.addColorStop(.72,"rgba(35,40,45,.035)");
+
+ glow.addColorStop(1,"rgba(0,0,0,0)");
+
+ g.fillStyle=glow;
+
+ g.fillRect(0,0,w,h);
+
+ g.save();
+
+ g.translate(w*.51,h*.48);
+
+ g.rotate(-.048);
+
+ g.transform(1,-.022,.115,1,0,0);
+
+ const sw=w*1.46;
+
+ const sh=h*1.18;
+
+ g.save();
+
+ g.globalAlpha=.26;
+
+ g.filter="blur(65px) brightness(175%)";
+
+ g.drawImage(screen.c,-sw/2,-sh/2,sw,sh);
+
+ g.restore();
+
+ g.save();
+
+ g.filter="blur(7px)";
+
+ g.drawImage(screen.c,-sw/2,-sh/2,sw,sh);
+
+ g.restore();
+
+ g.restore();
+
+ const lens=g.createLinearGradient(0,0,w,h);
+
+ lens.addColorStop(0,"rgba(160,175,190,.055)");
+
+ lens.addColorStop(.5,"rgba(220,220,205,.075)");
+
+ lens.addColorStop(1,"rgba(120,140,160,.035)");
+
+ g.fillStyle=lens;
+
+ g.fillRect(0,0,w,h);
+
+ const vignette=g.createRadialGradient(
+
+  w*.52,h*.47,w*.27,
+
+  w*.52,h*.5,w*.87
+
+ );
+
+ vignette.addColorStop(0,"rgba(0,0,0,0)");
+
+ vignette.addColorStop(.68,"rgba(0,0,0,.1)");
+
+ vignette.addColorStop(1,"rgba(0,0,0,.76)");
+
+ g.fillStyle=vignette;
+
+ g.fillRect(0,0,w,h);
+
+}
+
+function camera(t){
+
+ const w=work.width;
+
+ const h=work.height;
+
+ const mx=
+
+  Math.sin(t*8.3)*2.5+
+
+  Math.sin(t*16.9);
+
+ const my=
+
+  Math.cos(t*7.1)*2+
+
+  Math.sin(t*13.5)*.9;
+
+ const dx=Math.sin(t*.39)*6.5;
+
+ const dy=Math.cos(t*.28)*4.2;
+
+ const angle=
+
+  Math.sin(t*.63)*.0062+
+
+  Math.sin(t*2.8)*.0018;
+
+ const zoom=1.055+Math.sin(t*.24)*.008;
+
+ ctx.fillStyle="#000";
+
+ ctx.fillRect(0,0,w,h);
+
+ ctx.save();
+
+ ctx.translate(
+
+  w/2+mx+dx,
+
+  h/2+my+dy
+
+ );
+
+ ctx.rotate(angle);
+
+ ctx.scale(zoom,zoom);
+
+ ctx.drawImage(scene.c,-w/2,-h/2,w,h);
+
+ ctx.restore();
+
+}
+
+function mime(){
+
+ return [
+
+  'video/mp4;codecs="avc1.42E01E,mp4a.40.2"',
+
+  "video/mp4",
+
+  "video/webm;codecs=vp9,opus",
+
+  "video/webm;codecs=vp8,opus",
+
+  "video/webm"
+
+ ].find(x=>MediaRecorder.isTypeSupported(x))||"";
+
+}
+
+function reset(){
+
+ working=false;
+
+ $("make").disabled=false;
+
+ input.disabled=false;
+
+ video.controls=true;
+
+ renderMarkers();
+
+}
+
+function waitForSeek(){
+
+ if(!video.seeking)return Promise.resolve();
+
+ return new Promise((resolve,reject)=>{
+
+  let timer;
+
+  function done(){
+
+   clearTimeout(timer);
+
+   video.removeEventListener("seeked",done);
+
+   resolve();
+
+  }
+
+  timer=setTimeout(()=>{
+
+   video.removeEventListener("seeked",done);
+
+   reject(new Error(
+
+    "動画の位置調整が完了しませんでした。"
+
+   ));
+
+  },10000);
+
+  video.addEventListener("seeked",done,{once:true});
+
+ });
+
+}
+
+async function processVideo(){
+
+ if(working||!file)return;
+
+ working=true;
+
+ video.pause();
+
+ $("make").disabled=true;
+
+ input.disabled=true;
+
+ video.controls=false;
+
+ $("result").style.display="none";
+
+ $("progress").style.display="block";
+
+ $("bar").style.width="0%";
+
+ $("progressText").textContent="準備中…";
+
+ let recorder=null;
+
+ let stream=null;
+
+ let failed=false;
+
+ let stopped=false;
+
+ let failureText="";
+
+ let watchdog=null;
+
+ const chunks=[];
+
+ function stopWatchdog(){
+
+  if(watchdog){
+
+   clearInterval(watchdog);
+
+   watchdog=null;
+
+  }
+
+ }
+
+ function finish(){
+
+  if(stopped)return;
+
+  stopped=true;
+
+  cancelAnimationFrame(frameId);
+
+  stopWatchdog();
+
+  $("progressText").textContent=
+
+   "録画データを確定しています…";
+
+  if(!recorder||recorder.state==="inactive")return;
+
+  try{recorder.requestData()}catch(err){}
+
+  setTimeout(()=>{
+
+   if(recorder.state!=="inactive"){
+
+    try{recorder.stop()}catch(err){}
+
+   }
+
+  },850);
+
+ }
+
+ try{
+
+  if(!window.MediaRecorder||!work.captureStream){
+
+   throw Error(
+
+    "このブラウザは動画録画に対応していません。"
+
+   );
+
+  }
+
+  await audioSetup();
+
+  const lib=await loadSounds();
+
+  video.pause();
+
+  video.currentTime=0;
+
+  await waitForSeek();
+
+  const d=duration();
+
+  if(!d){
+
+   throw Error("動画の長さを取得できません。");
+
+  }
+
+  const portrait=
+
+   video.videoHeight>video.videoWidth;
+
+  work.width=portrait?540:960;
+
+  work.height=portrait?960:540;
+
+  for(const item of [
+
+   scene,screen,blur,bloom,color
+
+  ]){
+
+   item.c.width=work.width;
+
+   item.c.height=work.height;
+
+  }
+
+  build(0);
+
+  camera(0);
+
+  await new Promise(resolve=>
+
+   requestAnimationFrame(resolve)
+
+  );
+
+  stream=work.captureStream(30);
+
+  const finalStream=new MediaStream([
+
+   ...stream.getVideoTracks(),
+
+   ...dest.stream.getAudioTracks()
+
+  ]);
+
+  const type=mime();
+
+  const options={
+
+   videoBitsPerSecond:4000000
+
+  };
+
+  if(type)options.mimeType=type;
+
+  recorder=new MediaRecorder(finalStream,options);
+
+  recorder.ondataavailable=e=>{
+
+   if(e.data&&e.data.size>0){
+
+    chunks.push(e.data);
+
+   }
+
+  };
+
+  recorder.onerror=e=>{
+
+   failed=true;
+
+   failureText=e.error?.message||
+
+    "録画処理でエラーが発生しました。";
+
+  };
+
+  recorder.onstop=()=>{
+
+   stopWatchdog();
+
+   cancelAnimationFrame(frameId);
+
+   stopSounds();
+
+   video.pause();
+
+   if(stream){
+
+    stream.getTracks().forEach(track=>track.stop());
+
+   }
+
+   reset();
+
+   if(failed||chunks.length===0){
+
+    if(!failed&&retryCount===0){
+
+     retryCount=1;
+
+     $("status").textContent=
+
+      "録画データが空でした。"+
+
+      "自動的にもう一度処理します。";
+
+     $("progressText").textContent=
+
+      "自動再試行の準備中…";
+
+     setTimeout(()=>{
+
+      processVideo();
+
+     },900);
+
+     return;
+
+    }
+
+    retryCount=0;
+
+    $("status").textContent=failed
+
+     ?"録画エラー："+failureText
+
+     :"録画データが空でした。"+
+
+      "ブラウザを再読み込みしてお試しください。";
+
+    $("progressText").textContent=
+
+     "保存できませんでした";
+
+    return;
+
+   }
+
+   retryCount=0;
+
+   const actual=
+
+    recorder.mimeType||type||"video/mp4";
+
+   const blob=new Blob(chunks,{type:actual});
+
+   if(blob.size<1000){
+
+    $("status").textContent=
+
+     "録画ファイルの容量が小さすぎます。";
+
+    $("progressText").textContent=
+
+     "保存できませんでした";
+
+    return;
+
+   }
+
+   if(resultURL){
+
+    URL.revokeObjectURL(resultURL);
+
+   }
+
+   resultURL=URL.createObjectURL(blob);
+
+   out.src=resultURL;
+
+   out.load();
+
+   $("save").href=resultURL;
+
+   $("save").download=actual.includes("mp4")
+
+    ?"movie-leak-v25.mp4"
+
+    :"movie-leak-v25.webm";
+
+   $("result").style.display="block";
+
+   $("bar").style.width="100%";
+
+   $("progressText").textContent="完成";
+
+   $("status").textContent=
+
+    "動画が完成しました。"+
+
+    "\nファイル容量："+(
+
+     blob.size/1024/1024
+
+    ).toFixed(1)+" MB";
+
+  };
+
+  const level=Number($("crowdLevel").value);
+
+  stopSounds();
+
+  for(const g of [
+
+   movieGain,manualGain,
+
+   finalGain,crowdBus,voiceBus
+
+  ]){
+
+   g.gain.cancelScheduledValues(ac.currentTime);
+
+   g.gain.setValueAtTime(1,ac.currentTime);
+
+  }
+
+  const data=new Uint8Array(analyser.fftSize);
+
+  let smoothed=.03;
+
+  let quiet=0;
+
+  let last=-30;
+
+  let prev=0;
+
+  const finaleStart=Math.max(
+
+   0,d-Math.min(30,d*.35)
+
+  );
+
+  function frame(){
+
+   if(!working||stopped||video.ended)return;
+
+   if(!video.paused&&video.readyState>=2){
+
+    const t=video.currentTime;
+
+    build(t);
+
+    camera(t);
+
+    const p=Math.min(
+
+     100,Math.round(t/d*100)
+
+    );
+
+    $("bar").style.width=p+"%";
+
+    $("progressText").textContent=
+
+     "加工中 "+p+"%";
+
+    if(t-prev>.09&&t<finaleStart-1){
+
+     analyser.getByteTimeDomainData(data);
+
+     let sum=0;
+
+     for(const v of data){
+
+      const a=(v-128)/128;
+
+      sum+=a*a;
+
+     }
+
+     const rms=Math.sqrt(sum/data.length);
+
+     smoothed=smoothed*.83+rms*.17;
+
+     if(smoothed<.036){
+
+      quiet=Math.min(3,quiet+(t-prev));
+
+     }
+
+     if(
+
+      rms>Math.max(.085,smoothed*2)&&
+
+      quiet>.27&&t-last>6
+
+     ){
+
+      reaction(
+
+       lib,
+
+       ac.currentTime+.06,
+
+       Math.max(1,level-2)
+
+      );
+
+      last=t;
+
+      quiet=0;
+
+     }else if(rms>.055){
+
+      quiet=0;
+
+     }
+
+     prev=t;
+
+    }
+
+   }
+
+   frameId=requestAnimationFrame(frame);
+
+  }
+
+  video.onended=finish;
+
+  video.onerror=()=>{
+
+   if(!working||stopped)return;
+
+   failed=true;
+
+   failureText="元動画の再生エラーです。";
+
+   finish();
+
+  };
+
+  recorder.start(250);
+
+  await new Promise(resolve=>setTimeout(resolve,350));
+
+  await video.play();
+
+  const start=ac.currentTime+.05;
+
+  ambience(lib,start,d,level);
+
+  opening(lib,start,d,level);
+
+  finale(lib,start,d,level);
+
+  for(const m of markers){
+
+   manualReaction(
+
+    lib,start+m.t,m.level,level
+
+   );
+
+  }
+
+  duck(start,d,markers);
+
+  $("status").textContent=
+
+   "内蔵音声18本と動画音声を合成しています。"+
+
+   "\n指定ポイント："+markers.length+"か所";
+
+  let previousVideoTime=video.currentTime||0;
+
+  let stalledSeconds=0;
+
+  watchdog=setInterval(()=>{
+
+   if(stopped)return;
+
+   const current=video.currentTime||0;
+
+   if(Math.abs(current-previousVideoTime)<.05){
+
+    stalledSeconds++;
+
+   }else{
+
+    stalledSeconds=0;
+
+   }
+
+   previousVideoTime=current;
+
+   if(stalledSeconds>=15){
+
+    failed=true;
+
+    failureText=
+
+     "動画の再生が進まなくなりました。";
+
+    finish();
+
+   }
+
+  },1000);
+
+  frameId=requestAnimationFrame(frame);
+
+ }catch(err){
+
+  console.error(err);
+
+  failed=true;
+
+  failureText=err.message||String(err);
+
+  $("status").textContent="エラー："+failureText;
+
+  $("progressText").textContent="処理できませんでした";
+
+  stopWatchdog();
+
+  cancelAnimationFrame(frameId);
+
+  video.pause();
+
+  stopSounds();
+
+  if(recorder&&recorder.state!=="inactive"){
+
+   try{recorder.stop()}catch(err){}
+
+  }else{
+
+   if(stream){
+
+    stream.getTracks().forEach(track=>track.stop());
+
+   }
+
+   reset();
+
+  }
+
+ }
+
+}
+
+$("make").onclick=processVideo;
+
+renderMarkers();
+
+</script>
+
+</body>
+
+</html>
