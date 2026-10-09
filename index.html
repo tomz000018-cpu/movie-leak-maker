@@ -32,13 +32,13 @@ input[type=range]{width:100%;accent-color:var(--pink);touch-action:pan-y}.slider
 .markerRow{display:flex;align-items:center;gap:12px;margin-top:7px;border:1px solid var(--line);border-radius:11px;padding:10px 9px;background:#fcfcff}.markerRow:before{content:'⋮';font-size:18px;color:#b7bcc7}
 .jump{background:transparent;border:0;color:var(--ink);font-size:15px;font-weight:850;padding:6px 0}.type{flex:1;font-size:14px;font-weight:700}.delete{border:0;background:#f5f5f8;color:#707887;border-radius:8px;padding:9px;font-size:12px}.empty{color:var(--muted);font-size:13px;padding:14px 0}
 .make{margin:16px 0;border-radius:999px;box-shadow:0 5px 13px #f500822e;font-size:clamp(16px,4.7vw,20px)}#progress,#result{display:none}.barbg{height:11px;background:#f0f0f3;border-radius:9px;overflow:hidden;margin-top:10px}.bar{height:100%;background:var(--pink);width:0%}.progressText{font-size:12px;color:var(--muted);text-align:center;margin:8px}.status{background:#f6f7fa;border-radius:10px;padding:12px;font-size:12px;line-height:1.6;color:#5f6978;white-space:pre-wrap}
-.outputTitle{text-align:center;display:block;white-space:nowrap;font-size:clamp(15px,4.4vw,23px);line-height:1.35}.save{display:flex;flex-direction:row;gap:0;padding:9px 4px;line-height:1.2;white-space:nowrap;font-size:clamp(11px,3.55vw,18px)}#outVideo{width:100%;border-radius:11px;background:black;margin:10px 0;max-height:55vh}.save{background:white;color:var(--pink);border:2px solid var(--pink);margin:9px 0}.next-picker{margin-top:13px;background:#586173;font-size:16px;min-height:54px}.notice{text-align:center;font-size:11px;color:#969cab;line-height:1.8;margin-top:14px}#work{display:none}
+.outputTitle{text-align:center;display:block;white-space:nowrap;font-size:clamp(15px,4.4vw,23px);line-height:1.35}.save{display:flex;flex-direction:row;gap:0;padding:9px 4px;line-height:1.2;white-space:nowrap;font-size:clamp(11px,3.55vw,18px)}#outVideo{width:100%;border-radius:11px;background:black;margin:10px 0;max-height:55vh}.save{background:white;color:var(--pink);border:2px solid var(--pink);margin:9px 0}.notice{text-align:center;font-size:11px;color:#969cab;line-height:1.8;margin-top:14px}#work{display:none}
 @media(max-width:370px){.choice span{font-size:10px;gap:3px}.card{padding:12px}.smallbtn{font-size:11px}}
 </style>
 </head>
 <body>
 <main>
-<header><h1>やめよう<em>映画盗撮</em></h1><div class="sub">どんな動画でも映画盗撮風に変換するので、これで承認欲求を満たしてください</div><div class="ver">Version 45</div></header>
+<header><h1>やめよう<em>映画盗撮</em></h1><div class="sub">どんな動画でも映画盗撮風に変換するので、これで承認欲求を満たしてください</div><div class="ver">Version 46</div></header>
 <section class="card" id="editingArea">
 <label class="file-label">⇧ 動画を選ぶ<input id="videoInput" type="file" accept="video/*" aria-label="動画ファイルを選択"></label>
 <div class="file-note">MP4 / MOV / WebM などに対応</div>
@@ -64,7 +64,7 @@ input[type=range]{width:100%;accent-color:var(--pink);touch-action:pan-y}.slider
 </section>
 <button id="make" class="make">✦ 盗撮流出風動画を作る</button>
 <div class="card"><div id="progress"><div class="barbg"><div class="bar" id="bar"></div></div><div class="progressText" id="progressText">準備中</div></div><div id="status" class="status">動画を選んでください。</div></div>
-<section id="result" class="card"><h2 class="outputTitle">↓↓↓↓流出動画↓↓↓↓</h2><video id="outVideo" playsinline controls></video><a id="save" class="save">→→→→流出動画を保存←←←←</a><label class="file-label next-picker">⇧ 別の動画を選ぶ<input id="nextVideoInput" type="file" accept="video/*" aria-label="次の動画ファイルを選択"></label></section>
+<section id="result" class="card"><h2 class="outputTitle">↓↓↓↓流出動画↓↓↓↓</h2><video id="outVideo" playsinline controls></video><a id="save" class="save">→→→→流出動画を保存←←←←</a></section>
 <canvas id="work"></canvas><p class="notice">加工は端末内で行います。実際の映画盗撮は法律で禁止されています。<br>権利確認が済むまでは個人テスト用としてご利用ください。</p>
 </main>
 <script>
@@ -104,7 +104,6 @@ function setupPicker(picker){
  });
 }
 setupPicker($('videoInput'));
-setupPicker($('nextVideoInput'));
 video.addEventListener('loadedmetadata',()=>{updateClock();if(!working&&file)$('status').textContent='読み込み完了：'+formatTime(duration())+'。ポイントを設定できます。'});
 video.addEventListener('timeupdate',updateClock);
 $('seek').oninput=e=>{if(working||!duration())return;video.pause();video.currentTime=duration()*e.target.value/1000;updateClock()};
@@ -185,8 +184,10 @@ function scheduleSounds(lib,start,d,level){
 // 描画を最後に拡大して切り取らず、スクリーンの輪郭を必ず見せる。
 const screenBuffer=document.createElement('canvas');
 const screenCtx=screenBuffer.getContext('2d',{alpha:false});
+const frameBuffer=document.createElement('canvas');
+const frameCtx=frameBuffer.getContext('2d',{alpha:false});
 function drawPerspective(buffer, corners){
- const segments=72, sw=buffer.width,sh=buffer.height;
+ const segments=120, sw=buffer.width,sh=buffer.height;
  const [tl,tr,br,bl]=corners;
  ctx.save();ctx.beginPath();ctx.moveTo(...tl);ctx.lineTo(...tr);ctx.lineTo(...br);ctx.lineTo(...bl);ctx.closePath();ctx.clip();
  ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality='high';
@@ -195,11 +196,11 @@ function drawPerspective(buffer, corners){
   const topL=[tl[0]+(tr[0]-tl[0])*u,tl[1]+(tr[1]-tl[1])*u];
   const topR=[tl[0]+(tr[0]-tl[0])*v,tl[1]+(tr[1]-tl[1])*v];
   const botL=[bl[0]+(br[0]-bl[0])*u,bl[1]+(br[1]-bl[1])*u];
-  const x0=Math.floor(sw*u),x1=Math.min(sw,Math.ceil(sw*v)+2),srcW=Math.max(2,x1-x0);
-  const dx=topR[0]-topL[0],dy=topR[1]-topL[1],pad=1.4;
+  const x0=Math.max(0,Math.floor(sw*u)-1),x1=Math.min(sw,Math.ceil(sw*v)+3),srcW=Math.max(3,x1-x0);
+  const dx=topR[0]-topL[0],dy=topR[1]-topL[1],pad=2.2;
   ctx.save();
   ctx.transform(dx/srcW,dy/srcW,(botL[0]-topL[0])/sh,(botL[1]-topL[1])/sh,topL[0]-dx*(pad/srcW),topL[1]-dy*(pad/srcW));
-  // ストリップ同士を少し重ねて、継ぎ目の縦線を消す。
+  // ストリップ同士をしっかり重ねて、継ぎ目の縦線を消す。
   ctx.drawImage(buffer,x0,0,srcW,sh,0,0,srcW+pad*2,sh);
   ctx.restore();
  }
@@ -209,6 +210,7 @@ function renderFrame(t){
  const w=work.width,h=work.height,vr=video.videoWidth/video.videoHeight;
  const portrait=h>w,isFourThree=!portrait&&vr>=1.20&&vr<=1.50;
  ctx.setTransform(1,0,0,1,0,0);
+ ctx.filter='none';ctx.globalCompositeOperation='source-over';ctx.globalAlpha=1;
  ctx.fillStyle='#010206';ctx.fillRect(0,0,w,h);
  // 客席側の黒場に、映像の光だけが大きくぼけて漏れている感じを作る。
  ctx.save();ctx.globalAlpha=.28;ctx.filter='blur(92px) brightness(96%) saturate(66%)';
@@ -236,6 +238,7 @@ function renderFrame(t){
  corners=corners.map(([x,y])=>[x+jx+(y-h/2)*shakeAngle,y+jy-(x-w/2)*shakeAngle]);
  const bw=portrait?540:960,bh=portrait?960:(isFourThree?720:540);
  if(screenBuffer.width!==bw||screenBuffer.height!==bh){screenBuffer.width=bw;screenBuffer.height=bh}
+ if(frameBuffer.width!==w||frameBuffer.height!==h){frameBuffer.width=w;frameBuffer.height=h}
  screenCtx.setTransform(1,0,0,1,0,0);screenCtx.imageSmoothingEnabled=true;screenCtx.imageSmoothingQuality='high';screenCtx.clearRect(0,0,bw,bh);
  let sx=0,sy=0,sw=video.videoWidth,sh=video.videoHeight;
  const r=bw/bh;
@@ -294,8 +297,26 @@ function renderFrame(t){
  bloom.addColorStop(1,'rgba(255,255,255,0)');
  ctx.fillStyle=bloom;ctx.fillRect(0,0,w,h);
  ctx.restore();
- const lens=ctx.createLinearGradient(0,0,w,h);lens.addColorStop(0,'#b1c0d008');lens.addColorStop(.5,'#dddaca06');lens.addColorStop(1,'#8293a008');ctx.fillStyle=lens;ctx.fillRect(0,0,w,h);
- const vignette=ctx.createRadialGradient(w*.52,h*.48,w*.24,w*.52,h*.5,w*.84);vignette.addColorStop(0,'#00000000');vignette.addColorStop(.8,'#00000014');vignette.addColorStop(1,'#00000097');ctx.fillStyle=vignette;ctx.fillRect(0,0,w,h);
+ // 最後に画面全体へまとめてフィルターをかけ、スクリーン部だけが浮かないようにする。
+ frameCtx.setTransform(1,0,0,1,0,0);frameCtx.globalCompositeOperation='source-over';frameCtx.globalAlpha=1;frameCtx.filter='none';frameCtx.clearRect(0,0,w,h);frameCtx.drawImage(work,0,0);
+ ctx.setTransform(1,0,0,1,0,0);ctx.globalCompositeOperation='source-over';ctx.globalAlpha=1;ctx.filter='none';ctx.clearRect(0,0,w,h);ctx.fillStyle='#04050a';ctx.fillRect(0,0,w,h);
+ ctx.save();ctx.filter='blur(3.2px) brightness(108%) contrast(88%) saturate(82%)';ctx.globalAlpha=.98;ctx.drawImage(frameBuffer,0,0,w,h);ctx.restore();
+ ctx.save();ctx.globalCompositeOperation='screen';
+ const wash=ctx.createLinearGradient(0,0,w,h);
+ wash.addColorStop(0,'rgba(255,255,248,.12)');
+ wash.addColorStop(.24,'rgba(255,255,248,.07)');
+ wash.addColorStop(.58,'rgba(255,255,255,.03)');
+ wash.addColorStop(1,'rgba(255,255,255,.05)');
+ ctx.fillStyle=wash;ctx.fillRect(0,0,w,h);
+ const haze=ctx.createRadialGradient(w*.46,h*.34,w*.03,w*.46,h*.34,w*.9);
+ haze.addColorStop(0,'rgba(255,255,245,.14)');
+ haze.addColorStop(.25,'rgba(255,255,245,.07)');
+ haze.addColorStop(.6,'rgba(255,255,255,.02)');
+ haze.addColorStop(1,'rgba(255,255,255,0)');
+ ctx.fillStyle=haze;ctx.fillRect(0,0,w,h);
+ ctx.restore();
+ const lens=ctx.createLinearGradient(0,0,w,h);lens.addColorStop(0,'#c7d2de10');lens.addColorStop(.5,'#f0ece208');lens.addColorStop(1,'#8d9eab10');ctx.fillStyle=lens;ctx.fillRect(0,0,w,h);
+ const vignette=ctx.createRadialGradient(w*.52,h*.48,w*.24,w*.52,h*.5,w*.84);vignette.addColorStop(0,'#00000000');vignette.addColorStop(.8,'#00000018');vignette.addColorStop(1,'#00000097');ctx.fillStyle=vignette;ctx.fillRect(0,0,w,h);
 }
 
 function recorderMime(){return ['video/mp4;codecs="avc1.42E01E,mp4a.40.2"','video/mp4','video/webm;codecs=vp9,opus','video/webm;codecs=vp8,opus','video/webm'].find(x=>MediaRecorder.isTypeSupported(x))||''}
@@ -380,7 +401,7 @@ $('make').onclick=async()=>{
    }
   }
   if(!result)throw Error('録画を完了できませんでした');if(resultURL)URL.revokeObjectURL(resultURL);
-  resultURL=URL.createObjectURL(result.blob);$('outVideo').src=resultURL;$('save').href=resultURL;$('save').download=result.actual.includes('mp4')?'movie-leak-v45.mp4':'movie-leak-v45.webm';$('result').style.display='block';$('bar').style.width='100%';$('progressText').textContent='完成';$('status').textContent='動画が完成しました。保存後は「別の動画を選ぶ」から続けて作成できます。';
+  resultURL=URL.createObjectURL(result.blob);$('outVideo').src=resultURL;$('save').href=resultURL;$('save').download=result.actual.includes('mp4')?'movie-leak-v46.mp4':'movie-leak-v46.webm';$('result').style.display='block';$('bar').style.width='100%';$('progressText').textContent='完成';$('status').textContent='動画が完成しました。次の動画を作るときは、画面上部の「動画を選ぶ」から選び直してください。';
  }catch(e){console.error(e);$('status').textContent='自動再試行でも完成できませんでした。\nもう一度「盗撮流出風動画を作る」を押してください。\n詳細：'+(e.message||String(e));$('progressText').textContent='もう一度お試しください';$('make').textContent='↻ もう一度、盗撮流出風動画を作る'}finally{video.pause();stopSounds();working=false;$('make').disabled=false;video.controls=true;renderMarkers()}
 };
 renderMarkers();
