@@ -48,7 +48,9 @@ h1 em{font-style:normal;color:var(--pink)}
 
 .file-label{position:relative;overflow:hidden;margin-top:13px}
 
-.file-label input{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer;font-size:100px}
+.file-label input{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer;font-size:100px;z-index:2}
+
+#videoInputFallback{display:block;width:100%;margin:10px auto;color:#555;font-size:13px}
 
 .file-label svg,.make svg,.save svg{width:23px;height:23px;flex-shrink:0}
 
@@ -164,7 +166,7 @@ input[type=range]{width:100%;accent-color:var(--pink);touch-action:pan-y}
 
 <div class="sub">どんな動画も映画盗撮流出風に変換します</div>
 
-<div class="ver">Version 26 | スマホ向けデザイン</div>
+<div class="ver">Version 27 | 動画選択修正版</div>
 
 </header>
 
@@ -184,11 +186,13 @@ input[type=range]{width:100%;accent-color:var(--pink);touch-action:pan-y}
 
 動画を選ぶ
 
-<input id="videoInput" type="file" accept="video/*,.mp4,.mov,.m4v,.webm" aria-label="動画を選ぶ">
+<input id="videoInput" type="file" accept="video/*" aria-label="動画を選ぶ">
 
 </label>
 
 <div class="file-note">MP4 / MOV / WebM などに対応</div>
+
+<div class="file-note">うまく選べない場合はこちら：<input id="videoInputFallback" type="file" accept="video/*"></div>
 
 <div class="name" id="fileName">動画が選択されていません</div>
 
@@ -322,59 +326,85 @@ function updateClock(){let d=duration(),t=video.currentTime||0;$('clock').textCo
 
 $('crowdLevel').oninput=e=>$('crowdText').textContent=`レベル${e.target.value}：${names[+e.target.value]}`;
 
-$('videoInput').addEventListener('change',e=>{
+// V27: 動画の選択イベントを一本化して、iPhoneで状態が見えるようにする
 
- if(working)return;
+let selectionId=0;
 
- const selected=e.target.files&&e.target.files[0];
+function selectVideo(selected){
 
- if(!selected)return;
+ if(working||!selected)return;
 
- file=selected;video.pause();
+ const id=++selectionId;
+
+ file=selected;
+
+ video.pause();
 
  const oldURL=fileURL;
 
- fileURL=URL.createObjectURL(file);
+ fileURL=URL.createObjectURL(selected);
 
- video.src=fileURL;video.load();
+ $('fileName').textContent='選択した動画：'+selected.name;
 
- if(oldURL)setTimeout(()=>URL.revokeObjectURL(oldURL),1200);
+ $('status').textContent='動画を読み込み中：'+selected.name;
 
- $('fileName').textContent='選択した動画：'+file.name;
+ $('videoPlaceholder').style.display='none';
+
+ video.classList.add('loaded');
 
  $('preview').style.display='block';
 
  $('result').style.display='none';
 
+ $('progress').style.display='none';
+
  markers=[];seq=0;retryCount=0;
 
  $('addNotice').textContent='';
 
- $('progress').style.display='none';
-
- $('status').textContent='動画を読み込み中…';
-
  renderMarkers();
 
- e.target.value='';
+ video.onerror=()=>{
 
-});
+  if(id!==selectionId||working)return;
+
+  $('status').textContent='動画の読み込みエラーです。「ファイル」に保存してから選び直すと読み込める場合があります。';
+
+ };
+
+ video.src=fileURL;
+
+ video.load();
+
+ if(oldURL)setTimeout(()=>URL.revokeObjectURL(oldURL),1200);
+
+}
+
+for(const picker of [$('videoInput'),$('videoInputFallback')]){
+
+ picker.addEventListener('change',()=>{
+
+  const selected=picker.files&&picker.files[0];
+
+  if(selected)selectVideo(selected);
+
+  picker.value='';
+
+ });
+
+}
 
 video.addEventListener('loadedmetadata',()=>{
 
  updateClock();
 
- if(!working)$('status').textContent='動画を読み込みました。盛り上がりポイントを設定できます。';
+ if(!working&&file)$('status').textContent='読み込み完了：'+time(duration())+' の動画です。盛り上がりポイントを設定できます。';
 
 });
 
-video.addEventListener('error',()=>{
+video.addEventListener('timeupdate',updateClock);
 
- if(!working&&file)$('status').textContent='動画を読み込めませんでした。「ファイル」に保存して選び直してください。';
-
-});
-
-video.addEventListener('loadedmetadata',updateClock);video.addEventListener('timeupdate',updateClock);
+video.addEventListener('seeked',updateClock);
 
 $('seek').oninput=e=>{if(working||!duration())return;video.pause();video.currentTime=duration()*e.target.value/1000;updateClock()};
 
@@ -396,4 +426,204 @@ const mix=ac.createGain(),compress=ac.createDynamicsCompressor();compress.thresh
 
 function mono(b){if(b.numberOfChannels===1)return b;const m=ac.createBuffer(1,b.length,b.sampleRate),target=m.getChannelData(0);for(let c=0;c<b.numberOfChannels;c++){const src=b.getChannelData(c);for(let i=0;i<src.length;i++)target[i]+=src[i]/b.numberOfChannels}return m}
 
-async function loadSounds(){const lib={cheer:[],applause:[],voices:[],laugh:[]};for(let i=0;i<sounds.length;i++){$('status').textContent=`内蔵音声の読み込み中：${i+1} / ${sounds.length}`;const name=sounds[i];let response=
+async function loadSounds(){const lib={cheer:[],applause:[],voices:[],laugh:[]};for(let i=0;i<sounds.length;i++){$('status').textContent=`内蔵音声の読み込み中：${i+1} / ${sounds.length}`;const name=sounds[i];let response=await fetch('./'+name+'?v=27');if(!response.ok)throw Error('音声ファイルが見つかりません：'+name);const raw=await response.arrayBuffer();let b;try{b=mono(await ac.decodeAudioData(raw))}catch(e){throw Error('読み込めない音声です：'+name)}if(name.startsWith('voice_'))lib.voices.push(b);else if(name.startsWith('laugh_'))lib.laugh.push(b);else if(name.startsWith('applause_'))lib.applause.push(b);else lib.cheer.push(b)}return lib}
+
+const pick=a=>a[Math.floor(Math.random()*a.length)];
+
+function clip(b,start,length,vol,fadeIn=.4,fadeOut=2.4,target=crowdBus){
+
+ if(!b)return;
+
+ let len=Math.min(length,b.duration);
+
+ if(len<.1)return;
+
+ let src=ac.createBufferSource(),g=ac.createGain();
+
+ let a=Math.min(fadeIn,len*.23),z=Math.min(fadeOut,len*.38);
+
+ src.buffer=b;
+
+ g.gain.setValueAtTime(.0001,start);
+
+ g.gain.linearRampToValueAtTime(vol,start+a);
+
+ g.gain.setValueAtTime(vol,start+Math.max(a,len-z));
+
+ g.gain.linearRampToValueAtTime(.0001,start+len);
+
+ src.connect(g);g.connect(target);
+
+ src.start(start,0,len);src.stop(start+len+.03);
+
+ active.push(src);
+
+}
+
+function randomClip(a,start,len,vol,fi=.4,fo=2.4,target=crowdBus){
+
+ if(a.length)clip(pick(a),start,len,vol,fi,fo,target);
+
+}
+
+function voiceReaction(lib,t,s){
+
+ if(!lib.voices.length)return;
+
+ const voices=[...lib.voices].sort(()=>Math.random()-.5);
+
+ randomClip(lib.cheer,t,5,.45*s,.3,2.6);
+
+ clip(voices[0],t+.22,4,1.48*s,.09,.5,voiceBus);
+
+ if(voices.length>1)clip(voices[1],t+1.85,3.5,1.12*s,.12,.6,voiceBus);
+
+ if(voices.length>2&&Math.random()<.6)clip(voices[2],t+3.25,3,.88*s,.16,.7,voiceBus);
+
+}
+
+function variedCheer(lib,t,s,big){
+
+ if(!lib.cheer.length)return;
+
+ const bank=[...lib.cheer].sort(()=>Math.random()-.5);
+
+ const count=big?4:2;
+
+ for(let i=0;i<Math.min(count,bank.length);i++){
+
+  const offset=big?i*.43:i*.75;
+
+  const gain=big?[1.35,1.10,.91,.78][i]:[.95,.68][i];
+
+  clip(bank[i],t+offset,big?8:5.5,gain*s,.15+i*.07,3);
+
+ }
+
+ if(big)randomClip(lib.applause,t+.5,8,.56*s,.2,3.5);
+
+}
+
+function laughterReaction(lib,t,s){
+
+ if(!lib.laugh.length)return;
+
+ const shuffled=[...lib.laugh].sort(()=>Math.random()-.5);
+
+ clip(shuffled[0],t+.12,7,.92*s,.1,1.0);
+
+ if(shuffled.length>1)clip(shuffled[1],t+1.15,7,.63*s,.2,1.2);
+
+ if(shuffled.length>2&&Math.random()<.65)clip(shuffled[2],t+2.4,6,.4*s,.25,1.3);
+
+}
+
+function applauseReaction(lib,t,s){
+
+ if(!lib.applause.length)return;
+
+ const shuffled=[...lib.applause].sort(()=>Math.random()-.5);
+
+ clip(shuffled[0],t+.1,8,1.10*s,.2,1.8);
+
+ if(shuffled.length>1)clip(shuffled[1],t+1.1,7,.72*s,.3,1.6);
+
+}
+
+function ambience(lib,start,d,level){const bank=[...lib.cheer,...lib.applause],base=[0,.07,.1,.14,.18,.24][level];for(let t=0;t<d;t+=1.1){let b=pick(bank),len=Math.min(5.7,d-t,b.duration);if(len>.1)clip(b,start+t,len,base*(.55+Math.random()*.4),1,2)}}
+
+function opening(lib,start,d,level){let scale=[0,.35,.55,.75,1,1.25][level],len=Math.min(12,Math.max(4,d*.16));randomClip(lib.cheer,start,len,.9*scale,.12,4);randomClip(lib.applause,start+.15,Math.max(2,len-1),1.1*scale,.15,4.5);if(d>12)randomClip(lib.applause,start+2.2,Math.min(7,len),.6*scale,.5,4);movieGain.gain.setValueAtTime(level>=4?.68:.8,start);movieGain.gain.linearRampToValueAtTime(1,start+len)}
+
+function finale(lib,start,d,level){let scale=[0,.35,.55,.75,1,1.25][level],span=Math.min(30,d*.35),from=Math.max(0,d-span);for(let t=from;t<d;t+=2.1){let p=Math.min(1,(t-from)/Math.max(1,span));randomClip(lib.cheer,start+t,8,(.6+p*1.15)*scale,.4,3.5)}let clapAt=Math.max(from,d-Math.min(12,d*.18));for(let t=clapAt;t<d;t+=2.5){let p=Math.min(1,(t-clapAt)/Math.max(1,d-clapAt));randomClip(lib.applause,start+t,9,(.7+p*1.25)*scale,.35,4)}randomClip(lib.applause,start+Math.max(0,d-4),10,1.65*scale,.25,3.5);let g=movieGain.gain;g.setValueAtTime(1,start+from);g.linearRampToValueAtTime(.62,start+Math.max(from+.1,d-3));g.setValueAtTime(.58,start+d)}
+
+function reaction(lib,t,level){let scale=[0,.35,.55,.75,1,1.25][level];randomClip(lib.cheer,t,5,.85*scale,.2,3);if(Math.random()<.4)randomClip(lib.applause,t+.7,4,.4*scale,.2,2.7)}
+
+function manualReaction(lib,t,point,level){
+
+ const s=[0,.35,.55,.75,1,1.25][level];
+
+ if(point===1)applauseReaction(lib,t,s);
+
+ else if(point===2)laughterReaction(lib,t,s);
+
+ else if(point===3)voiceReaction(lib,t,s);
+
+ else if(point===4)variedCheer(lib,t,s,false);
+
+ else if(point===5)variedCheer(lib,t,s,true);
+
+}
+
+function duck(start,d,points){
+
+ const g=manualGain.gain;
+
+ g.cancelScheduledValues(ac.currentTime);
+
+ g.setValueAtTime(1,ac.currentTime);
+
+ const list=points.map(m=>({
+
+  b:m.t,e:Math.min(d,m.t+(m.level===5?8:5)),
+
+  v:m.level===5?.52:m.level===4?.78:m.level===3?.90:.86
+
+ })).sort((a,b)=>a.b-b.b);
+
+ const merged=[];
+
+ for(const p of list){
+
+  const prev=merged[merged.length-1];
+
+  if(prev&&p.b<=prev.e+.2){prev.e=Math.max(prev.e,p.e);prev.v=Math.min(prev.v,p.v)}
+
+  else merged.push({...p});
+
+ }
+
+ for(const p of merged){
+
+  const b=start+p.b,e=start+p.e;
+
+  const fi=Math.min(.2,(e-b)*.2),fo=Math.min(1,(e-b)*.3);
+
+  g.setValueAtTime(1,b);g.gain;
+
+  g.setValueAtTime(1,b);g.linearRampToValueAtTime(p.v,b+fi);
+
+  g.setValueAtTime(p.v,Math.max(b+fi,e-fo));g.linearRampToValueAtTime(1,e);
+
+ }
+
+}
+
+function cover(g,w,h,scale=1){let vr=video.videoWidth/video.videoHeight,tr=w/h,sx=0,sy=0,sw=video.videoWidth,sh=video.videoHeight;if(vr>tr){sw=video.videoHeight*tr;sx=(video.videoWidth-sw)/2}else{sh=video.videoWidth/tr;sy=(video.videoHeight-sh)/2}g.drawImage(video,sx,sy,sw,sh,(w-w*scale)/2,(h-h*scale)/2,w*scale,h*scale)}
+
+function renderScreen(t){let w=screen.c.width,h=screen.c.height,s=screen.g,b=blur.g,l=bloom.g,c=color.g;for(let g of [s,b,l,c])g.clearRect(0,0,w,h);let fa=(Math.sin(t*.38)+1)/2,fb=(Math.sin(t*.14+2.1)+1)/2,focus=15+fa*9+fb*5,light=108+Math.sin(t*.62)*8+Math.sin(t*3.7)*3;b.save();b.filter=`brightness(${light}%) contrast(79%) saturate(64%) blur(${focus}px)`;cover(b,w,h,1.06);b.restore();let haze=b.createLinearGradient(0,0,w,h);haze.addColorStop(0,'rgba(210,220,230,.1)');haze.addColorStop(.45,'rgba(235,235,225,.16)');haze.addColorStop(1,'rgba(180,200,215,.08)');b.fillStyle=haze;b.fillRect(0,0,w,h);l.save();l.filter='brightness(190%) blur(32px)';cover(l,w,h,1.08);l.restore();l.save();l.globalAlpha=.55;l.filter='brightness(260%) blur(62px)';cover(l,w,h,1.1);l.restore();s.drawImage(blur.c,0,0);s.save();s.globalCompositeOperation='screen';s.globalAlpha=.44;s.drawImage(bloom.c,0,0);s.restore();c.save();c.globalAlpha=.11;c.filter='sepia(100%) saturate(500%) hue-rotate(-35deg)';c.drawImage(blur.c,4,1);c.restore();c.save();c.globalCompositeOperation='screen';c.globalAlpha=.08;c.filter='sepia(100%) saturate(500%) hue-rotate(170deg)';c.drawImage(blur.c,-4,-1);c.restore();s.save();s.globalCompositeOperation='screen';s.drawImage(color.c,0,0);s.restore();s.fillStyle='rgba(215,220,215,.095)';s.fillRect(0,0,w,h);s.save();s.globalCompositeOperation='destination-in';s.filter='blur(38px)';s.fillStyle='white';s.fillRect(46,40,w-92,h-80);s.restore()}
+
+function build(t){let w=scene.c.width,h=scene.c.height,g=scene.g;g.fillStyle='rgb(5,6,7)';g.fillRect(0,0,w,h);renderScreen(t);let glow=g.createRadialGradient(w*.52,h*.47,w*.1,w*.52,h*.5,w*.95);glow.addColorStop(0,'rgba(135,150,165,.16)');glow.addColorStop(.38,'rgba(85,95,105,.075)');glow.addColorStop(.72,'rgba(35,40,45,.035)');glow.addColorStop(1,'rgba(0,0,0,0)');g.fillStyle=glow;g.fillRect(0,0,w,h);g.save();g.translate(w*.51,h*.48);g.rotate(-.048);g.transform(1,-.022,.115,1,0,0);let sw=w*1.46,sh=h*1.18;g.save();g.globalAlpha=.26;g.filter='blur(65px) brightness(175%)';g.drawImage(screen.c,-sw/2,-sh/2,sw,sh);g.restore();g.save();g.filter='blur(7px)';g.drawImage(screen.c,-sw/2,-sh/2,sw,sh);g.restore();g.restore();let lens=g.createLinearGradient(0,0,w,h);lens.addColorStop(0,'rgba(160,175,190,.055)');lens.addColorStop(.5,'rgba(220,220,205,.075)');lens.addColorStop(1,'rgba(120,140,160,.035)');g.fillStyle=lens;g.fillRect(0,0,w,h);let vignette=g.createRadialGradient(w*.52,h*.47,w*.27,w*.52,h*.5,w*.87);vignette.addColorStop(0,'rgba(0,0,0,0)');vignette.addColorStop(.68,'rgba(0,0,0,.1)');vignette.addColorStop(1,'rgba(0,0,0,.76)');g.fillStyle=vignette;g.fillRect(0,0,w,h)}
+
+function camera(t){let w=work.width,h=work.height,mx=Math.sin(t*8.3)*2.5+Math.sin(t*16.9),my=Math.cos(t*7.1)*2+Math.sin(t*13.5)*.9,dx=Math.sin(t*.39)*6.5,dy=Math.cos(t*.28)*4.2,angle=Math.sin(t*.63)*.0062+Math.sin(t*2.8)*.0018,zoom=1.055+Math.sin(t*.24)*.008;ctx.fillStyle='black';ctx.fillRect(0,0,w,h);ctx.save();ctx.translate(w/2+mx+dx,h/2+my+dy);ctx.rotate(angle);ctx.scale(zoom,zoom);ctx.drawImage(scene.c,-w/2,-h/2,w,h);ctx.restore()}
+
+function mime(){return ['video/mp4;codecs="avc1.42E01E,mp4a.40.2"','video/mp4','video/webm;codecs=vp9,opus','video/webm;codecs=vp8,opus','video/webm'].find(x=>MediaRecorder.isTypeSupported(x))||''}
+
+function reset(){working=false;$('make').disabled=false;$('videoInput').disabled=false;video.controls=true;renderMarkers()}
+
+$('make').onclick=async()=>{if(working||!file)return;working=true;video.pause();$('make').disabled=true;$('videoInput').disabled=true;video.controls=false;$('result').style.display='none';$('progress').style.display='block';$('bar').style.width='0%';let recorder=null,stream=null,failed=false,finished=false;try{if(!window.MediaRecorder||!work.captureStream)throw Error('このブラウザでは動画を録画できません');await audioSetup();const lib=await loadSounds();video.pause();video.currentTime=0;if(video.seeking)await new Promise(r=>video.addEventListener('seeked',r,{once:true}));let d=duration();if(!d)throw Error('動画の長さを読み取れません');let portrait=video.videoHeight>video.videoWidth;work.width=portrait?540:960;work.height=portrait?960:540;for(let item of [scene,screen,blur,bloom,color]){item.c.width=work.width;item.c.height=work.height}build(0);camera(0);stream=work.captureStream(30);let finalStream=new MediaStream([...stream.getVideoTracks(),...dest.stream.getAudioTracks()]);let type=mime(),chunks=[];recorder=new MediaRecorder(finalStream,type?{mimeType:type,videoBitsPerSecond:4000000}:{videoBitsPerSecond:4000000});recorder.ondataavailable=e=>{if(e.data?.size)chunks.push(e.data)};recorder.onerror=e=>{failed=true;$('status').textContent='録画エラー：'+(e.error?.message||'不明')};recorder.onstop=()=>{cancelAnimationFrame(frameId);stopSounds();stream.getTracks().forEach(t=>t.stop());reset();if(failed||!chunks.length){if(!failed&&retryCount===0){retryCount=1;$('status').textContent='録画データを再取得しています。自動でもう一度試します…';$('progressText').textContent='自動再試行中';setTimeout(()=>{$('make').click()},750);return}retryCount=0;if(!failed)$('status').textContent='録画データを取得できませんでした。ブラウザを再読み込みして試してください。';$('progressText').textContent='録画できませんでした';return}retryCount=0;let actual=recorder.mimeType||type||'video/mp4',blob=new Blob(chunks,{type:actual});if(resultURL)URL.revokeObjectURL(resultURL);resultURL=URL.createObjectURL(blob);out.src=resultURL;$('save').href=resultURL;$('save').download=actual.includes('mp4')?'movie-leak-v27.mp4':'movie-leak-v27.webm';$('result').style.display='block';$('bar').style.width='100%';$('progressText').textContent='完成';$('status').textContent='動画が完成しました（音声18本内蔵）'};
+
+let level=+$('crowdLevel').value;stopSounds();for(let g of [movieGain,manualGain,finalGain,crowdBus]){g.gain.cancelScheduledValues(ac.currentTime);g.gain.setValueAtTime(1,ac.currentTime)}let data=new Uint8Array(analyser.fftSize),smoothed=.03,quiet=0,last=-30,prev=0,finaleStart=Math.max(0,d-Math.min(30,d*.35));
+
+function frame(){if(!working||video.ended)return;if(video.paused){frameId=requestAnimationFrame(frame);return;}let t=video.currentTime;build(t);camera(t);let p=Math.min(100,Math.round(t/d*100));$('bar').style.width=p+'%';$('progressText').textContent='加工中 '+p+'%';if(t-prev>.09&&t<finaleStart-1){analyser.getByteTimeDomainData(data);let sum=0;for(let v of data){let a=(v-128)/128;sum+=a*a}let rms=Math.sqrt(sum/data.length);smoothed=smoothed*.83+rms*.17;if(smoothed<.036)quiet=Math.min(3,quiet+(t-prev));if(rms>Math.max(.085,smoothed*2)&&quiet>.27&&t-last>6){reaction(lib,ac.currentTime+.06,Math.max(1,level-2));last=t;quiet=0}else if(rms>.055)quiet=0;prev=t}frameId=requestAnimationFrame(frame)}
+
+video.onended=()=>{if(finished)return;finished=true;cancelAnimationFrame(frameId);$('progressText').textContent='録画データを確定中…';if(recorder.state!=='inactive'){try{recorder.requestData()}catch(e){}setTimeout(()=>{if(recorder.state!=='inactive'){try{recorder.requestData()}catch(e){}try{recorder.stop()}catch(e){}}},1100)}};recorder.start(250);await new Promise(r=>setTimeout(r,300));await video.play();let start=ac.currentTime+.05;ambience(lib,start,d,level);opening(lib,start,d,level);finale(lib,start,d,level);for(let m of markers)manualReaction(lib,start+m.t,m.level,level);duck(start,d,markers);$('status').textContent='内蔵観客音と指定した歓声を合成中です（録画安定化）';frameId=requestAnimationFrame(frame)
+
+}catch(err){console.error(err);$('status').textContent='エラー：'+(err.message||String(err));cancelAnimationFrame(frameId);video.pause();stopSounds();if(recorder&&recorder.state!=='inactive'){try{recorder.stop()}catch(e){}}stream?.getTracks().forEach(t=>t.stop());reset()}};
+
+renderMarkers();
+
+</script>
+
+</body>
+
+</html>
