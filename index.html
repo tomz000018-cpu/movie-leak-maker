@@ -38,7 +38,7 @@ input[type=range]{width:100%;accent-color:var(--pink);touch-action:pan-y}.slider
 </head>
 <body>
 <main>
-<header><h1>やめよう<em>映画盗撮</em></h1><div class="sub">どんな動画でも映画盗撮風に変換するので、これで承認欲求を満たしてください</div><div class="ver">Version 41</div></header>
+<header><h1>やめよう<em>映画盗撮</em></h1><div class="sub">どんな動画でも映画盗撮風に変換するので、これで承認欲求を満たしてください</div><div class="ver">Version 42</div></header>
 <section class="card" id="editingArea">
 <label class="file-label">⇧ 動画を選ぶ<input id="videoInput" type="file" accept="video/*" aria-label="動画ファイルを選択"></label>
 <div class="file-note">MP4 / MOV / WebM などに対応</div>
@@ -209,28 +209,28 @@ function renderFrame(t){
  ctx.setTransform(1,0,0,1,0,0);
  ctx.fillStyle='#030407';ctx.fillRect(0,0,w,h);
  // 周囲は元の映像の光が暗くぼけて漏れるだけにする。
- ctx.save();ctx.globalAlpha=.14;ctx.filter='blur(53px) brightness(65%) saturate(55%)';
- ctx.drawImage(video,0,0,video.videoWidth,video.videoHeight,-w*.08,-h*.1,w*1.16,h*1.2);ctx.restore();
- ctx.fillStyle='rgba(0,0,3,.72)';ctx.fillRect(0,0,w,h);
- // 横動画では少し右側の客席から見た台形スクリーンを作る。
- // 旧版のように下端が右に向かって上がる角度をはっきり出す。
- const jx=Math.sin(t*7.8)*4+Math.sin(t*16.1)*2.6+Math.sin(t*.6)*8;
- const jy=Math.cos(t*6.7)*3.3+Math.sin(t*14.5)*2.2+Math.cos(t*.48)*6.2;
- const shakeAngle=Math.sin(t*3.7)*.004+Math.sin(t*.55)*.009;
- const xScale=isFourThree?.84:.97;
+ ctx.save();ctx.globalAlpha=.16;ctx.filter='blur(58px) brightness(67%) saturate(55%)';
+ ctx.drawImage(video,0,0,video.videoWidth,video.videoHeight,-w*.1,-h*.12,w*1.2,h*1.24);ctx.restore();
+ ctx.fillStyle='rgba(0,0,3,.74)';ctx.fillRect(0,0,w,h);
+ // 横動画では少し右側の客席、かつ少し下側から見上げた台形スクリーンを作る。
+ const jx=Math.sin(t*7.8)*4.4+Math.sin(t*16.1)*2.8+Math.sin(t*.6)*8.5;
+ const jy=Math.cos(t*6.7)*3.6+Math.sin(t*14.5)*2.4+Math.cos(t*.48)*6.6;
+ const shakeAngle=Math.sin(t*3.7)*.0045+Math.sin(t*.55)*.0095;
+ const xScale=isFourThree?.82:.95;
  const left=w*(1-xScale)/2;
- const top=isFourThree?h*.11:h*.035;
- const bottom=isFourThree?h*.88:h*.965;
+ const top=isFourThree?h*.115:h*.04;
+ const bottom=isFourThree?h*.89:h*.968;
  let corners;
  if(portrait){
-  corners=[[w*.05,h*.065],[w*.95,h*.04],[w*.94,h*.94],[w*.055,h*.97]];
+  corners=[[w*.06,h*.08],[w*.93,h*.045],[w*.955,h*.955],[w*.03,h*.985]];
  }else{
-  // 左上・右上・右下・左下。縦線も左右で長さを変え遠近感を出す。
+  // 下辺を上辺より広くし、特に右側の縦線が下へ行くほど外側へ広がるようにする。
+  // これで「少し下から見上げている」感じを強める。
   corners=[
-   [left+w*.006, top+h*.065],
-   [left+w*xScale, top-h*.035],
-   [left+w*(xScale-.024),bottom-h*.075],
-   [left+w*.01,bottom+h*.012]
+   [left+w*.028, top+h*.09],
+   [left+w*(xScale-.055), top-h*.052],
+   [left+w*(xScale+.035), bottom-h*.025],
+   [left-w*.022, bottom+h*.04]
   ];
  }
  corners=corners.map(([x,y])=>[x+jx+(y-h/2)*shakeAngle,y+jy-(x-w/2)*shakeAngle]);
@@ -244,12 +244,20 @@ function renderFrame(t){
  // 4:3は元画像を切らずにそのまま投影する。
  if(isFourThree){sx=sy=0;sw=video.videoWidth;sh=video.videoHeight}
  screenCtx.save();
- screenCtx.filter=`brightness(${105+Math.sin(t*.62)*6}%) contrast(81%) saturate(68%) blur(${9+(Math.sin(t*.38)+1)*5}px)`;
+ screenCtx.filter=`brightness(${106+Math.sin(t*.62)*7}%) contrast(80%) saturate(70%) blur(${10+(Math.sin(t*.38)+1)*6}px)`;
  screenCtx.drawImage(video,sx,sy,sw,sh,0,0,bw,bh);screenCtx.restore();
- // 台形が画面内に見えるよう輪郭の外側にかすかな光の漏れを入れる。
- ctx.save();ctx.beginPath();ctx.moveTo(...corners[0]);for(let i=1;i<4;i++)ctx.lineTo(...corners[i]);ctx.closePath();
- ctx.strokeStyle='rgba(156,164,176,.14)';ctx.lineWidth=12;ctx.filter='blur(10px)';ctx.stroke();ctx.restore();
+ // スクリーン境界に、光がにじんでぼけた感じを少し強めに入れる。
+ ctx.save();
+ ctx.beginPath();ctx.moveTo(...corners[0]);for(let i=1;i<4;i++)ctx.lineTo(...corners[i]);ctx.closePath();
+ ctx.strokeStyle='rgba(205,215,230,.14)';ctx.lineWidth=28;ctx.filter='blur(22px)';ctx.stroke();
+ ctx.strokeStyle='rgba(165,175,190,.12)';ctx.lineWidth=14;ctx.filter='blur(10px)';ctx.stroke();
+ ctx.restore();
  drawPerspective(screenBuffer,corners);
+ // スクリーンの内側の縁にも柔らかいぼけを重ねて、境目を少し曖昧にする。
+ ctx.save();
+ ctx.beginPath();ctx.moveTo(...corners[0]);for(let i=1;i<4;i++)ctx.lineTo(...corners[i]);ctx.closePath();ctx.clip();
+ ctx.strokeStyle='rgba(255,255,245,.08)';ctx.lineWidth=18;ctx.filter='blur(12px)';ctx.stroke();
+ ctx.restore();
  const lens=ctx.createLinearGradient(0,0,w,h);lens.addColorStop(0,'#b1c0d00c');lens.addColorStop(.5,'#dddaca0a');lens.addColorStop(1,'#8293a00b');ctx.fillStyle=lens;ctx.fillRect(0,0,w,h);
  const vignette=ctx.createRadialGradient(w*.52,h*.48,w*.25,w*.52,h*.5,w*.81);vignette.addColorStop(0,'#00000000');vignette.addColorStop(.75,'#00000020');vignette.addColorStop(1,'#0000008f');ctx.fillStyle=vignette;ctx.fillRect(0,0,w,h);
 }
@@ -336,7 +344,7 @@ $('make').onclick=async()=>{
    }
   }
   if(!result)throw Error('録画を完了できませんでした');if(resultURL)URL.revokeObjectURL(resultURL);
-  resultURL=URL.createObjectURL(result.blob);$('outVideo').src=resultURL;$('save').href=resultURL;$('save').download=result.actual.includes('mp4')?'movie-leak-v41.mp4':'movie-leak-v41.webm';$('result').style.display='block';$('bar').style.width='100%';$('progressText').textContent='完成';$('status').textContent='動画が完成しました。保存後は「別の動画を選ぶ」から続けて作成できます。';
+  resultURL=URL.createObjectURL(result.blob);$('outVideo').src=resultURL;$('save').href=resultURL;$('save').download=result.actual.includes('mp4')?'movie-leak-v42.mp4':'movie-leak-v42.webm';$('result').style.display='block';$('bar').style.width='100%';$('progressText').textContent='完成';$('status').textContent='動画が完成しました。保存後は「別の動画を選ぶ」から続けて作成できます。';
  }catch(e){console.error(e);$('status').textContent='自動再試行でも完成できませんでした。\nもう一度「盗撮流出風動画を作る」を押してください。\n詳細：'+(e.message||String(e));$('progressText').textContent='もう一度お試しください';$('make').textContent='↻ もう一度、盗撮流出風動画を作る'}finally{video.pause();stopSounds();working=false;$('make').disabled=false;video.controls=true;renderMarkers()}
 };
 renderMarkers();
