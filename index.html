@@ -19,6 +19,12 @@ h1{font-size:clamp(31px,12vw,72px);font-weight:950;letter-spacing:-.09em;margin:
 .file-label{margin-top:0;position:relative;overflow:hidden}.file-label input{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer;font-size:100px}.file-label svg,.make svg{width:23px;height:23px}
 .file-note,.hint,.name{font-size:12px;color:var(--muted);line-height:1.65}.file-note{text-align:center;margin:9px 0 0}.name{text-align:center;margin-top:9px;overflow-wrap:anywhere}
 
+/* 動画選択直後、メタデータ読込完了までの表示 */
+.loadingPick{display:none;align-items:center;justify-content:center;gap:11px;margin:10px 0 3px;color:var(--pink);font-weight:800;font-size:13px;min-height:30px}
+.loadingPick.visible{display:flex}
+.loadingSpinner{width:25px;height:25px;border:3px solid #f7c2df;border-top-color:var(--pink);border-radius:50%;animation:videoLoadingSpin .8s linear infinite;flex:none}
+@keyframes videoLoadingSpin{to{transform:rotate(360deg)}}
+@media(prefers-reduced-motion:reduce){.loadingSpinner{animation-duration:1.8s}}
 h2{font-size:18px;margin:0 0 8px;font-weight:850}.hint{margin:0 0 10px}.setting{margin:13px 0 11px;padding-top:12px;border-top:1px solid var(--line)}
 .settingHeader{display:flex;justify-content:space-between;gap:10px;font-size:14px;font-weight:800}#crowdText{color:var(--pink);font-size:13px;white-space:nowrap}
 input[type=range]{width:100%;accent-color:var(--pink);touch-action:pan-y}.sliderLabels{display:flex;justify-content:space-between;font-size:12px;color:var(--muted)}#preview{display:none}
@@ -38,12 +44,13 @@ input[type=range]{width:100%;accent-color:var(--pink);touch-action:pan-y}.slider
 </head>
 <body>
 <main>
-<header><h1>やめよう<em>映画盗撮</em></h1><div class="sub">どんな動画でも映画盗撮風に変換するので、これで承認欲求を満たしてください</div><div class="ver">Version 48</div></header>
+<header><h1>やめよう<em>映画盗撮</em></h1><div class="sub">どんな動画でも映画盗撮風に変換するので、これで承認欲求を満たしてください</div><div class="ver">Version 49</div></header>
 <section class="card" id="editingArea">
 <label class="file-label">⇧ 動画を選ぶ<input id="videoInput" type="file" accept="video/*" aria-label="動画ファイルを選択"></label>
 <div class="file-note">MP4 / MOV / WebM などに対応</div>
 
 <div class="name" id="fileName">動画が選択されていません</div>
+<div class="loadingPick" id="loadingPick" role="status" aria-live="polite"><span class="loadingSpinner" aria-hidden="true"></span><span>動画を読み込み中…</span></div>
 <div class="setting"><div class="settingHeader"><span>全体の盛り上がり</span><span id="crowdText">レベル4：大歓声</span></div><input id="crowdLevel" type="range" min="1" max="5" value="4"><div class="sliderLabels"><span>控えめ</span><span>激しめ</span></div></div>
 <div class="videoShell"><div id="videoPlaceholder">ここに選択した動画が表示されます</div><video id="sourceVideo" controls playsinline preload="metadata"></video></div>
 <div id="preview"><div class="clock" id="clock">0:00 / 0:00</div><div class="seek"><button class="smallbtn" id="minus" type="button">−1秒</button><input type="range" id="seek" min="0" max="1000" value="0"><button class="smallbtn" id="plus" type="button">＋1秒</button></div></div>
@@ -80,6 +87,11 @@ const delay=ms=>new Promise(r=>setTimeout(r,ms));
 const formatTime=t=>`${Math.floor(Math.max(0,t)/60)}:${String(Math.floor(Math.max(0,t))%60).padStart(2,'0')}`;
 function updateClock(){let d=duration();$('clock').textContent=formatTime(video.currentTime||0)+' / '+formatTime(d);if(d)$('seek').value=Math.round(video.currentTime/d*1000)}
 $('crowdLevel').oninput=e=>$('crowdText').textContent=`レベル${e.target.value}：${names[+e.target.value]}`;
+let selectLoadTimeout=null;
+function toggleSelectLoading(visible){
+ $('loadingPick').classList.toggle('visible',visible);
+ if(!visible&&selectLoadTimeout){clearTimeout(selectLoadTimeout);selectLoadTimeout=null}
+}
 function selectVideo(f){
  if(!f)return;
  if(working){$('status').textContent='加工中は動画を変更できません。完了後に選び直してください。';return}
@@ -87,9 +99,12 @@ function selectVideo(f){
  video.pause();file=f;fileURL=URL.createObjectURL(f);
  $('fileName').textContent='選択した動画：'+f.name;
  $('status').textContent='動画を読み込み中：'+f.name;
+ toggleSelectLoading(true);
+ if(selectLoadTimeout)clearTimeout(selectLoadTimeout);
+ selectLoadTimeout=setTimeout(()=>{if(id===selection&&!working){toggleSelectLoading(false);$('status').textContent='読み込みに時間がかかっています。動画を再選択するか、別の動画をお試しください。'}},20000);
  $('videoPlaceholder').style.display='none';video.classList.add('loaded');$('preview').style.display='block';$('result').style.display='none';$('progress').style.display='none';$('make').textContent='✦ 盗撮流出風動画を作る';$('make').disabled=false;
  markers=[];seq=0;renderMarkers();$('addNotice').textContent='';
- video.onerror=()=>{if(id===selection&&!working)$('status').textContent='動画の読み込みに失敗しました。ほかの動画、または「ファイル」から選び直してください。'};
+ video.onerror=()=>{if(id===selection&&!working){toggleSelectLoading(false);$('status').textContent='動画の読み込みに失敗しました。ほかの動画、または「ファイル」から選び直してください。'}};
  video.src=fileURL;video.load();
  if(old)setTimeout(()=>URL.revokeObjectURL(old),1500);
 }
@@ -104,7 +119,7 @@ function setupPicker(picker){
  });
 }
 setupPicker($('videoInput'));
-video.addEventListener('loadedmetadata',()=>{updateClock();if(!working&&file)$('status').textContent='読み込み完了：'+formatTime(duration())+'。ポイントを設定できます。'});
+video.addEventListener('loadedmetadata',()=>{updateClock();if(!working&&file){toggleSelectLoading(false);$('status').textContent='読み込み完了：'+formatTime(duration())+'。ポイントを設定できます。'}});
 video.addEventListener('timeupdate',updateClock);
 $('seek').oninput=e=>{if(working||!duration())return;video.pause();video.currentTime=duration()*e.target.value/1000;updateClock()};
 function move(s){if(working||!duration())return;video.pause();video.currentTime=Math.min(duration(),Math.max(0,video.currentTime+s));updateClock()}
@@ -179,7 +194,13 @@ function randomSpatialVoice(a,start,vol,distance){if(a.length)spatialVoice(pick(
 function manualReaction(lib,t,kind,level){const s=[0,.14,.26,.48,.85,1.25][level];
  if(kind===1){randomClip(lib.applause,t,8,1.02*s,.2,2);randomClip(lib.applause,t+1.1,7,.58*s,.3,2)}
  else if(kind===2){randomClip(lib.laugh,t,7,.78*s,.12,1);randomClip(lib.laugh,t+1.1,6,.48*s,.2,1)}
- else if(kind===3){randomClip(lib.cheer,t,5,.34*s,.2,2);const firstDistance=Math.random()<.22?'near':Math.random()<.60?'mid':'far';randomSpatialVoice(lib.voices,t+.22,1.15*s,firstDistance);randomSpatialVoice(lib.voices,t+1.85,.97*s,firstDistance==='near'?'far':(Math.random()<.7?'far':'mid'))}
+ else if(kind===3){
+  // 手動指定の Oh my God! は全体の盛り上がり量に左右されない独立音量にする。
+  randomClip(lib.cheer,t,5,.34*s,.2,2);
+  const firstDistance=Math.random()<.22?'near':Math.random()<.60?'mid':'far';
+  randomSpatialVoice(lib.voices,t+.22,1.25,firstDistance);
+  randomSpatialVoice(lib.voices,t+1.85,1.12,firstDistance==='near'?'far':(Math.random()<.7?'far':'mid'))
+ }
  else {let big=kind===5;for(let i=0;i<(big?4:2);i++)randomClip(lib.cheer,t+i*(big?.43:.75),big?8:5.5,(big?1.22:.82)*s*(1-i*.17),.2,3);if(big)randomClip(lib.applause,t+.5,8,.46*s,.2,3.5)}
 }
 function scheduleSounds(lib,start,d,level){
@@ -420,7 +441,7 @@ $('make').onclick=async()=>{
    }
   }
   if(!result)throw Error('録画を完了できませんでした');if(resultURL)URL.revokeObjectURL(resultURL);
-  resultURL=URL.createObjectURL(result.blob);$('outVideo').src=resultURL;$('save').href=resultURL;$('save').download=result.actual.includes('mp4')?'movie-leak-v48.mp4':'movie-leak-v48.webm';$('result').style.display='block';$('bar').style.width='100%';$('progressText').textContent='完成';$('status').textContent='動画が完成しました。次の動画を作るときは、画面上部の「動画を選ぶ」から選び直してください。';
+  resultURL=URL.createObjectURL(result.blob);$('outVideo').src=resultURL;$('save').href=resultURL;$('save').download=result.actual.includes('mp4')?'movie-leak-v49.mp4':'movie-leak-v49.webm';$('result').style.display='block';$('bar').style.width='100%';$('progressText').textContent='完成';$('status').textContent='動画が完成しました。次の動画を作るときは、画面上部の「動画を選ぶ」から選び直してください。';
  }catch(e){console.error(e);$('status').textContent='自動再試行でも完成できませんでした。\nもう一度「盗撮流出風動画を作る」を押してください。\n詳細：'+(e.message||String(e));$('progressText').textContent='もう一度お試しください';$('make').textContent='↻ もう一度、盗撮流出風動画を作る'}finally{video.pause();stopSounds();working=false;$('make').disabled=false;video.controls=true;renderMarkers()}
 };
 renderMarkers();
