@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>やめよう映画盗撮 | 盗撮流出風動画メーカー</title>
+<title>映画流出ジェネレーター</title>
 <style>
 :root{--pink:#f50082;--ink:#151b29;--muted:#697386;--line:#e8eaf1;--bg:#fafafd}
 *{box-sizing:border-box}
@@ -11,7 +11,7 @@ body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,Bl
 main{max-width:620px;margin:auto;padding:20px 13px 56px}
 header{text-align:center;padding:12px 0 18px}
 h1{font-size:clamp(31px,12vw,72px);font-weight:950;letter-spacing:-.09em;margin:5px 0 8px;white-space:nowrap}h1 em{font-style:normal;color:var(--pink)}
-.sub{font-size:clamp(8.4px,2.55vw,11.5px);font-weight:650;letter-spacing:-.045em;white-space:nowrap;color:#5b6676}.ver{font-size:11px;color:#9298a5;margin-top:8px}
+.newTitle{display:flex;flex-direction:column;align-items:center;gap:0;letter-spacing:-.055em;line-height:1.05;margin:3px 0 12px}.newTitle span{color:var(--pink);font-size:clamp(38px,11vw,68px);font-weight:950}.newTitle strong{color:#101014;font-size:clamp(31px,9vw,56px);font-weight:950}.sub{font-size:clamp(8.4px,2.55vw,11.5px);font-weight:650;letter-spacing:-.045em;white-space:nowrap;color:#5b6676}.ver{font-size:11px;color:#9298a5;margin-top:8px}
 .card{background:white;border:1px solid #edf0f4;border-radius:20px;padding:16px;margin-bottom:14px;box-shadow:0 4px 20px #14193209}
 .videoShell{background:#141519;border-radius:12px;overflow:hidden;aspect-ratio:16/9;display:flex;align-items:center;justify-content:center;color:#a7acb6;font-weight:700;font-size:13px}
 .videoShell video{width:100%;height:100%;object-fit:contain;background:#090a0c}#sourceVideo{display:none}#sourceVideo.loaded{display:block}#videoPlaceholder{text-align:center;padding:20px}
@@ -20,9 +20,9 @@ h1{font-size:clamp(31px,12vw,72px);font-weight:950;letter-spacing:-.09em;margin:
 .file-note,.hint,.name{font-size:12px;color:var(--muted);line-height:1.65}.file-note{text-align:center;margin:9px 0 0}.name{text-align:center;margin-top:9px;overflow-wrap:anywhere}
 
 /* 動画選択直後、メタデータ読込完了までの表示 */
-.loadingPick{display:none;align-items:center;justify-content:center;gap:11px;margin:10px 0 3px;color:var(--pink);font-weight:800;font-size:13px;min-height:30px}
+.loadingPick{display:none;align-items:center;justify-content:center;flex-direction:column;gap:13px;color:var(--pink);font-weight:850;font-size:17px;position:fixed;inset:0;z-index:9999;background:rgba(255,255,255,.92);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
 .loadingPick.visible{display:flex}
-.loadingSpinner{width:25px;height:25px;border:3px solid #f7c2df;border-top-color:var(--pink);border-radius:50%;animation:videoLoadingSpin .8s linear infinite;flex:none}
+.loadingSpinner{width:62px;height:62px;border:7px solid #f7c2df;border-top-color:var(--pink);border-radius:50%;animation:videoLoadingSpin .8s linear infinite;flex:none}
 @keyframes videoLoadingSpin{to{transform:rotate(360deg)}}
 @media(prefers-reduced-motion:reduce){.loadingSpinner{animation-duration:1.8s}}
 h2{font-size:18px;margin:0 0 8px;font-weight:850}.hint{margin:0 0 10px}.setting{margin:13px 0 11px;padding-top:12px;border-top:1px solid var(--line)}
@@ -44,7 +44,7 @@ input[type=range]{width:100%;accent-color:var(--pink);touch-action:pan-y}.slider
 </head>
 <body>
 <main>
-<header><h1>やめよう<em>映画盗撮</em></h1><div class="sub">どんな動画でも映画盗撮風に変換するので、これで承認欲求を満たしてください</div><div class="ver">Version 49</div></header>
+<header><h1 class="newTitle"><span>映画流出</span><strong>ジェネレーター</strong></h1><div class="sub">どんな動画でも映画盗撮風に変換するので、これで承認欲求を満たしてください</div><div class="ver">Version 50</div></header>
 <section class="card" id="editingArea">
 <label class="file-label">⇧ 動画を選ぶ<input id="videoInput" type="file" accept="video/*" aria-label="動画ファイルを選択"></label>
 <div class="file-note">MP4 / MOV / WebM などに対応</div>
@@ -87,10 +87,16 @@ const delay=ms=>new Promise(r=>setTimeout(r,ms));
 const formatTime=t=>`${Math.floor(Math.max(0,t)/60)}:${String(Math.floor(Math.max(0,t))%60).padStart(2,'0')}`;
 function updateClock(){let d=duration();$('clock').textContent=formatTime(video.currentTime||0)+' / '+formatTime(d);if(d)$('seek').value=Math.round(video.currentTime/d*1000)}
 $('crowdLevel').oninput=e=>$('crowdText').textContent=`レベル${e.target.value}：${names[+e.target.value]}`;
-let selectLoadTimeout=null;
-function toggleSelectLoading(visible){
- $('loadingPick').classList.toggle('visible',visible);
- if(!visible&&selectLoadTimeout){clearTimeout(selectLoadTimeout);selectLoadTimeout=null}
+let selectLoadTimeout=null, selectLoadStarted=0, selectLoadHideTimer=null;
+function toggleSelectLoading(visible,immediate=false){
+ const overlay=$('loadingPick');
+ if(selectLoadHideTimer){clearTimeout(selectLoadHideTimer);selectLoadHideTimer=null}
+ if(visible){selectLoadStarted=Date.now();overlay.classList.add('visible');overlay.setAttribute('aria-busy','true')}
+ else{
+  const finish=()=>{overlay.classList.remove('visible');overlay.removeAttribute('aria-busy');if(selectLoadTimeout){clearTimeout(selectLoadTimeout);selectLoadTimeout=null}};
+  const remaining=immediate?0:Math.max(0,900-(Date.now()-selectLoadStarted));
+  if(remaining)selectLoadHideTimer=setTimeout(finish,remaining);else finish();
+ }
 }
 function selectVideo(f){
  if(!f)return;
@@ -104,7 +110,7 @@ function selectVideo(f){
  selectLoadTimeout=setTimeout(()=>{if(id===selection&&!working){toggleSelectLoading(false);$('status').textContent='読み込みに時間がかかっています。動画を再選択するか、別の動画をお試しください。'}},20000);
  $('videoPlaceholder').style.display='none';video.classList.add('loaded');$('preview').style.display='block';$('result').style.display='none';$('progress').style.display='none';$('make').textContent='✦ 盗撮流出風動画を作る';$('make').disabled=false;
  markers=[];seq=0;renderMarkers();$('addNotice').textContent='';
- video.onerror=()=>{if(id===selection&&!working){toggleSelectLoading(false);$('status').textContent='動画の読み込みに失敗しました。ほかの動画、または「ファイル」から選び直してください。'}};
+ video.onerror=()=>{if(id===selection&&!working){toggleSelectLoading(false,true);$('status').textContent='動画の読み込みに失敗しました。ほかの動画、または「ファイル」から選び直してください。'}};
  video.src=fileURL;video.load();
  if(old)setTimeout(()=>URL.revokeObjectURL(old),1500);
 }
@@ -441,7 +447,7 @@ $('make').onclick=async()=>{
    }
   }
   if(!result)throw Error('録画を完了できませんでした');if(resultURL)URL.revokeObjectURL(resultURL);
-  resultURL=URL.createObjectURL(result.blob);$('outVideo').src=resultURL;$('save').href=resultURL;$('save').download=result.actual.includes('mp4')?'movie-leak-v49.mp4':'movie-leak-v49.webm';$('result').style.display='block';$('bar').style.width='100%';$('progressText').textContent='完成';$('status').textContent='動画が完成しました。次の動画を作るときは、画面上部の「動画を選ぶ」から選び直してください。';
+  resultURL=URL.createObjectURL(result.blob);$('outVideo').src=resultURL;$('save').href=resultURL;$('save').download=result.actual.includes('mp4')?'movie-leak-v50.mp4':'movie-leak-v50.webm';$('result').style.display='block';$('bar').style.width='100%';$('progressText').textContent='完成';$('status').textContent='動画が完成しました。次の動画を作るときは、画面上部の「動画を選ぶ」から選び直してください。';
  }catch(e){console.error(e);$('status').textContent='自動再試行でも完成できませんでした。\nもう一度「盗撮流出風動画を作る」を押してください。\n詳細：'+(e.message||String(e));$('progressText').textContent='もう一度お試しください';$('make').textContent='↻ もう一度、盗撮流出風動画を作る'}finally{video.pause();stopSounds();working=false;$('make').disabled=false;video.controls=true;renderMarkers()}
 };
 renderMarkers();
